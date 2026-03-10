@@ -3,6 +3,7 @@
  */
 import { memo, useMemo } from 'react';
 import { View } from 'react-native';
+import { useI18n } from '@/i18n';
 import { TransactionRow } from './TransactionRow';
 import { TransactionSection } from './TransactionSection';
 import { normalizeNote } from '@/utils/recurringDetector';
