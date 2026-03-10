@@ -18,7 +18,7 @@ export default function AuthLoadingScreen() {
     if (session) {
       router.replace('/(tabs)');
     } else {
-      router.replace('/welcome');
+      router.replace('/');
     }
   }, [session, loading]);
 

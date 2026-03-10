@@ -14,7 +14,7 @@ export default function OnboardingLayout() {
   useEffect(() => {
     if (authLoading) return;
     if (!session) {
-      router.replace('/welcome');
+      router.replace('/');
       return;
     }
     if (profileLoading) return;

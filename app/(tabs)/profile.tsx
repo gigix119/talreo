@@ -31,7 +31,7 @@ export default function ProfileScreen() {
 
   async function handleSignOut() {
     await signOut();
-    router.replace('/welcome');
+    router.replace('/');
   }
 
   if (loading) {

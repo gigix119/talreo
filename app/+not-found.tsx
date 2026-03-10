@@ -12,7 +12,7 @@ export default function NotFoundScreen() {
       <ScreenContainer>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ fontSize: 18, color: '#1C1C1E' }}>This screen doesn't exist.</Text>
-          <Link href="/welcome" style={{ marginTop: 16, color: '#0A84FF' }}>
+          <Link href="/" style={{ marginTop: 16, color: '#0A84FF' }}>
             Go to Welcome
           </Link>
         </View>

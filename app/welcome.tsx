@@ -1,31 +1,13 @@
 /**
- * Welcome screen — premium fintech-style landing experience.
- * Composes: Header, Hero, Features, Preview, Use Cases, CTA.
+ * Welcome — redirects to / (welcome content lives at root for clean talreo.com URL).
  */
-import { ScrollView } from 'react-native';
-import { theme } from '@/constants/theme';
-import {
-  WelcomeHeader,
-  WelcomeHero,
-  WelcomeFeatures,
-  WelcomePreview,
-  WelcomeUseCases,
-  WelcomeCTA,
-} from '@/components/welcome';
+import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
-export default function WelcomeScreen() {
-  return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      contentContainerStyle={{ paddingBottom: theme.spacing.xxl }}
-      showsVerticalScrollIndicator={false}
-    >
-      <WelcomeHeader />
-      <WelcomeHero />
-      <WelcomeFeatures />
-      <WelcomePreview />
-      <WelcomeUseCases />
-      <WelcomeCTA />
-    </ScrollView>
-  );
+export default function WelcomeRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/');
+  }, []);
+  return null;
 }

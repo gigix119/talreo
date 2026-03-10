@@ -21,12 +21,12 @@ export default function AuthCallbackScreen() {
 
     async function handleUrl(url: string | null) {
       if (!url || !supabase) {
-        router.replace('/welcome');
+        router.replace('/');
         return;
       }
       const tokens = parseAuthUrl(url);
       if (!tokens) {
-        router.replace('/welcome');
+        router.replace('/');
         return;
       }
       try {
@@ -60,7 +60,7 @@ export default function AuthCallbackScreen() {
       <ScreenContainer>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: theme.colors.error, marginBottom: 16 }}>{error}</Text>
-          <Text style={{ color: theme.colors.primary }} onPress={() => router.replace('/welcome')}>
+          <Text style={{ color: theme.colors.primary }} onPress={() => router.replace('/')}>
             Back to Welcome
           </Text>
         </View>
