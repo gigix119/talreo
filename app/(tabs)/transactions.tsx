@@ -51,7 +51,6 @@ export default function TransactionsScreen() {
     recurringNoteSet,
     categoryTotalsThisMonth,
     totalExpensesThisMonth,
-    refetch,
     deleteTransaction,
   } = useTransactionsList();
 
