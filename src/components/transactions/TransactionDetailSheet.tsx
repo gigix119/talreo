@@ -9,6 +9,7 @@ import { TransactionDetailHeader } from './TransactionDetailHeader';
 import { TransactionMetadata } from './TransactionMetadata';
 import { TransactionInsightCard } from './TransactionInsightCard';
 import { TransactionActionButtons } from './TransactionActionButtons';
+import { DeleteTransactionDialog } from './DeleteTransactionDialog';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
 
@@ -23,6 +24,10 @@ interface TransactionDetailSheetProps {
   onEdit: () => void;
   onDelete: () => void;
   deleteDisabled?: boolean;
+  deleteConfirmVisible?: boolean;
+  onDeleteConfirm?: () => void;
+  onDeleteCancel?: () => void;
+  deleteLoading?: boolean;
 }
 
 export function TransactionDetailSheet({
@@ -36,6 +41,10 @@ export function TransactionDetailSheet({
   onEdit,
   onDelete,
   deleteDisabled = false,
+  deleteConfirmVisible = false,
+  onDeleteConfirm,
+  onDeleteCancel,
+  deleteLoading = false,
 }: TransactionDetailSheetProps) {
   const { t } = useI18n();
 
@@ -101,6 +110,15 @@ export function TransactionDetailSheet({
             deleteDisabled={deleteDisabled}
           />
         </ScrollView>
+
+        {onDeleteConfirm && onDeleteCancel ? (
+          <DeleteTransactionDialog
+            visible={deleteConfirmVisible}
+            onCancel={onDeleteCancel}
+            onConfirm={onDeleteConfirm}
+            loading={deleteLoading}
+          />
+        ) : null}
       </View>
     </Modal>
   );

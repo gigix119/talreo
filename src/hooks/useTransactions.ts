@@ -57,7 +57,7 @@ export function useTransactions(options?: GetTransactionsOptions) {
 
   const deleteTransaction = useCallback(
     async (id: string): Promise<void> => {
-      if (!user?.id) return;
+      if (!user?.id) throw new Error('User not authenticated.');
       await transactionsService.deleteTransaction(user.id, id);
       setTransactions((prev) => prev.filter((t) => t.id !== id));
     },

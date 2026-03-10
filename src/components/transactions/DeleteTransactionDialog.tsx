@@ -73,10 +73,12 @@ export function DeleteTransactionDialog({
               disabled={loading}
               style={({ pressed }) => ({
                 flex: 1,
+                minHeight: 48,
                 paddingVertical: 14,
                 borderRadius: theme.radius.lg,
                 backgroundColor: theme.colors.background,
                 alignItems: 'center',
+                justifyContent: 'center',
                 opacity: pressed ? 0.9 : 1,
               })}
             >
@@ -89,10 +91,12 @@ export function DeleteTransactionDialog({
               disabled={loading}
               style={({ pressed }) => ({
                 flex: 1,
+                minHeight: 48,
                 paddingVertical: 14,
                 borderRadius: theme.radius.lg,
                 backgroundColor: theme.colors.expense,
                 alignItems: 'center',
+                justifyContent: 'center',
                 opacity: loading || pressed ? 0.8 : 1,
               })}
             >

@@ -14,7 +14,6 @@ import {
   TransactionSummaryCard,
   TransactionList,
   TransactionDetailSheet,
-  DeleteTransactionDialog,
   EmptyTransactionsState,
   EmptySearchState,
 } from '@/components/transactions';
@@ -28,6 +27,7 @@ export default function TransactionsScreen() {
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
@@ -66,28 +66,35 @@ export default function TransactionsScreen() {
 
   const handleDeletePress = useCallback(() => {
     if (!selectedTx) return;
+    setPendingDeleteId(selectedTx.id);
     setDeleteConfirmVisible(true);
   }, [selectedTx]);
 
   const handleDeleteConfirm = useCallback(async () => {
-    if (!selectedTx) return;
+    const id = pendingDeleteId;
+    if (!id) return;
     setDeleting(true);
     try {
-      await deleteTransaction(selectedTx.id);
+      await deleteTransaction(id);
       setDetailVisible(false);
       setDeleteConfirmVisible(false);
+      setPendingDeleteId(null);
       setSelectedTx(null);
       await refetch();
       setToast({ message: t('transactions.toastDeleted'), variant: 'success' });
-    } catch {
+    } catch (err) {
+      if (__DEV__) console.error('[DeleteTransaction] Failed:', err);
       setToast({ message: t('transactions.toastDeleteFailed'), variant: 'error' });
     } finally {
       setDeleting(false);
     }
-  }, [selectedTx, deleteTransaction, refetch, t]);
+  }, [pendingDeleteId, deleteTransaction, refetch, t]);
 
   const handleDeleteCancel = useCallback(() => {
-    if (!deleting) setDeleteConfirmVisible(false);
+    if (!deleting) {
+      setDeleteConfirmVisible(false);
+      setPendingDeleteId(null);
+    }
   }, [deleting]);
 
   const handleEdit = useCallback(
@@ -202,17 +209,15 @@ export default function TransactionsScreen() {
           setDetailVisible(false);
           setSelectedTx(null);
           setDeleteConfirmVisible(false);
+          setPendingDeleteId(null);
         }}
         onEdit={() => handleEdit()}
         onDelete={handleDeletePress}
         deleteDisabled={deleting}
-      />
-
-      <DeleteTransactionDialog
-        visible={deleteConfirmVisible}
-        onCancel={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        loading={deleting}
+        deleteConfirmVisible={deleteConfirmVisible}
+        onDeleteConfirm={handleDeleteConfirm}
+        onDeleteCancel={handleDeleteCancel}
+        deleteLoading={deleting}
       />
 
       {toast ? (

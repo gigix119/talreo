@@ -142,8 +142,8 @@ export function useTransactionsList() {
   }, [dateFilter]);
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      if (!user?.id) return;
+    async (id: string): Promise<void> => {
+      if (!user?.id) throw new Error('User not authenticated.');
       await deleteTransaction(id);
     },
     [user?.id, deleteTransaction]

@@ -92,7 +92,7 @@ export const transactionsService = {
   },
 
   async deleteTransaction(userId: string, transactionId: string): Promise<void> {
-    if (!supabase) return;
+    if (!supabase) throw new Error('Database not available.');
     const { error } = await supabase
       .from('transactions')
       .delete()
