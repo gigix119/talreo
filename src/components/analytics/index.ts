@@ -1,5 +1,7 @@
 export { AnalyticsCategoryPieChart } from './AnalyticsCategoryPieChart';
 export { AnalyticsHeader } from './AnalyticsHeader';
+export { AnalyticsCard } from './AnalyticsCard';
+export { SpendingCategoriesWidget } from './SpendingCategoriesWidget';
 export { FinancialHealthScore } from './FinancialHealthScore';
 export { CashflowStoryWidget } from './CashflowStoryWidget';
 export { SpendingBehaviorWidget } from './SpendingBehaviorWidget';

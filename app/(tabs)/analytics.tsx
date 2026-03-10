@@ -1,10 +1,9 @@
 /**
- * Analytics tab — financial experience (not a traditional dashboard).
- * Interactive widgets: 1) Cashflow Overview  2) Spending Behavior
- * 3) Budget Status  4) Savings Momentum  5) AI Insight.
- * Mobile-first, tap/expand, animated numbers, soft shadows.
+ * Analytics tab — premium fintech experience.
+ * Order: 1) Financial Health  2) AI Copilot  3) Cashflow Chart
+ * 4) Spending Categories  5) Budget Status  6) Spending Momentum  7) Largest Transactions.
  */
-import { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { View, Text, ScrollView } from 'react-native';
 import { useProfile } from '@/hooks/useProfile';
@@ -21,11 +20,10 @@ import {
   RangeComparisonCard,
   LargestExpensesList,
   CategoryFilterChips,
-  CashflowStoryWidget,
-  SpendingBehaviorWidget,
   BudgetStatusWidget,
   SavingsMomentumWidget,
   AIInsightWidget,
+  SpendingCategoriesWidget,
 } from '@/components/analytics';
 import { AnalyticsSkeleton } from '@/components/analytics/AnalyticsSkeleton';
 import { theme } from '@/constants/theme';
@@ -39,6 +37,22 @@ function monthAdd(month: string, delta: number): string {
   d.setMonth(d.getMonth() + delta);
   return getFirstDayOfMonth(d.getFullYear(), d.getMonth());
 }
+
+const ChartSection = memo(function ChartSection({
+  trend,
+  currency,
+  title,
+  emptyText,
+}: {
+  trend: import('@/types/database').MonthlyTrendItem[];
+  currency: string;
+  title: string;
+  emptyText: string;
+}) {
+  return (
+    <FinancialTrendChart data={trend} currency={currency} title={title} emptyText={emptyText} />
+  );
+});
 
 export default function AnalyticsScreen() {
   const router = useRouter();
@@ -55,7 +69,6 @@ export default function AnalyticsScreen() {
 
   const {
     expenseBreakdown,
-    incomeBreakdown,
     rawExpenseBreakdown,
     rawIncomeBreakdown,
     trend,
@@ -183,30 +196,27 @@ export default function AnalyticsScreen() {
               currency={currency}
             />
 
-            {/* 2. Cashflow Story — narrative card */}
-            <CashflowStoryWidget trend={trend} currency={currency} />
+            {/* 2. AI Financial Copilot */}
+            <AIInsightWidget insights={insights} />
 
-            {/* 3. Primary Chart */}
-            <View>
-              <FinancialTrendChart
-                data={trend}
-                currency={currency}
-                title={t('analytics.monthlyTrend')}
-                emptyText={t('analytics.noData')}
-              />
-            </View>
-
-            {/* 4. Spending Behavior — category explorer */}
-            <SpendingBehaviorWidget
-              expenseData={expenseBreakdown}
-              incomeData={incomeBreakdown}
+            {/* 3. Cashflow Chart */}
+            <ChartSection
+              trend={trend}
               currency={currency}
-              emptyExpenseText={t('analytics.noExpenses')}
-              emptyIncomeText={t('analytics.noIncome')}
+              title={t('analytics.monthlyTrend')}
+              emptyText={t('analytics.noData')}
+            />
+
+            {/* 4. Spending Categories */}
+            <SpendingCategoriesWidget
+              expenseData={expenseBreakdown}
+              categoryPerformance={categoryPerformance}
+              currency={currency}
+              emptyText={t('analytics.noExpenses')}
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* 5. Budget Status — smart bars + prediction */}
+            {/* 5. Budget Status */}
             <BudgetStatusWidget
               data={categoryPerformance}
               currency={currency}
@@ -214,42 +224,30 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noBudgets')}
             />
 
-            {/* 6. Savings Momentum — daily avg + forecast */}
+            {/* 6. Spending Momentum */}
             <SavingsMomentumWidget
               velocity={velocity}
               currency={currency}
               emptyText={t('analytics.noExpenses')}
             />
 
-            {/* 7. Largest Expenses */}
+            {/* 7. Largest Transactions */}
             {largestExpenses.length > 0 && (
-              <View
-                style={{
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: 20,
-                  padding: theme.spacing.lg,
-                }}
-              >
-                <LargestExpensesList
+              <LargestExpensesList
                   items={largestExpenses}
                   currency={currency}
                   emptyText={t('analytics.noExpenses')}
                 />
-              </View>
             )}
 
-            {/* 8. Range Comparison */}
             {rangeComparison && (
               <RangeComparisonCard
-                data={rangeComparison}
-                currency={currency}
-                rangeALabel={rangeALabel}
-                rangeBLabel={rangeBLabel}
-              />
+                  data={rangeComparison}
+                  currency={currency}
+                  rangeALabel={rangeALabel}
+                  rangeBLabel={rangeBLabel}
+                />
             )}
-
-            {/* 9. AI Insight */}
-            <AIInsightWidget insights={insights} />
           </View>
         )}
       </ScrollView>

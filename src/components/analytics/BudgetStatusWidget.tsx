@@ -111,11 +111,23 @@ export function BudgetStatusWidget({
                     />
                   </View>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, flexWrap: 'wrap', gap: 4 }}>
-                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-                      {row.remaining >= 0
-                        ? `${formatAmount(row.remaining, currency)} ${t('analytics.budgetLeft')}`
-                        : `${formatAmount(Math.abs(row.remaining), currency)} ${t('analytics.budgetOver')}`}
-                    </Text>
+                    <View>
+                      <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
+                        {row.remaining >= 0
+                          ? `${formatAmount(row.remaining, currency)} ${t('analytics.budgetLeft')}`
+                          : `${formatAmount(Math.abs(row.remaining), currency)} ${t('analytics.budgetOver')}`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          fontWeight: '600',
+                          color: overBudget ? analyticsColors.expense : barColor,
+                          marginTop: 2,
+                        }}
+                      >
+                        {t(overBudget ? 'analytics.statusOverBudget' : 'analytics.statusOnTrack')}
+                      </Text>
+                    </View>
                     {prediction ? (
                       <Text style={{ fontSize: 12, fontWeight: '600', color: analyticsColors.warning }}>
                         {prediction}

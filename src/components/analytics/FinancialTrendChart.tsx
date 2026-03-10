@@ -2,7 +2,7 @@
  * Financial Trend Chart — TradingView/Binance style.
  * Inspect mode (long-press), Compare mode (tap-tap), range summary.
  */
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, memo } from 'react';
 import {
   View,
   Text,
@@ -34,7 +34,7 @@ interface FinancialTrendChartProps {
   emptyText: string;
 }
 
-export function FinancialTrendChart({
+export const FinancialTrendChart = memo(function FinancialTrendChart({
   data,
   currency,
   title,
@@ -387,6 +387,14 @@ export function FinancialTrendChart({
                   <Row label={t('analytics.totalIncome')} value={data[crosshairIndex].income} currency={currency} color={analyticsColors.income} />
                   <Row label={t('analytics.totalExpenses')} value={data[crosshairIndex].expense} currency={currency} color={analyticsColors.expense} />
                   <Row label={t('analytics.balance')} value={data[crosshairIndex].balance} currency={currency} color={analyticsColors.balance} bold />
+                  {crosshairIndex > 0 && (
+                    <Row
+                      label={t('analytics.changeVsPrev')}
+                      value={data[crosshairIndex].balance - data[crosshairIndex - 1].balance}
+                      currency={currency}
+                      color={data[crosshairIndex].balance >= data[crosshairIndex - 1].balance ? analyticsColors.success : analyticsColors.expense}
+                    />
+                  )}
                 </View>
               </View>
             </>
@@ -471,7 +479,7 @@ export function FinancialTrendChart({
       </Card>
     </View>
   );
-}
+});
 
 function Row({
   label,

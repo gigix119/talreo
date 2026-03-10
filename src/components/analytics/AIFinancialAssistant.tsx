@@ -331,15 +331,16 @@ export function AIFinancialAssistant({ insights }: AIFinancialAssistantProps) {
                     )}
                     <Pressable
                       onPress={() => hideInsight(insight.id)}
-                      style={{
+                      style={({ pressed }) => ({
                         paddingHorizontal: 12,
                         paddingVertical: 8,
                         backgroundColor: theme.colors.background,
                         borderRadius: analyticsRadius.badge,
-                      }}
+                        opacity: pressed ? 0.7 : 1,
+                      })}
                     >
                       <Text style={{ fontSize: 12, fontWeight: '500', color: theme.colors.text.tertiary }}>
-                        {t('analytics.aiHideInsight')}
+                        {t('analytics.aiDismiss')}
                       </Text>
                     </Pressable>
                   </View>
