@@ -150,8 +150,6 @@ export default function TransactionsScreen() {
                 setSelectedTx(tx);
                 setDetailVisible(true);
               }}
-              onEdit={handleEdit}
-              onDelete={confirmDelete}
             />
           </>
         )}

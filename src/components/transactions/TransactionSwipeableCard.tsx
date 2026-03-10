@@ -33,6 +33,9 @@ export const TransactionSwipeableCard = memo(function TransactionSwipeableCard({
   onEdit,
   onDelete,
 }: TransactionSwipeableCardProps) {
+  const { t } = useI18n();
+  const onPressRef = useRef(onPress);
+  onPressRef.current = onPress;
   const translateX = useRef(new Animated.Value(0)).current;
   const lastOffset = useRef(0);
   const currentX = useRef(0);
@@ -40,7 +43,7 @@ export const TransactionSwipeableCard = memo(function TransactionSwipeableCard({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 10,
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 15,
       onPanResponderGrant: () => {
         lastOffset.current = currentX.current;
       },
@@ -53,6 +56,11 @@ export const TransactionSwipeableCard = memo(function TransactionSwipeableCard({
         translateX.setValue(dx);
       },
       onPanResponderRelease: (_, g) => {
+        const movement = Math.abs(g.dx) + Math.abs(g.dy);
+        if (movement < 10) {
+          onPressRef.current();
+          return;
+        }
         const vx = g.vx;
         const val = currentX.current;
         let toValue = 0;

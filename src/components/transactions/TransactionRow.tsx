@@ -39,15 +39,17 @@ export const TransactionRow = memo(function TransactionRow({
         alignItems: 'center',
         paddingVertical: theme.spacing.lg,
         paddingHorizontal: theme.spacing.lg,
-        backgroundColor: pressed ? theme.colors.background : theme.colors.surface,
+        backgroundColor: theme.colors.surface,
         marginHorizontal: theme.spacing.lg,
         marginBottom: 8,
         borderRadius: theme.radius.lg,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.03,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 6,
+        elevation: 3,
+        opacity: pressed ? 0.95 : 1,
+        transform: [{ scale: pressed ? 0.98 : 1 }],
       })}
     >
       <TransactionIcon
