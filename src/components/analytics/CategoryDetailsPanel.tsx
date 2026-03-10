@@ -11,10 +11,17 @@ import { formatDate } from '@/utils/date';
 import type { CategoryDetails } from '@/types/analytics';
 import type { Currency } from '@/types/database';
 
+interface BudgetInfo {
+  spent: number;
+  budget: number;
+  remaining: number;
+}
+
 interface CategoryDetailsPanelProps {
   visible: boolean;
   details: CategoryDetails | null;
   currency: Currency;
+  budgetInfo?: BudgetInfo | null;
   onClose: () => void;
 }
 
@@ -22,6 +29,7 @@ export function CategoryDetailsPanel({
   visible,
   details,
   currency,
+  budgetInfo,
   onClose,
 }: CategoryDetailsPanelProps) {
   const { t } = useI18n();
@@ -67,6 +75,12 @@ export function CategoryDetailsPanel({
               <StatBlock label={t('analytics.avgTransaction')} value={formatAmount(details.avgTransaction, currency)} />
               <StatBlock label={t('analytics.largest')} value={formatAmount(details.largestTransaction, currency)} />
               <StatBlock label={t('analytics.transactions')} value={String(details.transactionCount)} />
+              {budgetInfo && budgetInfo.budget > 0 && (
+                <StatBlock
+                  label={t('analytics.budgetUsage')}
+                  value={`${formatAmount(budgetInfo.spent, currency)} / ${formatAmount(budgetInfo.budget, currency)}`}
+                />
+              )}
             </View>
           </Card>
 

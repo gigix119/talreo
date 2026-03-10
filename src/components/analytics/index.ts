@@ -1,6 +1,12 @@
 export { AnalyticsCategoryPieChart } from './AnalyticsCategoryPieChart';
 export { AnalyticsHeader } from './AnalyticsHeader';
 export { FinancialHealthScore } from './FinancialHealthScore';
+export { CashflowStoryWidget } from './CashflowStoryWidget';
+export { SpendingBehaviorWidget } from './SpendingBehaviorWidget';
+export { BudgetStatusWidget } from './BudgetStatusWidget';
+export { SavingsMomentumWidget } from './SavingsMomentumWidget';
+export { AIInsightWidget } from './AIInsightWidget';
+export { InteractiveWidget } from './InteractiveWidget';
 export { KPISummaryRow } from './KPISummaryRow';
 export { CategoryBreakdownSection } from './CategoryBreakdownSection';
 export { CategoryPerformanceCards } from './CategoryPerformanceCards';

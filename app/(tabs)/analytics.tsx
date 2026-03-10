@@ -1,6 +1,6 @@
 /**
- * Analytics — premium mobile-first fintech dashboard.
- * Copilot / Apple Stocks / Revolut inspired.
+ * Analytics — financial experience with interactive widgets.
+ * Mobile-first, premium fintech feel.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -9,22 +9,21 @@ import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard, fetchCategoryDetails } from '@/hooks/useAnalyticsDashboard';
 import { useI18n } from '@/i18n';
-import { useResponsive } from '@/hooks/useResponsive';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
   AnalyticsHeader,
-  KPISummaryRow,
-  CategoryBreakdownSection,
-  CategoryDetailsPanel,
-  RangeComparisonCard,
-  CategoryPerformanceCards,
-  PredictionsSection,
   FinancialHealthScore,
   FinancialTrendChart,
-  AIFinancialAssistant,
+  CategoryDetailsPanel,
+  RangeComparisonCard,
+  LargestExpensesList,
   CategoryFilterChips,
-  SectionHeader,
+  CashflowStoryWidget,
+  SpendingBehaviorWidget,
+  BudgetStatusWidget,
+  SavingsMomentumWidget,
+  AIInsightWidget,
 } from '@/components/analytics';
 import { AnalyticsSkeleton } from '@/components/analytics/AnalyticsSkeleton';
 import { theme } from '@/constants/theme';
@@ -42,7 +41,6 @@ function monthAdd(month: string, delta: number): string {
 export default function AnalyticsScreen() {
   const router = useRouter();
   const { t } = useI18n();
-  const { isDesktop, isTablet } = useResponsive();
   const { user } = useAuth();
   const { profile } = useProfile();
   const currency = (profile?.currency ?? 'PLN') as import('@/types/database').Currency;
@@ -69,6 +67,20 @@ export default function AnalyticsScreen() {
     refetch,
   } = useAnalyticsDashboard(month, monthCount, filters);
 
+  const budgetInfoForCategory = useCallback(
+    (categoryId: string | null, categoryName: string) => {
+      const row = categoryPerformance.find(
+        (r) => (r.categoryId && r.categoryId === categoryId) || r.categoryName === categoryName
+      );
+      return row && row.budget > 0
+        ? { spent: row.spent, budget: row.budget, remaining: row.remaining }
+        : null;
+    },
+    [categoryPerformance]
+  );
+
+  const [selectedBudgetInfo, setSelectedBudgetInfo] = useState<{ spent: number; budget: number; remaining: number } | null>(null);
+
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -79,6 +91,7 @@ export default function AnalyticsScreen() {
     async (item: CategoryBreakdownItem) => {
       if (!user?.id) return;
       setDetailsPanelVisible(true);
+      setSelectedBudgetInfo(budgetInfoForCategory(item.category_id, item.category_name));
       const details = await fetchCategoryDetails(
         user.id,
         item.category_id,
@@ -87,7 +100,7 @@ export default function AnalyticsScreen() {
       );
       setCategoryDetails(details);
     },
-    [user?.id, month]
+    [user?.id, month, budgetInfoForCategory]
   );
 
   const recentMonths = getRecentMonths(12);
@@ -130,7 +143,6 @@ export default function AnalyticsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* 1. Header — premium compact controls */}
         <AnalyticsHeader
           month={month}
           monthCount={monthCount}
@@ -162,25 +174,18 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* 2. Financial Health Score */}
-            <View>
-              <SectionHeader title={t('analytics.financialHealthScore')} />
-              <FinancialHealthScore
-                trend={trend}
-                categoryPerformance={categoryPerformance}
-                currency={currency}
-              />
-            </View>
+            {/* 1. Financial Health Score */}
+            <FinancialHealthScore
+              trend={trend}
+              categoryPerformance={categoryPerformance}
+              currency={currency}
+            />
 
-            {/* 3. Financial Summary — swipeable KPI cards */}
-            <View>
-              <SectionHeader title={t('analytics.sectionSummary')} />
-              <KPISummaryRow trend={trend} currency={currency} />
-            </View>
+            {/* 2. Cashflow Story — narrative card */}
+            <CashflowStoryWidget trend={trend} currency={currency} />
 
-            {/* 4. Primary Chart — centerpiece */}
+            {/* 3. Primary Chart */}
             <View>
-              <SectionHeader title={t('analytics.sectionTrend')} />
               <FinancialTrendChart
                 data={trend}
                 currency={currency}
@@ -189,55 +194,60 @@ export default function AnalyticsScreen() {
               />
             </View>
 
-            {/* 5. Category Breakdown — donut + ranked list */}
-            <View>
-              <SectionHeader title={t('analytics.sectionBreakdown')} />
-              <CategoryBreakdownSection
-                expenseData={expenseBreakdown}
-                incomeData={incomeBreakdown}
-                currency={currency}
-                emptyExpenseText={t('analytics.noExpenses')}
-                emptyIncomeText={t('analytics.noIncome')}
-                onExpenseSegmentPress={handleCategoryPress}
-              />
-            </View>
+            {/* 4. Spending Behavior — category explorer */}
+            <SpendingBehaviorWidget
+              expenseData={expenseBreakdown}
+              incomeData={incomeBreakdown}
+              currency={currency}
+              emptyExpenseText={t('analytics.noExpenses')}
+              emptyIncomeText={t('analytics.noIncome')}
+              onCategoryPress={handleCategoryPress}
+            />
 
-            {/* 6. Performance — app-style cards */}
-            <View>
-              <SectionHeader title={t('analytics.sectionPerformance')} />
-              <CategoryPerformanceCards
-                data={categoryPerformance}
-                currency={currency}
-                emptyText={t('analytics.noBudgets')}
-              />
-            </View>
+            {/* 5. Budget Status — smart bars + prediction */}
+            <BudgetStatusWidget
+              data={categoryPerformance}
+              currency={currency}
+              month={month}
+              emptyText={t('analytics.noBudgets')}
+            />
 
-            {/* 7. Predictions — pace + top expenses */}
-            <View>
-              <SectionHeader title={t('analytics.sectionPredictions')} />
-              <PredictionsSection
-                velocity={velocity}
-                largestExpenses={largestExpenses}
-                currency={currency}
-                emptyText={t('analytics.noExpenses')}
-              />
-            </View>
+            {/* 6. Savings Momentum — daily avg + forecast */}
+            <SavingsMomentumWidget
+              velocity={velocity}
+              currency={currency}
+              emptyText={t('analytics.noExpenses')}
+            />
+
+            {/* 7. Largest Expenses */}
+            {largestExpenses.length > 0 && (
+              <View
+                style={{
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: 20,
+                  padding: theme.spacing.lg,
+                }}
+              >
+                <LargestExpensesList
+                  items={largestExpenses}
+                  currency={currency}
+                  emptyText={t('analytics.noExpenses')}
+                />
+              </View>
+            )}
 
             {/* 8. Range Comparison */}
-            <View>
+            {rangeComparison && (
               <RangeComparisonCard
                 data={rangeComparison}
                 currency={currency}
                 rangeALabel={rangeALabel}
                 rangeBLabel={rangeBLabel}
               />
-            </View>
+            )}
 
-            {/* 9. AI Financial Copilot */}
-            <View>
-              <SectionHeader title={t('analytics.aiFinancialCopilot')} subtitle={t('analytics.aiInsights')} />
-              <AIFinancialAssistant insights={insights} />
-            </View>
+            {/* 9. AI Insight */}
+            <AIInsightWidget insights={insights} />
           </View>
         )}
       </ScrollView>
@@ -246,9 +256,11 @@ export default function AnalyticsScreen() {
         visible={detailsPanelVisible}
         details={categoryDetails}
         currency={currency}
+        budgetInfo={selectedBudgetInfo}
         onClose={() => {
           setDetailsPanelVisible(false);
           setCategoryDetails(null);
+          setSelectedBudgetInfo(null);
         }}
       />
     </ScreenContainer>

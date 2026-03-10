@@ -98,6 +98,24 @@ export function getRecentMonths(count: number): string[] {
   return months;
 }
 
+/** Days elapsed in month (if current month) or full days in month (if past) */
+export function getDaysElapsedInMonth(monthFirstDay: string): number {
+  const now = new Date();
+  const d = new Date(monthFirstDay + 'T00:00:00');
+  const currentMonth = getFirstDayOfMonth(now.getFullYear(), now.getMonth());
+  if (monthFirstDay === currentMonth) {
+    return now.getDate();
+  }
+  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  return last.getDate();
+}
+
+export function getDaysInMonth(monthFirstDay: string): number {
+  const d = new Date(monthFirstDay + 'T00:00:00');
+  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  return last.getDate();
+}
+
 export function isDateBefore(a: string, b: string): boolean {
   return a < b;
 }
