@@ -10,5 +10,6 @@ export { TransactionsFilters, type TypeFilter, type DateFilter } from './Transac
 export { TransactionList } from './TransactionList';
 export { TransactionRow } from './TransactionRow';
 export { TransactionDetailSheet } from './TransactionDetailSheet';
+export { DeleteTransactionDialog } from './DeleteTransactionDialog';
 export { EmptyTransactionsState } from './EmptyTransactionsState';
 export { EmptySearchState } from './EmptySearchState';

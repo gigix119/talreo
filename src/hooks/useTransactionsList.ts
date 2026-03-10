@@ -97,6 +97,17 @@ export function useTransactionsList() {
     [transactions]
   );
 
+  const totalExpensesThisMonth = useMemo(() => {
+    const now = new Date();
+    const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    let total = 0;
+    for (const t of transactions) {
+      if (!t.transaction_date.startsWith(monthStr)) continue;
+      if (t.type === 'expense') total += Number(t.amount);
+    }
+    return total;
+  }, [transactions]);
+
   const categoryTotalsThisMonth = useMemo(() => {
     const now = new Date();
     const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -142,6 +153,7 @@ export function useTransactionsList() {
     transactions: withCategoryName,
     recurringNoteSet,
     categoryTotalsThisMonth,
+    totalExpensesThisMonth,
     summary,
     periodLabel,
     loading,

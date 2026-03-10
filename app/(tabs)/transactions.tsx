@@ -1,10 +1,10 @@
 /**
  * Transactions tab — premium mobile-first fintech experience.
- * Sticky filters, summary bar, swipe actions.
+ * Sticky filters, summary bar, delete confirmation, success toast.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useI18n } from '@/i18n';
 import { useTransactionsList } from '@/hooks/useTransactionsList';
 import {
@@ -14,9 +14,11 @@ import {
   TransactionSummaryCard,
   TransactionList,
   TransactionDetailSheet,
+  DeleteTransactionDialog,
   EmptyTransactionsState,
   EmptySearchState,
 } from '@/components/transactions';
+import { Toast } from '@/components/ui/Toast';
 import { theme } from '@/constants/theme';
 import type { Transaction } from '@/types/database';
 
@@ -25,6 +27,9 @@ export default function TransactionsScreen() {
   const { t } = useI18n();
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
 
   const {
     transactions,
@@ -45,6 +50,8 @@ export default function TransactionsScreen() {
     periodLabel,
     recurringNoteSet,
     categoryTotalsThisMonth,
+    totalExpensesThisMonth,
+    refetch,
     deleteTransaction,
   } = useTransactionsList();
 
@@ -58,32 +65,31 @@ export default function TransactionsScreen() {
     ? categories.find((c) => c.id === selectedTx.category_id)?.name ?? '—'
     : '—';
 
-  const confirmDelete = useCallback(
-    (tx: Transaction) => {
-      Alert.alert(
-        t('common.deleteTransaction'),
-        t('common.confirmDelete'),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          {
-            text: t('common.delete'),
-            style: 'destructive',
-            onPress: async () => {
-              await deleteTransaction(tx.id);
-              setDetailVisible(false);
-              setSelectedTx(null);
-            },
-          },
-        ]
-      );
-    },
-    [deleteTransaction, t]
-  );
-
-  const handleDelete = useCallback(() => {
+  const handleDeletePress = useCallback(() => {
     if (!selectedTx) return;
-    confirmDelete(selectedTx);
-  }, [selectedTx, confirmDelete]);
+    setDeleteConfirmVisible(true);
+  }, [selectedTx]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!selectedTx) return;
+    setDeleting(true);
+    try {
+      await deleteTransaction(selectedTx.id);
+      setDetailVisible(false);
+      setDeleteConfirmVisible(false);
+      setSelectedTx(null);
+      await refetch();
+      setToast({ message: t('transactions.toastDeleted'), variant: 'success' });
+    } catch {
+      setToast({ message: t('transactions.toastDeleteFailed'), variant: 'error' });
+    } finally {
+      setDeleting(false);
+    }
+  }, [selectedTx, deleteTransaction, refetch, t]);
+
+  const handleDeleteCancel = useCallback(() => {
+    if (!deleting) setDeleteConfirmVisible(false);
+  }, [deleting]);
 
   const handleEdit = useCallback(
     (tx?: Transaction) => {
@@ -192,13 +198,32 @@ export default function TransactionsScreen() {
         categoryName={categoryName}
         currency={currency}
         categorySpendingThisMonth={selectedTx ? (categoryTotalsThisMonth.get(selectedTx.category_id ?? '') ?? null) : null}
+        totalExpensesThisMonth={totalExpensesThisMonth}
         onClose={() => {
           setDetailVisible(false);
           setSelectedTx(null);
+          setDeleteConfirmVisible(false);
         }}
         onEdit={() => handleEdit()}
-        onDelete={handleDelete}
+        onDelete={handleDeletePress}
+        deleteDisabled={deleting}
       />
+
+      <DeleteTransactionDialog
+        visible={deleteConfirmVisible}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        loading={deleting}
+      />
+
+      {toast ? (
+        <Toast
+          message={toast.message}
+          variant={toast.variant}
+          visible={!!toast}
+          onDismiss={() => setToast(null)}
+        />
+      ) : null}
     </View>
   );
 }
