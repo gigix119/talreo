@@ -20,6 +20,8 @@ interface TransactionDetailSheetProps {
   currency: Currency;
   categorySpendingThisMonth?: number | null;
   totalExpensesThisMonth?: number;
+  totalExpensesThisWeek?: number;
+  totalExpensesLastMonth?: number;
   onClose: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -37,6 +39,8 @@ export function TransactionDetailSheet({
   currency,
   categorySpendingThisMonth,
   totalExpensesThisMonth = 0,
+  totalExpensesThisWeek = 0,
+  totalExpensesLastMonth = 0,
   onClose,
   onEdit,
   onDelete,
@@ -101,6 +105,8 @@ export function TransactionDetailSheet({
               currency={currency}
               isExpense={transaction.type === 'expense'}
               totalExpensesThisMonth={totalExpensesThisMonth}
+              totalExpensesThisWeek={totalExpensesThisWeek}
+              totalExpensesLastMonth={totalExpensesLastMonth}
             />
           ) : null}
 

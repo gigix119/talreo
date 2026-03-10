@@ -3,7 +3,6 @@
  */
 import { memo, useMemo } from 'react';
 import { View } from 'react-native';
-import { useI18n } from '@/i18n';
 import { TransactionRow } from './TransactionRow';
 import { TransactionSection } from './TransactionSection';
 import { normalizeNote } from '@/utils/recurringDetector';
@@ -56,6 +55,10 @@ interface TransactionListProps {
   currency: Currency;
   onTransactionPress: (tx: Transaction) => void;
   recurringNoteSet?: Set<string>;
+  isSelectionMode?: boolean;
+  selectedIds?: Set<string> | string[];
+  onToggleSelect?: (id: string) => void;
+  onLongPress?: (tx: Transaction) => void;
 }
 
 const GROUP_LABELS: Record<DateGroupKey, string> = {
@@ -70,8 +73,13 @@ export const TransactionList = memo(function TransactionList({
   currency,
   onTransactionPress,
   recurringNoteSet = new Set(),
+  isSelectionMode = false,
+  selectedIds = [],
+  onToggleSelect,
+  onLongPress,
 }: TransactionListProps) {
   const { t } = useI18n();
+  const selectedSet = selectedIds instanceof Set ? selectedIds : new Set(selectedIds as string[]);
   const groups = useMemo(() => groupByDate(transactions), [transactions]);
 
   return (
@@ -85,8 +93,12 @@ export const TransactionList = memo(function TransactionList({
               categoryName={item.categoryName}
               currency={currency}
               onPress={() => onTransactionPress(item)}
+              onLongPress={onLongPress ? () => onLongPress(item) : undefined}
               isRecurring={recurringNoteSet.has(normalizeNote(item.note))}
               isSubscription={isSubscription(item.note ?? '')}
+              isSelectionMode={isSelectionMode}
+              isSelected={selectedSet.has(item.id)}
+              onToggleSelect={onToggleSelect ? () => onToggleSelect(item.id) : undefined}
             />
           ))}
         </TransactionSection>

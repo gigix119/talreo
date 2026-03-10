@@ -1,8 +1,5 @@
 /**
- * TransactionRow — title-focused layout with circular category icon.
- * Line 1: Transaction title (bold) + Recurring/Subscription labels
- * Line 2: Category • Date
- * Right: Amount
+ * TransactionRow — title-focused layout. Supports long-press for multi-select.
  */
 import { memo } from 'react';
 import { View, Text, Pressable } from 'react-native';
@@ -29,17 +26,27 @@ export const TransactionRow = memo(function TransactionRow({
   categoryName,
   currency,
   onPress,
+  onLongPress,
   isRecurring = false,
   isSubscription = false,
+  isSelectionMode = false,
+  isSelected = false,
+  onToggleSelect,
 }: TransactionRowProps) {
   const { t } = useI18n();
   const amount = Number(transaction.amount);
   const isIncome = transaction.type === 'income';
   const title = getTransactionTitle(transaction.note, categoryName);
 
+  const handlePress = () => {
+    if (isSelectionMode && onToggleSelect) onToggleSelect();
+    else onPress();
+  };
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
+      onLongPress={onLongPress}
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
@@ -56,8 +63,23 @@ export const TransactionRow = memo(function TransactionRow({
         elevation: 3,
         opacity: pressed ? 0.95 : 1,
         transform: [{ scale: pressed ? 0.98 : 1 }],
+        borderWidth: isSelected ? 2 : 0,
+        borderColor: isSelected ? theme.colors.primary : 'transparent',
       })}
     >
+      {isSelectionMode ? (
+        <View
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+            backgroundColor: isSelected ? theme.colors.primary : 'transparent',
+            marginRight: theme.spacing.md,
+          }}
+        />
+      ) : null}
       <TransactionIcon
         categoryName={categoryName}
         type={transaction.type}

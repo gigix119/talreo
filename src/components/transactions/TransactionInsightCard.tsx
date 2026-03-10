@@ -1,10 +1,11 @@
 /**
- * TransactionInsightCard — category spending/income this month with optional % for expenses.
+ * TransactionInsightCard — category spending/income with smart contextual insight.
  */
 import { View, Text } from 'react-native';
 import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
 import { formatAmount } from '@/utils/currency';
+import { getTransactionInsight } from '@/utils/transactionInsights';
 import type { Currency } from '@/types/database';
 
 interface TransactionInsightCardProps {
@@ -13,6 +14,8 @@ interface TransactionInsightCardProps {
   currency: Currency;
   isExpense: boolean;
   totalExpensesThisMonth?: number;
+  totalExpensesThisWeek?: number;
+  totalExpensesLastMonth?: number;
 }
 
 export function TransactionInsightCard({
@@ -21,12 +24,19 @@ export function TransactionInsightCard({
   currency,
   isExpense,
   totalExpensesThisMonth = 0,
+  totalExpensesThisWeek = 0,
+  totalExpensesLastMonth = 0,
 }: TransactionInsightCardProps) {
   const { t } = useI18n();
-  const percent =
-    isExpense && totalExpensesThisMonth > 0 && amount > 0
-      ? Math.round((amount / totalExpensesThisMonth) * 100)
-      : null;
+  const insight = getTransactionInsight({
+    categoryName,
+    amount,
+    currency,
+    isExpense,
+    totalExpensesThisMonth,
+    totalExpensesThisWeek,
+    totalExpensesLastMonth,
+  });
 
   return (
     <View
@@ -58,7 +68,7 @@ export function TransactionInsightCard({
       >
         {formatAmount(amount, currency)}
       </Text>
-      {percent != null && percent > 0 ? (
+      {insight.secondaryText ? (
         <Text
           style={{
             fontSize: 12,
@@ -66,7 +76,7 @@ export function TransactionInsightCard({
             marginTop: 4,
           }}
         >
-          {t('transactions.insightPercentOfExpenses').replace('{{percent}}', String(percent))}
+          {insight.secondaryText}
         </Text>
       ) : null}
     </View>

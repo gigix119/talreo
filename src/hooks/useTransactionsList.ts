@@ -97,6 +97,32 @@ export function useTransactionsList() {
     [transactions]
   );
 
+  const totalExpensesThisWeek = useMemo(() => {
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekAgoStr = weekAgo.toISOString().slice(0, 10);
+    let total = 0;
+    for (const t of transactions) {
+      if (t.transaction_date >= weekAgoStr && t.type === 'expense') total += Number(t.amount);
+    }
+    return total;
+  }, [transactions]);
+
+  const totalExpensesLastMonth = useMemo(() => {
+    const now = new Date();
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    const from = lastMonth.toISOString().slice(0, 10);
+    const to = lastMonthEnd.toISOString().slice(0, 10);
+    let total = 0;
+    for (const t of transactions) {
+      if (t.transaction_date >= from && t.transaction_date <= to && t.type === 'expense')
+        total += Number(t.amount);
+    }
+    return total;
+  }, [transactions]);
+
   const totalExpensesThisMonth = useMemo(() => {
     const now = new Date();
     const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -154,6 +180,8 @@ export function useTransactionsList() {
     recurringNoteSet,
     categoryTotalsThisMonth,
     totalExpensesThisMonth,
+    totalExpensesThisWeek,
+    totalExpensesLastMonth,
     summary,
     periodLabel,
     loading,

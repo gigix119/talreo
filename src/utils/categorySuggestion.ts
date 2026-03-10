@@ -19,6 +19,7 @@ const KEYWORD_MAP: Array<{ keywords: string[]; categoryName: string; type: Trans
   { keywords: ['freelance', 'faktura', 'invoice'], categoryName: 'Freelance', type: 'income' },
   { keywords: ['rent', 'czynsz', 'mortgage', 'hipoteka'], categoryName: 'Bills', type: 'expense' },
   { keywords: ['entertainment', 'rozrywka', 'kino', 'cinema'], categoryName: 'Entertainment', type: 'expense' },
+  { keywords: ['coffee', 'kawa', 'cafe', 'starbucks'], categoryName: 'Food', type: 'expense' },
 ];
 
 /** Known subscription service names (for Subscription tag) */

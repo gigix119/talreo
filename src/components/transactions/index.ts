@@ -3,6 +3,8 @@ export { TransactionIcon } from './TransactionIcon';
 export { TransactionMeta } from './TransactionMeta';
 export { TransactionAmount } from './TransactionAmount';
 export { TransactionSummaryCard } from './TransactionSummaryCard';
+export { SpendingChart } from './SpendingChart';
+export { SelectionBar } from './SelectionBar';
 export { TransactionSwipeableCard } from './TransactionSwipeableCard';
 export { TransactionSection } from './TransactionSection';
 export { TransactionsSearch } from './TransactionsSearch';

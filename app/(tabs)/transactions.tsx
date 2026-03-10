@@ -2,7 +2,7 @@
  * Transactions tab — premium mobile-first fintech experience.
  * Sticky filters, summary bar, delete confirmation, success toast.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useI18n } from '@/i18n';
@@ -14,11 +14,14 @@ import {
   TransactionSummaryCard,
   TransactionList,
   TransactionDetailSheet,
+  SpendingChart,
+  SelectionBar,
   EmptyTransactionsState,
   EmptySearchState,
 } from '@/components/transactions';
 import { Toast } from '@/components/ui/Toast';
 import { theme } from '@/constants/theme';
+import { useMultiSelectManager } from '@/hooks/useMultiSelectManager';
 import type { Transaction } from '@/types/database';
 
 export default function TransactionsScreen() {
@@ -30,6 +33,7 @@ export default function TransactionsScreen() {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
+  const multiSelect = useMultiSelectManager();
 
   const {
     transactions,
@@ -51,6 +55,8 @@ export default function TransactionsScreen() {
     recurringNoteSet,
     categoryTotalsThisMonth,
     totalExpensesThisMonth,
+    totalExpensesThisWeek,
+    totalExpensesLastMonth,
     deleteTransaction,
   } = useTransactionsList();
 
@@ -97,6 +103,30 @@ export default function TransactionsScreen() {
     }
   }, [deleting]);
 
+  const handleLongPress = useCallback(
+    (tx: Transaction) => {
+      if (!multiSelect.isSelectionMode) {
+        multiSelect.enterSelectionMode(tx.id);
+      }
+    },
+    [multiSelect]
+  );
+
+  const handleBulkDelete = useCallback(async () => {
+    const ids = multiSelect.selectedIds;
+    if (ids.length === 0) return;
+    try {
+      for (const id of ids) await deleteTransaction(id);
+      multiSelect.exitSelectionMode();
+      await refetch();
+      setToast({ message: t('transactions.toastDeleted'), variant: 'success' });
+    } catch {
+      setToast({ message: t('transactions.toastDeleteFailed'), variant: 'error' });
+    }
+  }, [multiSelect.selectedIds, deleteTransaction, multiSelect.exitSelectionMode, refetch, t]);
+
+  const selectedIdsSet = useMemo(() => new Set(multiSelect.selectedIds), [multiSelect.selectedIds]);
+
   const handleEdit = useCallback(
     (tx?: Transaction) => {
       const target = tx ?? selectedTx;
@@ -120,6 +150,14 @@ export default function TransactionsScreen() {
         }}
       >
         <TransactionsHeader />
+        {multiSelect.isSelectionMode ? (
+          <SelectionBar
+            selectedCount={multiSelect.selectedCount}
+            onDelete={handleBulkDelete}
+            onChangeCategory={() => {}}
+            onCancel={multiSelect.exitSelectionMode}
+          />
+        ) : null}
         <TransactionsSearch value={search} onChangeText={setSearch} />
         <TransactionsFilters
           typeFilter={typeFilter}
@@ -167,9 +205,14 @@ export default function TransactionsScreen() {
               currency={currency}
               recurringNoteSet={recurringNoteSet}
               onTransactionPress={(tx) => {
+                if (multiSelect.isSelectionMode) return;
                 setSelectedTx(tx);
                 setDetailVisible(true);
               }}
+              isSelectionMode={multiSelect.isSelectionMode}
+              selectedIds={selectedIdsSet}
+              onToggleSelect={multiSelect.toggleSelect}
+              onLongPress={handleLongPress}
             />
           </>
         )}
@@ -205,6 +248,8 @@ export default function TransactionsScreen() {
         currency={currency}
         categorySpendingThisMonth={selectedTx ? (categoryTotalsThisMonth.get(selectedTx.category_id ?? '') ?? null) : null}
         totalExpensesThisMonth={totalExpensesThisMonth}
+        totalExpensesThisWeek={totalExpensesThisWeek}
+        totalExpensesLastMonth={totalExpensesLastMonth}
         onClose={() => {
           setDetailVisible(false);
           setSelectedTx(null);
