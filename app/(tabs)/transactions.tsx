@@ -1,5 +1,6 @@
 /**
- * Transactions tab — premium mobile-first fintech transaction experience.
+ * Transactions tab — premium mobile-first fintech experience.
+ * Sticky filters, summary bar, swipe actions.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -10,6 +11,7 @@ import {
   TransactionsHeader,
   TransactionsSearch,
   TransactionsFilters,
+  TransactionSummaryCard,
   TransactionList,
   TransactionDetailSheet,
   EmptyTransactionsState,
@@ -38,6 +40,8 @@ export default function TransactionsScreen() {
     setCategoryId,
     categories,
     currency,
+    summary,
+    periodLabel,
     deleteTransaction,
   } = useTransactionsList();
 
@@ -51,43 +55,54 @@ export default function TransactionsScreen() {
     ? categories.find((c) => c.id === selectedTx.category_id)?.name ?? '—'
     : '—';
 
+  const confirmDelete = useCallback(
+    (tx: Transaction) => {
+      Alert.alert(
+        t('common.deleteTransaction'),
+        t('common.confirmDelete'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('common.delete'),
+            style: 'destructive',
+            onPress: async () => {
+              await deleteTransaction(tx.id);
+              setDetailVisible(false);
+              setSelectedTx(null);
+            },
+          },
+        ]
+      );
+    },
+    [deleteTransaction, t]
+  );
+
   const handleDelete = useCallback(() => {
     if (!selectedTx) return;
-    Alert.alert(
-      t('common.deleteTransaction'),
-      t('common.confirmDelete'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.delete'),
-          style: 'destructive',
-          onPress: async () => {
-            await deleteTransaction(selectedTx.id);
-            setDetailVisible(false);
-            setSelectedTx(null);
-          },
-        },
-      ]
-    );
-  }, [selectedTx, deleteTransaction, t]);
+    confirmDelete(selectedTx);
+  }, [selectedTx, confirmDelete]);
 
-  const handleEdit = useCallback(() => {
-    if (!selectedTx) return;
-    setDetailVisible(false);
-    router.push(`/(modals)/edit-transaction?id=${selectedTx.id}`);
-    setSelectedTx(null);
-  }, [selectedTx, router]);
+  const handleEdit = useCallback(
+    (tx?: Transaction) => {
+      const target = tx ?? selectedTx;
+      if (!target) return;
+      setDetailVisible(false);
+      router.push(`/(modals)/edit-transaction?id=${target.id}`);
+      setSelectedTx(null);
+    },
+    [selectedTx, router]
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
+      {/* Sticky: header + search + filters */}
+      <View
+        style={{
           paddingTop: 48,
           paddingHorizontal: theme.spacing.lg,
-          paddingBottom: 100,
+          paddingBottom: theme.spacing.md,
+          backgroundColor: theme.colors.background,
         }}
-        showsVerticalScrollIndicator={false}
       >
         <TransactionsHeader />
         <TransactionsSearch value={search} onChangeText={setSearch} />
@@ -100,7 +115,16 @@ export default function TransactionsScreen() {
           onDateChange={setDateFilter}
           onCategoryChange={setCategoryId}
         />
+      </View>
 
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingHorizontal: theme.spacing.lg,
+          paddingBottom: 100,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {error ? (
           <Text style={{ color: theme.colors.error, marginBottom: theme.spacing.md }}>{error}</Text>
         ) : null}
@@ -112,14 +136,24 @@ export default function TransactionsScreen() {
         ) : transactions.length === 0 ? (
           <EmptyTransactionsState onAddPress={() => router.push('/(modals)/add-transaction')} />
         ) : (
-          <TransactionList
-            transactions={transactions}
-            currency={currency}
-            onTransactionPress={(tx) => {
-              setSelectedTx(tx);
-              setDetailVisible(true);
-            }}
-          />
+          <>
+            <TransactionSummaryCard
+              income={summary.income}
+              expense={summary.expense}
+              currency={currency}
+              periodLabel={t(periodLabel)}
+            />
+            <TransactionList
+              transactions={transactions}
+              currency={currency}
+              onTransactionPress={(tx) => {
+                setSelectedTx(tx);
+                setDetailVisible(true);
+              }}
+              onEdit={handleEdit}
+              onDelete={confirmDelete}
+            />
+          </>
         )}
       </ScrollView>
 
@@ -155,7 +189,7 @@ export default function TransactionsScreen() {
           setDetailVisible(false);
           setSelectedTx(null);
         }}
-        onEdit={handleEdit}
+        onEdit={() => handleEdit()}
         onDelete={handleDelete}
       />
     </View>

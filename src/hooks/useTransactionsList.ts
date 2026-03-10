@@ -91,6 +91,26 @@ export function useTransactionsList() {
     [filteredBySearch, categoryMap]
   );
 
+  const summary = useMemo(() => {
+    let income = 0;
+    let expense = 0;
+    for (const t of withCategoryName) {
+      const amt = Number(t.amount);
+      if (t.type === 'income') income += amt;
+      else expense += amt;
+    }
+    return { income, expense };
+  }, [withCategoryName]);
+
+  const periodLabel = useMemo(() => {
+    switch (dateFilter) {
+      case '7d': return 'transactions.summaryLast7Days';
+      case '30d': return 'transactions.summaryLast30Days';
+      case 'month': return 'transactions.summaryThisMonth';
+      default: return 'transactions.summaryAll';
+    }
+  }, [dateFilter]);
+
   const handleDelete = useCallback(
     async (id: string) => {
       if (!user?.id) return;
@@ -101,6 +121,8 @@ export function useTransactionsList() {
 
   return {
     transactions: withCategoryName,
+    summary,
+    periodLabel,
     loading,
     error,
     refetch,
