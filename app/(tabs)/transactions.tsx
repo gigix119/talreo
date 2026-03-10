@@ -200,6 +200,7 @@ export default function TransactionsScreen() {
               currency={currency}
               periodLabel={t(periodLabel)}
             />
+            <SpendingChart transactions={transactions} currency={currency} />
             <TransactionList
               transactions={transactions}
               currency={currency}

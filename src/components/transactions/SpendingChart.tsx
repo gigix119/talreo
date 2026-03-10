@@ -1,12 +1,19 @@
 /**
  * SpendingChart — mini daily expense trend for transactions screen.
+ * Uses Dimensions (not useWindowDimensions) for safer SSR/init.
  */
 import { memo, useMemo } from 'react';
-import { View, Text, useWindowDimensions, ScrollView } from 'react-native';
-import { LineChart } from 'react-native-gifted-charts';
+import { View, Text, ScrollView, Dimensions, Platform } from 'react-native';
 import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
 import type { Currency } from '@/types/database';
+
+let LineChart: React.ComponentType<unknown> | null = null;
+try {
+  LineChart = require('react-native-gifted-charts').LineChart;
+} catch {
+  LineChart = null;
+}
 
 interface TransactionForChart {
   transaction_date: string;
@@ -36,15 +43,14 @@ function getDailyExpenses(transactions: TransactionForChart[]): { value: number;
 
 export const SpendingChart = memo(function SpendingChart({
   transactions,
-  currency,
 }: SpendingChartProps) {
   const { t } = useI18n();
-  const { width } = useWindowDimensions();
-  const chartWidth = Math.max(280, Math.min(width - 48, 400));
-
   const data = useMemo(() => getDailyExpenses(transactions), [transactions]);
 
-  if (data.length < 2) return null;
+  if (data.length < 2 || !LineChart || Platform.OS === 'web') return null;
+
+  const { width } = Dimensions.get('window');
+  const chartWidth = Math.max(280, Math.min(width - 48, 400));
 
   return (
     <View
