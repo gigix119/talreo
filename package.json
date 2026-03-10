@@ -1,0 +1,41 @@
+{
+  "name": "talreo",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:web": "expo export --platform web"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "babel-preset-expo": "~55.0.10",
+    "expo": "~55.0.5",
+    "expo-constants": "~18.0.4",
+    "expo-file-system": "~55.0.10",
+    "expo-linear-gradient": "~55.0.8",
+    "expo-linking": "~8.0.5",
+    "expo-print": "~55.0.8",
+    "expo-router": "~5.0.5",
+    "expo-secure-store": "~15.0.2",
+    "expo-sharing": "~55.0.11",
+    "expo-status-bar": "~55.0.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.2",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-gifted-charts": "^1.4.76",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.18.0",
+    "react-native-svg": "15.15.3",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
