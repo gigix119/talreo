@@ -1,6 +1,8 @@
 /**
- * Analytics — financial experience with interactive widgets.
- * Mobile-first, premium fintech feel.
+ * Analytics tab — financial experience (not a traditional dashboard).
+ * Interactive widgets: 1) Cashflow Overview  2) Spending Behavior
+ * 3) Budget Status  4) Savings Momentum  5) AI Insight.
+ * Mobile-first, tap/expand, animated numbers, soft shadows.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
