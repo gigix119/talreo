@@ -17,6 +17,18 @@ export interface GetTransactionsOptions {
 }
 
 export const transactionsService = {
+  async getTransactionById(userId: string, transactionId: string): Promise<Transaction | null> {
+    if (!supabase) return null;
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('id', transactionId)
+      .eq('user_id', userId)
+      .single();
+    if (error || !data) return null;
+    return data as Transaction;
+  },
+
   async getTransactions(
     userId: string,
     options?: GetTransactionsOptions
@@ -59,6 +71,23 @@ export const transactionsService = {
       .select()
       .single();
     if (error) throw new Error(error.message || 'Could not create transaction.');
+    return data as Transaction;
+  },
+
+  async updateTransaction(
+    userId: string,
+    transactionId: string,
+    tx: Partial<Pick<TransactionInsert, 'type' | 'amount' | 'category_id' | 'note' | 'transaction_date'>>
+  ): Promise<Transaction | null> {
+    if (!supabase) return null;
+    const { data, error } = await supabase
+      .from('transactions')
+      .update(tx)
+      .eq('id', transactionId)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    if (error) throw new Error(error.message || 'Could not update transaction.');
     return data as Transaction;
   },
 

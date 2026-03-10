@@ -23,6 +23,14 @@ export function getCurrentMonth(): string {
 
 const LOCALE_MAP: Record<string, string> = { pl: 'pl-PL', en: 'en-US' };
 
+export function formatDateShort(dateStr: string, locale: string = 'pl'): string {
+  const l = LOCALE_MAP[locale] ?? 'pl-PL';
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString(l, {
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
 export function formatDate(dateStr: string, locale: string = 'pl'): string {
   const l = LOCALE_MAP[locale] ?? 'pl-PL';
   return new Date(dateStr + 'T00:00:00').toLocaleDateString(l, {
