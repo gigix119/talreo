@@ -1,5 +1,6 @@
 export { AnalyticsCategoryPieChart } from './AnalyticsCategoryPieChart';
 export { AnalyticsHeader } from './AnalyticsHeader';
+export { FinancialHealthScore } from './FinancialHealthScore';
 export { KPISummaryRow } from './KPISummaryRow';
 export { CategoryBreakdownSection } from './CategoryBreakdownSection';
 export { CategoryPerformanceCards } from './CategoryPerformanceCards';

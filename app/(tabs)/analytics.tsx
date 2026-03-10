@@ -20,7 +20,7 @@ import {
   RangeComparisonCard,
   CategoryPerformanceCards,
   PredictionsSection,
-  ExpenseHeatmap,
+  FinancialHealthScore,
   FinancialTrendChart,
   AIFinancialAssistant,
   CategoryFilterChips,
@@ -60,7 +60,6 @@ export default function AnalyticsScreen() {
     rawIncomeBreakdown,
     trend,
     categoryPerformance,
-    heatmap,
     largestExpenses,
     velocity,
     insights,
@@ -163,13 +162,23 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* 2. Financial Summary — swipeable KPI cards */}
+            {/* 2. Financial Health Score */}
+            <View>
+              <SectionHeader title={t('analytics.financialHealthScore')} />
+              <FinancialHealthScore
+                trend={trend}
+                categoryPerformance={categoryPerformance}
+                currency={currency}
+              />
+            </View>
+
+            {/* 3. Financial Summary — swipeable KPI cards */}
             <View>
               <SectionHeader title={t('analytics.sectionSummary')} />
               <KPISummaryRow trend={trend} currency={currency} />
             </View>
 
-            {/* 3. Primary Chart — centerpiece */}
+            {/* 4. Primary Chart — centerpiece */}
             <View>
               <SectionHeader title={t('analytics.sectionTrend')} />
               <FinancialTrendChart
@@ -180,7 +189,7 @@ export default function AnalyticsScreen() {
               />
             </View>
 
-            {/* 4. Category Breakdown — donut + ranked list */}
+            {/* 5. Category Breakdown — donut + ranked list */}
             <View>
               <SectionHeader title={t('analytics.sectionBreakdown')} />
               <CategoryBreakdownSection
@@ -193,7 +202,7 @@ export default function AnalyticsScreen() {
               />
             </View>
 
-            {/* 5. Performance — app-style cards */}
+            {/* 6. Performance — app-style cards */}
             <View>
               <SectionHeader title={t('analytics.sectionPerformance')} />
               <CategoryPerformanceCards
@@ -203,7 +212,7 @@ export default function AnalyticsScreen() {
               />
             </View>
 
-            {/* 6. Predictions — pace + top expenses */}
+            {/* 7. Predictions — pace + top expenses */}
             <View>
               <SectionHeader title={t('analytics.sectionPredictions')} />
               <PredictionsSection
@@ -214,24 +223,19 @@ export default function AnalyticsScreen() {
               />
             </View>
 
-            {/* 7. Range Comparison + Heatmap — compact grid */}
-            <View style={{ flexDirection: isTablet || isDesktop ? 'row' : 'column', gap: theme.spacing.lg, flexWrap: 'wrap' }}>
-              <View style={{ flex: isTablet || isDesktop ? 1 : undefined, minWidth: isTablet || isDesktop ? 280 : undefined }}>
-                <RangeComparisonCard
-                  data={rangeComparison}
-                  currency={currency}
-                  rangeALabel={rangeALabel}
-                  rangeBLabel={rangeBLabel}
-                />
-              </View>
-              <View style={{ flex: isTablet || isDesktop ? 1 : undefined, minWidth: isTablet || isDesktop ? 280 : undefined }}>
-                <ExpenseHeatmap data={heatmap} emptyText={t('analytics.noData')} />
-              </View>
+            {/* 8. Range Comparison */}
+            <View>
+              <RangeComparisonCard
+                data={rangeComparison}
+                currency={currency}
+                rangeALabel={rangeALabel}
+                rangeBLabel={rangeBLabel}
+              />
             </View>
 
-            {/* 8. AI Financial Assistant */}
+            {/* 9. AI Financial Copilot */}
             <View>
-              <SectionHeader title={t('analytics.sectionInsights')} subtitle={t('analytics.aiInsights')} />
+              <SectionHeader title={t('analytics.aiFinancialCopilot')} subtitle={t('analytics.aiInsights')} />
               <AIFinancialAssistant insights={insights} />
             </View>
           </View>
