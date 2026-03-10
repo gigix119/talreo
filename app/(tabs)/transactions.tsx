@@ -15,6 +15,7 @@ import {
   TransactionList,
   TransactionDetailSheet,
   EmptyTransactionsState,
+  EmptySearchState,
 } from '@/components/transactions';
 import { theme } from '@/constants/theme';
 import type { Transaction } from '@/types/database';
@@ -42,6 +43,8 @@ export default function TransactionsScreen() {
     currency,
     summary,
     periodLabel,
+    recurringNoteSet,
+    categoryTotalsThisMonth,
     deleteTransaction,
   } = useTransactionsList();
 
@@ -134,7 +137,11 @@ export default function TransactionsScreen() {
             <Text style={{ color: theme.colors.text.secondary }}>Loading...</Text>
           </View>
         ) : transactions.length === 0 ? (
-          <EmptyTransactionsState onAddPress={() => router.push('/(modals)/add-transaction')} />
+          search.trim() ? (
+            <EmptySearchState onAddPress={() => router.push('/(modals)/add-transaction')} />
+          ) : (
+            <EmptyTransactionsState onAddPress={() => router.push('/(modals)/add-transaction')} />
+          )
         ) : (
           <>
             <TransactionSummaryCard
@@ -146,6 +153,7 @@ export default function TransactionsScreen() {
             <TransactionList
               transactions={transactions}
               currency={currency}
+              recurringNoteSet={recurringNoteSet}
               onTransactionPress={(tx) => {
                 setSelectedTx(tx);
                 setDetailVisible(true);
@@ -183,6 +191,7 @@ export default function TransactionsScreen() {
         transaction={selectedTx}
         categoryName={categoryName}
         currency={currency}
+        categorySpendingThisMonth={selectedTx ? (categoryTotalsThisMonth.get(selectedTx.category_id ?? '') ?? null) : null}
         onClose={() => {
           setDetailVisible(false);
           setSelectedTx(null);

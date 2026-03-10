@@ -8,6 +8,7 @@ import { useTransactions } from './useTransactions';
 import { useCategories } from './useCategories';
 import { transactionsService } from '@/services/transactions';
 import { getMonthRange } from '@/utils/date';
+import { getRecurringNoteSet } from '@/utils/recurringDetector';
 import type { Transaction } from '@/types/database';
 import type { TypeFilter, DateFilter } from '@/components/transactions/TransactionsFilters';
 
@@ -91,6 +92,24 @@ export function useTransactionsList() {
     [filteredBySearch, categoryMap]
   );
 
+  const recurringNoteSet = useMemo(
+    () => getRecurringNoteSet(transactions),
+    [transactions]
+  );
+
+  const categoryTotalsThisMonth = useMemo(() => {
+    const now = new Date();
+    const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const map = new Map<string, number>();
+    for (const t of transactions) {
+      if (!t.transaction_date.startsWith(monthStr)) continue;
+      const amt = Number(t.amount);
+      const catId = t.category_id ?? '_none';
+      map.set(catId, (map.get(catId) ?? 0) + amt);
+    }
+    return map;
+  }, [transactions]);
+
   const summary = useMemo(() => {
     let income = 0;
     let expense = 0;
@@ -121,6 +140,8 @@ export function useTransactionsList() {
 
   return {
     transactions: withCategoryName,
+    recurringNoteSet,
+    categoryTotalsThisMonth,
     summary,
     periodLabel,
     loading,

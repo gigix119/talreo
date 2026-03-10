@@ -1,11 +1,12 @@
 /**
  * TransactionRow — title-focused layout with circular category icon.
- * Line 1: Transaction title (bold)
+ * Line 1: Transaction title (bold) + Recurring/Subscription labels
  * Line 2: Category • Date
  * Right: Amount
  */
 import { memo } from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
 import { TransactionIcon } from './TransactionIcon';
 import { TransactionMeta } from './TransactionMeta';
@@ -19,6 +20,8 @@ interface TransactionRowProps {
   categoryName: string;
   currency: Currency;
   onPress: () => void;
+  isRecurring?: boolean;
+  isSubscription?: boolean;
 }
 
 export const TransactionRow = memo(function TransactionRow({
@@ -26,7 +29,10 @@ export const TransactionRow = memo(function TransactionRow({
   categoryName,
   currency,
   onPress,
+  isRecurring = false,
+  isSubscription = false,
 }: TransactionRowProps) {
+  const { t } = useI18n();
   const amount = Number(transaction.amount);
   const isIncome = transaction.type === 'income';
   const title = getTransactionTitle(transaction.note, categoryName);
@@ -58,16 +64,28 @@ export const TransactionRow = memo(function TransactionRow({
         size={40}
       />
       <View style={{ flex: 1, minWidth: 0, marginLeft: theme.spacing.md }}>
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: '600',
-            color: theme.colors.text.primary,
-          }}
-          numberOfLines={1}
-        >
-          {title}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: theme.colors.text.primary,
+            }}
+            numberOfLines={1}
+          >
+            {title}
+          </Text>
+          {isRecurring ? (
+            <View style={{ backgroundColor: '#E8F4FF', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+              <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.primary }}>{t('transactions.labelRecurring')}</Text>
+            </View>
+          ) : null}
+          {isSubscription ? (
+            <View style={{ backgroundColor: '#F2F2F7', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+              <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.text.secondary }}>{t('transactions.labelSubscription')}</Text>
+            </View>
+          ) : null}
+        </View>
         <TransactionMeta
           categoryName={categoryName}
           date={transaction.transaction_date}

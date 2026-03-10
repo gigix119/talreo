@@ -6,6 +6,8 @@ import { View } from 'react-native';
 import { useI18n } from '@/i18n';
 import { TransactionRow } from './TransactionRow';
 import { TransactionSection } from './TransactionSection';
+import { normalizeNote } from '@/utils/recurringDetector';
+import { isSubscription } from '@/utils/categorySuggestion';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
 
@@ -53,6 +55,7 @@ interface TransactionListProps {
   transactions: TransactionWithCategory[];
   currency: Currency;
   onTransactionPress: (tx: Transaction) => void;
+  recurringNoteSet?: Set<string>;
 }
 
 const GROUP_LABELS: Record<DateGroupKey, string> = {
@@ -66,6 +69,7 @@ export const TransactionList = memo(function TransactionList({
   transactions,
   currency,
   onTransactionPress,
+  recurringNoteSet = new Set(),
 }: TransactionListProps) {
   const { t } = useI18n();
   const groups = useMemo(() => groupByDate(transactions), [transactions]);
@@ -81,6 +85,8 @@ export const TransactionList = memo(function TransactionList({
               categoryName={item.categoryName}
               currency={currency}
               onPress={() => onTransactionPress(item)}
+              isRecurring={recurringNoteSet.has(normalizeNote(item.note))}
+              isSubscription={isSubscription(item.note ?? '')}
             />
           ))}
         </TransactionSection>

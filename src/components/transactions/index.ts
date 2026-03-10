@@ -11,3 +11,4 @@ export { TransactionList } from './TransactionList';
 export { TransactionRow } from './TransactionRow';
 export { TransactionDetailSheet } from './TransactionDetailSheet';
 export { EmptyTransactionsState } from './EmptyTransactionsState';
+export { EmptySearchState } from './EmptySearchState';

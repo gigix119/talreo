@@ -16,6 +16,7 @@ interface TransactionDetailSheetProps {
   transaction: Transaction | null;
   categoryName: string;
   currency: Currency;
+  categorySpendingThisMonth?: number | null;
   onClose: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -26,6 +27,7 @@ export function TransactionDetailSheet({
   transaction,
   categoryName,
   currency,
+  categorySpendingThisMonth,
   onClose,
   onEdit,
   onDelete,
@@ -104,6 +106,12 @@ export function TransactionDetailSheet({
             <Row label={t('transactions.detailType')} value={isIncome ? t('transactions.filterTypeIncome') : t('transactions.filterTypeExpense')} />
             <Row label={t('transactions.detailCategory')} value={categoryName} />
             <Row label={t('transactions.detailDate')} value={formatDate(transaction.transaction_date)} />
+            {categorySpendingThisMonth != null ? (
+              <View style={{ marginTop: theme.spacing.md, padding: theme.spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.radius.md }}>
+                <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>{categoryName} {t('transactions.insightCategorySpending')}</Text>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.text.primary, marginTop: 4 }}>{formatAmount(categorySpendingThisMonth, currency)}</Text>
+              </View>
+            ) : null}
             {formatTransactionNote(transaction.note) ? (
               <Row label={t('transactions.detailNote')} value={getTransactionTitle(transaction.note, categoryName)} />
             ) : null}

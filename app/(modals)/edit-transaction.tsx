@@ -1,7 +1,7 @@
 /**
- * Edit transaction modal — pre-filled form, update on save.
+ * Edit transaction modal — pre-filled form, smart category, update on save.
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { View, Text } from 'react-native';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
@@ -13,10 +13,19 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { theme } from '@/constants/theme';
+import { suggestCategory } from '@/utils/categorySuggestion';
+import { useI18n } from '@/i18n';
 import type { Transaction } from '@/types/database';
+import type { Category } from '@/types/database';
+
+function findCategoryByName(categories: Category[], name: string): Category | undefined {
+  const n = name.toLowerCase().trim();
+  return categories.find((c) => c.name.toLowerCase() === n || c.name.toLowerCase().includes(n));
+}
 
 export default function EditTransactionScreen() {
   const router = useRouter();
+  const { t } = useI18n();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const { profile } = useProfile();
@@ -58,6 +67,18 @@ export default function EditTransactionScreen() {
   useEffect(() => {
     setCategoryId((prev) => (categories.some((c) => c.id === prev) ? prev : categories[0]?.id ?? null));
   }, [type, categories]);
+
+  const handleNoteChange = useCallback(
+    (text: string) => {
+      setNote(text);
+      const suggestion = suggestCategory(text);
+      if (suggestion && suggestion.type === type) {
+        const cat = findCategoryByName(categories, suggestion.categoryName);
+        if (cat) setCategoryId(cat.id);
+      }
+    },
+    [type, categories]
+  );
 
   async function handleSave() {
     if (!user?.id || !id) return;
@@ -170,7 +191,7 @@ export default function EditTransactionScreen() {
             <Input
               label="Note (optional)"
               value={note}
-              onChangeText={setNote}
+              onChangeText={handleNoteChange}
               placeholder="e.g. Groceries"
             />
 
