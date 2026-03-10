@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
 import { formatAmount } from '@/utils/currency';
 import { formatDate } from '@/utils/date';
+import { getTransactionTitle, formatTransactionNote } from '@/utils/transactionDisplay';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
 
@@ -88,7 +89,7 @@ export function TransactionDetailSheet({
               {isIncome ? '+' : '−'}{formatAmount(amount, currency)}
             </Text>
             <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4 }}>
-              {transaction.note || categoryName || '—'}
+              {getTransactionTitle(transaction.note, categoryName)}
             </Text>
           </View>
 
@@ -103,7 +104,9 @@ export function TransactionDetailSheet({
             <Row label={t('transactions.detailType')} value={isIncome ? t('transactions.filterTypeIncome') : t('transactions.filterTypeExpense')} />
             <Row label={t('transactions.detailCategory')} value={categoryName} />
             <Row label={t('transactions.detailDate')} value={formatDate(transaction.transaction_date)} />
-            {transaction.note ? <Row label={t('transactions.detailNote')} value={transaction.note} /> : null}
+            {formatTransactionNote(transaction.note) ? (
+              <Row label={t('transactions.detailNote')} value={getTransactionTitle(transaction.note, categoryName)} />
+            ) : null}
           </View>
 
           <View style={{ gap: theme.spacing.sm }}>

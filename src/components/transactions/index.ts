@@ -1,4 +1,7 @@
 export { TransactionsHeader } from './TransactionsHeader';
+export { TransactionIcon } from './TransactionIcon';
+export { TransactionMeta } from './TransactionMeta';
+export { TransactionAmount } from './TransactionAmount';
 export { TransactionsSearch } from './TransactionsSearch';
 export { TransactionsFilters, type TypeFilter, type DateFilter } from './TransactionsFilters';
 export { TransactionList } from './TransactionList';

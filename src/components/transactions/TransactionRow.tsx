@@ -1,31 +1,18 @@
 /**
- * TransactionRow — premium list row with icon, title, category, date, amount.
+ * TransactionRow — title-focused layout with circular category icon.
+ * Line 1: Transaction title (bold)
+ * Line 2: Category • Date
+ * Right: Amount
  */
 import { memo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { theme } from '@/constants/theme';
-import { formatAmount } from '@/utils/currency';
-import { formatDateShort } from '@/utils/date';
+import { TransactionIcon } from './TransactionIcon';
+import { TransactionMeta } from './TransactionMeta';
+import { TransactionAmount } from './TransactionAmount';
+import { getTransactionTitle } from '@/utils/transactionDisplay';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
-
-const CATEGORY_ICONS: Record<string, string> = {
-  food: '🍽️',
-  jedzenie: '🍽️',
-  bills: '📄',
-  transport: '🚗',
-  shopping: '🛒',
-  zakupy: '🛒',
-  salary: '💰',
-  freelance: '💼',
-  default: '📦',
-};
-
-function getIcon(categoryName: string | null, type: string): string {
-  if (!categoryName) return type === 'income' ? '💰' : '📤';
-  const k = categoryName.toLowerCase();
-  return CATEGORY_ICONS[k] ?? CATEGORY_ICONS.default;
-}
 
 interface TransactionRowProps {
   transaction: Transaction;
@@ -40,9 +27,9 @@ export const TransactionRow = memo(function TransactionRow({
   currency,
   onPress,
 }: TransactionRowProps) {
-  const icon = getIcon(categoryName, transaction.type);
   const amount = Number(transaction.amount);
   const isIncome = transaction.type === 'income';
+  const title = getTransactionTitle(transaction.note, categoryName);
 
   return (
     <Pressable
@@ -50,13 +37,12 @@ export const TransactionRow = memo(function TransactionRow({
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: theme.spacing.md,
+        paddingVertical: theme.spacing.lg,
         paddingHorizontal: theme.spacing.lg,
-        backgroundColor: theme.colors.surface,
+        backgroundColor: pressed ? theme.colors.background : theme.colors.surface,
         marginHorizontal: theme.spacing.lg,
-        marginBottom: 6,
+        marginBottom: 8,
         borderRadius: theme.radius.lg,
-        opacity: pressed ? 0.95 : 1,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.03,
@@ -64,36 +50,34 @@ export const TransactionRow = memo(function TransactionRow({
         elevation: 2,
       })}
     >
-      <View
-        style={{
-          width: 44,
-          height: 44,
-          borderRadius: 12,
-          backgroundColor: theme.colors.background,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginRight: theme.spacing.md,
-        }}
-      >
-        <Text style={{ fontSize: 22 }}>{icon}</Text>
-      </View>
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
-          {transaction.note || categoryName || '—'}
+      <TransactionIcon
+        categoryName={categoryName}
+        type={transaction.type}
+        size={40}
+      />
+      <View style={{ flex: 1, minWidth: 0, marginLeft: theme.spacing.md }}>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: '600',
+            color: theme.colors.text.primary,
+          }}
+          numberOfLines={1}
+        >
+          {title}
         </Text>
-        <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 2 }}>
-          {categoryName} · {formatDateShort(transaction.transaction_date)}
-        </Text>
+        <TransactionMeta
+          categoryName={categoryName}
+          date={transaction.transaction_date}
+        />
       </View>
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '700',
-          color: isIncome ? theme.colors.income : theme.colors.expense,
-        }}
-      >
-        {isIncome ? '+' : '−'}{formatAmount(amount, currency)}
-      </Text>
+      <View style={{ marginLeft: theme.spacing.md }}>
+        <TransactionAmount
+          amount={amount}
+          isIncome={isIncome}
+          currency={currency}
+        />
+      </View>
     </Pressable>
   );
 });
