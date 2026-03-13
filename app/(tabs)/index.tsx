@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { theme } from '@/constants/theme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import { formatAmount, formatAmountSigned } from '@/utils/currency';
 import { getCurrentMonthRange, formatDate, getCurrentMonth } from '@/utils/date';
 import { alertsService } from '@/services/alerts';
@@ -94,7 +95,7 @@ export default function DashboardScreen() {
     <ScreenContainer>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: 16, paddingBottom: theme.spacing.xxl }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: BOTTOM_CONTENT_PADDING }}
         showsVerticalScrollIndicator={false}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

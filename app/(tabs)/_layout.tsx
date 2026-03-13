@@ -1,10 +1,11 @@
 /**
  * Tabs layout — bottom tab bar for main app.
- * Protected: redirects to welcome if not authenticated, to onboarding if not completed.
+ * Mobile-first: safe area insets for tab bar visibility.
  */
 import { useEffect } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useI18n } from '@/i18n';
@@ -16,6 +17,7 @@ function TabIcon({ name }: { name: string }) {
 
 export default function TabsLayout() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { session, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
 
@@ -32,6 +34,8 @@ export default function TabsLayout() {
   if (!session || !profile?.onboarding_completed) return null;
 
   const { t } = useI18n();
+  const tabBarHeight = 56;
+  const tabBarPaddingBottom = Math.max(insets.bottom, 8);
 
   return (
     <LanguageSync>
@@ -40,7 +44,12 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: '#0A84FF',
         tabBarInactiveTintColor: '#8E8E93',
-        tabBarStyle: { backgroundColor: '#FFFFFF' },
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          height: tabBarHeight + tabBarPaddingBottom,
+          paddingBottom: tabBarPaddingBottom,
+          paddingTop: 8,
+        },
         tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
       }}
     >

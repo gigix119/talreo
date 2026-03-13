@@ -1,9 +1,9 @@
 /**
- * Budgets screen — list budgets for current month, progress bars, add/edit/delete.
+ * Budgets screen — compact budget rows, progress bars, simple status.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useProfile } from '@/hooks/useProfile';
 import { useBudgets } from '@/hooks/useBudgets';
@@ -15,6 +15,7 @@ import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { theme } from '@/constants/theme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import { formatAmount } from '@/utils/currency';
 import { getCurrentMonth, formatMonth } from '@/utils/date';
 import type { BudgetProgress, BudgetStatus } from '@/types/database';
@@ -93,40 +94,33 @@ function BudgetCard({
   onDelete: () => void;
 }) {
   const { t } = useI18n();
+  const showOverflow = () => {
+    Alert.alert(p.category_name, undefined, [
+      { text: t('budgets.edit'), onPress: onEdit },
+      { text: t('common.delete'), onPress: onDelete, style: 'destructive' },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
   return (
     <Card key={p.budget.id} padding="md" elevated>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-            {p.category_name}
-          </Text>
-          <View style={{ marginTop: 4 }}>
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
-              {formatAmount(p.spentAmount, currency)} / {formatAmount(p.budgetAmount, currency)}
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+              {p.category_name}
             </Text>
+            <StatusBadge status={p.status} />
           </View>
-          <View style={{ marginTop: 4 }}>
+          <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginTop: 4 }}>
+            {formatAmount(p.spentAmount, currency)} / {formatAmount(p.budgetAmount, currency)}
+          </Text>
+          <View style={{ marginTop: 6 }}>
             <ProgressBar percent={p.progressPercent} status={p.status} />
           </View>
-          <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 4 }}>
-            {p.progressPercent.toFixed(1)}%
-          </Text>
         </View>
-        <View style={{ alignItems: 'flex-end', gap: theme.spacing.xs, marginLeft: theme.spacing.sm }}>
-          <StatusBadge status={p.status} />
-          <View style={{ flexDirection: 'row', gap: theme.spacing.xs }}>
-            <Button variant="ghost" onPress={onEdit} style={{ paddingHorizontal: 8 }}>
-              {t('budgets.edit')}
-            </Button>
-            <Pressable
-              onPress={onDelete}
-              hitSlop={8}
-              style={{ padding: 8, justifyContent: 'center' }}
-            >
-              <Text style={{ fontSize: 18, color: theme.colors.error }}>×</Text>
-            </Pressable>
-          </View>
-        </View>
+        <Pressable onPress={showOverflow} hitSlop={12} style={{ padding: 8, marginLeft: 4 }}>
+          <Text style={{ fontSize: 18, color: theme.colors.text.tertiary, fontWeight: '600' }}>⋯</Text>
+        </Pressable>
       </View>
     </Card>
   );
@@ -168,7 +162,7 @@ export default function BudgetsScreen() {
 
   return (
     <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: 48, paddingHorizontal: 20 }}>
+      <View style={{ flex: 1, paddingTop: 16 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('budgets.title')}
@@ -202,7 +196,7 @@ export default function BudgetsScreen() {
         ) : (
           <ScrollView
             style={{ marginTop: theme.spacing.lg }}
-            contentContainerStyle={{ paddingBottom: theme.spacing.xxl }}
+            contentContainerStyle={{ paddingBottom: BOTTOM_CONTENT_PADDING }}
             showsVerticalScrollIndicator={false}
           >
             {progress.map((p) => (

@@ -1,7 +1,7 @@
 /**
  * Analytics tab — premium fintech experience.
- * Order: 1) Financial Health  2) AI Copilot  3) Cashflow Chart
- * 4) Spending Categories  5) Budget Status  6) Spending Momentum  7) Largest Transactions.
+ * Order: 1) Header + time  2) Top summary  3) Key insight  4) Trend chart
+ * 5) Categories  6) Comparison  7) AI insights  8) Budget status  9) Largest transactions
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -19,15 +19,16 @@ import {
   CategoryDetailsPanel,
   RangeComparisonCard,
   LargestExpensesList,
-  CategoryFilterChips,
   BudgetStatusWidget,
   SavingsMomentumWidget,
   AIInsightWidget,
   SpendingCategoriesWidget,
+  KPISummaryRow,
 } from '@/components/analytics';
 import { AnalyticsSkeleton } from '@/components/analytics/AnalyticsSkeleton';
 import { theme } from '@/constants/theme';
 import { analyticsSpacing } from '@/constants/analyticsTheme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import { formatMonth, getCurrentMonth, getRecentMonths, getFirstDayOfMonth } from '@/utils/date';
 import type { CategoryBreakdownItem } from '@/types/database';
 import type { CategoryDetails } from '@/types/analytics';
@@ -152,8 +153,8 @@ export default function AnalyticsScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{
           padding: theme.spacing.lg,
-          paddingTop: 32,
-          paddingBottom: theme.spacing.xxl,
+          paddingTop: 16,
+          paddingBottom: BOTTOM_CONTENT_PADDING,
           backgroundColor: theme.colors.background,
         }}
         showsVerticalScrollIndicator={false}
@@ -166,13 +167,13 @@ export default function AnalyticsScreen() {
           onRangeChange={setMonthCount}
         />
 
-        {/* Time range switch: 1M / 3M / 6M / 12M */}
+        {/* Time range: 1M / 3M / 6M / 12M */}
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            marginTop: theme.spacing.md,
-            marginBottom: theme.spacing.sm,
+            marginTop: theme.spacing.sm,
+            marginBottom: theme.spacing.xs,
             gap: theme.spacing.sm,
           }}
         >
@@ -209,13 +210,6 @@ export default function AnalyticsScreen() {
           })}
         </View>
 
-        <CategoryFilterChips
-          expenseCategories={rawExpenseBreakdown}
-          incomeCategories={rawIncomeBreakdown}
-          filters={filters}
-          onFiltersChange={setFilters}
-        />
-
         {error ? (
           <Text style={{ color: theme.colors.error, marginBottom: theme.spacing.md }}>{error}</Text>
         ) : null}
@@ -232,7 +226,30 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* Large cashflow chart */}
+            {/* 1. Top summary: Przychody / Wydatki / Saldo */}
+            <KPISummaryRow trend={trend} currency={currency} />
+
+            {/* 2. Key insight — first prominent insight */}
+            {insights.length > 0 && (
+              <View
+                style={{
+                  padding: theme.spacing.md,
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: theme.radius.md,
+                  borderLeftWidth: 4,
+                  borderLeftColor:
+                    insights[0].type === 'warning'
+                      ? theme.colors.warning
+                      : insights[0].type === 'success'
+                        ? theme.colors.success
+                        : theme.colors.primary,
+                }}
+              >
+                <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{insights[0].text}</Text>
+              </View>
+            )}
+
+            {/* 3. Monthly trend chart */}
             <ChartSection
               trend={trend}
               currency={currency}
@@ -240,7 +257,7 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noData')}
             />
 
-            {/* Categories list with percentages */}
+            {/* 4. Expense categories */}
             <SpendingCategoriesWidget
               expenseData={expenseBreakdown}
               categoryPerformance={categoryPerformance}
@@ -249,16 +266,27 @@ export default function AnalyticsScreen() {
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* Financial health & AI insights below core analytics */}
+            {/* 5. Comparison to previous period */}
+            {rangeComparison && (
+              <RangeComparisonCard
+                data={rangeComparison}
+                currency={currency}
+                rangeALabel={rangeALabel}
+                rangeBLabel={rangeBLabel}
+              />
+            )}
+
+            {/* 6. Financial health score */}
             <FinancialHealthScore
               trend={trend}
               categoryPerformance={categoryPerformance}
               currency={currency}
             />
 
+            {/* 7. AI insights */}
             <AIInsightWidget insights={insights} />
 
-            {/* Budget status, momentum, largest transactions, comparisons */}
+            {/* 8. Budget status */}
             <BudgetStatusWidget
               data={categoryPerformance}
               currency={currency}
@@ -266,26 +294,19 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noBudgets')}
             />
 
+            {/* 9. Prognoza wydatków (renamed from Momentum) */}
             <SavingsMomentumWidget
               velocity={velocity}
               currency={currency}
               emptyText={t('analytics.noExpenses')}
             />
 
+            {/* 10. Largest transactions */}
             {largestExpenses.length > 0 && (
               <LargestExpensesList
                 items={largestExpenses}
                 currency={currency}
                 emptyText={t('analytics.noExpenses')}
-              />
-            )}
-
-            {rangeComparison && (
-              <RangeComparisonCard
-                data={rangeComparison}
-                currency={currency}
-                rangeALabel={rangeALabel}
-                rangeBLabel={rangeBLabel}
               />
             )}
           </View>

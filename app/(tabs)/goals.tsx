@@ -1,9 +1,10 @@
 /**
- * Goals screen — savings goals list, add/edit/delete, add/withdraw funds.
+ * Goals screen — savings goals list.
+ * Primary action: Wpłać. Secondary: Wypłać. Edit/Delete in overflow menu.
  */
 import { useCallback, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useProfile } from '@/hooks/useProfile';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
@@ -14,6 +15,7 @@ import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { theme } from '@/constants/theme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import { formatAmount } from '@/utils/currency';
 import { formatDate } from '@/utils/date';
 import type { SavingsGoalWithStatus, GoalStatus } from '@/types/database';
@@ -67,20 +69,24 @@ function GoalCard({
         ? theme.colors.warning
         : theme.colors.primary;
 
+  const showOverflowMenu = () => {
+    Alert.alert(g.name, undefined, [
+      { text: t('goals.edit'), onPress: onEdit },
+      { text: t('common.delete'), onPress: onDelete, style: 'destructive' },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
+
   return (
     <Card key={g.id} padding="md" elevated>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
             {g.name}
           </Text>
-          <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4 }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.secondary, marginTop: 4 }}>
             {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)}
-            {' · '}{g.progressPercent.toFixed(0)}%
-          </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
-            {t('goals.remaining')}: {formatAmount(g.remaining, currency)}
-            {g.target_date ? ` · ${t('goals.targetDate')}: ${formatDate(g.target_date)}` : ''}
+            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}> · {g.progressPercent.toFixed(0)}%</Text>
           </Text>
           <View
             style={{
@@ -100,24 +106,24 @@ function GoalCard({
               }}
             />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: theme.spacing.sm }}>
-            <StatusBadge status={g.status} />
-            <Button variant="ghost" onPress={onAddFunds} style={{ paddingHorizontal: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: theme.spacing.sm, flexWrap: 'wrap' }}>
+            <Button variant="primary" onPress={onAddFunds} style={{ paddingHorizontal: 14, paddingVertical: 6 }}>
               {t('goals.addFunds')}
             </Button>
-            <Button variant="ghost" onPress={onWithdraw} style={{ paddingHorizontal: 8 }}>
+            <Button variant="ghost" onPress={onWithdraw} style={{ paddingHorizontal: 10 }}>
               {t('goals.withdraw')}
             </Button>
+            {g.status !== 'active' ? <StatusBadge status={g.status} /> : null}
+            {g.target_date ? (
+              <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
+                {t('goals.targetDate')}: {formatDate(g.target_date)}
+              </Text>
+            ) : null}
           </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: theme.spacing.xs }}>
-          <Button variant="ghost" onPress={onEdit} style={{ paddingHorizontal: 8 }}>
-            {t('goals.edit')}
-          </Button>
-          <Pressable onPress={onDelete} hitSlop={8} style={{ padding: 8 }}>
-            <Text style={{ fontSize: 18, color: theme.colors.error }}>×</Text>
-          </Pressable>
-        </View>
+        <Pressable onPress={showOverflowMenu} hitSlop={12} style={{ padding: 8, marginLeft: 4 }}>
+          <Text style={{ fontSize: 18, color: theme.colors.text.tertiary, fontWeight: '600' }}>⋯</Text>
+        </Pressable>
       </View>
     </Card>
   );
@@ -162,7 +168,7 @@ export default function GoalsScreen() {
 
   return (
     <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: 48, paddingHorizontal: 20 }}>
+      <View style={{ flex: 1, paddingTop: 16 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('goals.title')}
@@ -192,7 +198,7 @@ export default function GoalsScreen() {
         ) : (
           <ScrollView
             style={{ marginTop: theme.spacing.lg }}
-            contentContainerStyle={{ paddingBottom: theme.spacing.xxl }}
+            contentContainerStyle={{ paddingBottom: BOTTOM_CONTENT_PADDING }}
             showsVerticalScrollIndicator={false}
           >
             {sorted.map((g) => (

@@ -8,6 +8,7 @@ import { TransactionRow } from './TransactionRow';
 import { normalizeNote } from '@/utils/recurringDetector';
 import { isSubscription } from '@/utils/categorySuggestion';
 import { theme } from '@/constants/theme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
 
@@ -158,7 +159,7 @@ export const TransactionList = memo(function TransactionList({
       ListHeaderComponent={ListHeaderComponent}
       stickySectionHeadersEnabled={true}
       style={{ flex: 1, minHeight: 0 }}
-      contentContainerStyle={{ paddingHorizontal: theme.spacing.lg, paddingBottom: 88 }}
+      contentContainerStyle={{ paddingHorizontal: theme.spacing.lg, paddingBottom: BOTTOM_CONTENT_PADDING }}
       showsVerticalScrollIndicator={false}
       removeClippedSubviews={true}
       initialNumToRender={12}

@@ -10,6 +10,7 @@ import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { theme } from '@/constants/theme';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 
 function LabelValue({ label, value }: { label: string; value: string | null | undefined }) {
   if (value == null || value === '') return null;
@@ -48,7 +49,7 @@ export default function ProfileScreen() {
     <ScreenContainer>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: 16, paddingBottom: theme.spacing.xxl }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: BOTTOM_CONTENT_PADDING }}
         showsVerticalScrollIndicator={false}
       >
         <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
