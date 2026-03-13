@@ -17,8 +17,9 @@ import type {
   SmartInsight,
 } from '@/types/analytics';
 
-function safeChangePercent(prev: number, curr: number): number {
-  if (prev === 0) return curr > 0 ? 100 : 0;
+/** Returns null when prev=0 (no meaningful percent comparison). Avoids misleading +100%. */
+function safeChangePercent(prev: number, curr: number): number | null {
+  if (prev === 0) return null;
   return ((curr - prev) / prev) * 100;
 }
 
@@ -89,7 +90,11 @@ export const analyticsAdvancedService = {
         changePercent: safeChangePercent(amtA, amtB),
       });
     }
-    categoryChanges.sort((x, y) => Math.abs(y.changePercent) - Math.abs(x.changePercent));
+    categoryChanges.sort((x, y) => {
+      const ax = x.changePercent == null ? -1 : Math.abs(x.changePercent);
+      const ay = y.changePercent == null ? -1 : Math.abs(y.changePercent);
+      return ay - ax;
+    });
 
     return {
       rangeA: { totalExpense: a.expense, totalIncome: a.income, balance: a.balance },
@@ -321,16 +326,26 @@ export const analyticsAdvancedService = {
     const prevTotal = prevBreakdown.reduce((s, c) => s + c.amount, 0);
     const currTotal = breakdown.reduce((s, c) => s + c.amount, 0);
     const totalChange = safeChangePercent(prevTotal, currTotal);
-    if (Math.abs(totalChange) >= 5) {
+
+    if (totalChange != null && Math.abs(totalChange) >= 5) {
       insights.push({
         id: 'total',
         type: totalChange > 0 ? 'warning' : 'success',
         text: totalChange > 0
-          ? 'Total expenses increased compared to last month.'
-          : 'Total expenses decreased compared to last month.',
-        value: `${totalChange > 0 ? '+' : ''}${totalChange.toFixed(0)}%`,
-        title: totalChange > 0 ? 'Spending is up vs last month' : 'Spending is down vs last month',
-        recommendation: totalChange > 0 ? 'Review categories with the biggest increases and consider adjusting your budget.' : 'Your savings rate is improving. Consider putting the extra toward your goals.',
+          ? `Wydatki wzrosły o ${Math.round(Math.abs(totalChange))}% względem poprzedniego miesiąca.`
+          : `Wydatki spadły o ${Math.round(Math.abs(totalChange))}% względem poprzedniego miesiąca.`,
+        value: `${totalChange > 0 ? '+' : ''}${Math.round(totalChange)}%`,
+        title: totalChange > 0 ? 'Wzrost wydatków' : 'Spadek wydatków',
+        recommendation: totalChange > 0
+          ? 'Przejrzyj kategorie z największym wzrostem i rozważ dostosowanie budżetu.'
+          : 'Oszczędzasz więcej. Rozważ przeznaczenie nadwyżki na cele oszczędnościowe.',
+      });
+    } else if (prevTotal === 0 && currTotal > 0) {
+      insights.push({
+        id: 'total-new',
+        type: 'info',
+        text: 'Nowa aktywność wydatkowa w tym okresie. Brak danych do porównania z poprzednim miesiącem.',
+        title: 'Nowa aktywność',
       });
     }
 
@@ -338,12 +353,26 @@ export const analyticsAdvancedService = {
       const prev = prevBreakdown.find((p) => (p.category_id ?? p.category_name) === (c.category_id ?? c.category_name));
       const prevAmt = prev?.amount ?? 0;
       const change = safeChangePercent(prevAmt, c.amount);
-      if (Math.abs(change) >= 15 && c.amount > 50) {
+      if (change != null && Math.abs(change) >= 15 && c.amount > 50) {
         insights.push({
           id: `cat-${c.category_id ?? c.category_name}`,
           type: change > 0 ? 'warning' : 'success',
-          text: `"${c.category_name}" ${change > 0 ? 'increased' : 'decreased'} by ${Math.abs(change).toFixed(0)}% vs last month.`,
-          value: `${change > 0 ? '+' : ''}${change.toFixed(0)}%`,
+          text: `Kategoria „${c.category_name}" ${change > 0 ? 'wzrosła' : 'spadła'} o ${Math.round(Math.abs(change))}% względem poprzedniego miesiąca.`,
+          value: `${change > 0 ? '+' : ''}${Math.round(change)}%`,
+          categoryName: c.category_name,
+          title: change > 0 ? 'Wzrost wydatków' : 'Spadek wydatków',
+          recommendation: change > 0
+            ? `Sprawdź transakcje w kategorii ${c.category_name} i rozważ ograniczenie wydatków.`
+            : `Kategoria ${c.category_name} jest pod kontrolą — kontynuuj.`,
+        });
+      } else if (prevAmt === 0 && c.amount > 0 && c.amount > 50) {
+        insights.push({
+          id: `cat-new-${c.category_id ?? c.category_name}`,
+          type: 'info',
+          text: `Nowa aktywność w kategorii „${c.category_name}".`,
+          value: undefined,
+          categoryName: c.category_name,
+          title: 'Nowa kategoria',
         });
       }
     }
@@ -353,34 +382,35 @@ export const analyticsAdvancedService = {
         insights.push({
           id: `budget-${b.category_id}`,
           type: 'warning',
-          text: `Budget exceeded for "${b.category_name}".`,
-          value: `${b.percentUsed.toFixed(0)}%`,
+          text: `Przekroczyłeś budżet kategorii „${b.category_name}".`,
+          value: `${Math.round(b.percentUsed)}%`,
           categoryName: b.category_name,
-          title: `${b.category_name} budget exceeded`,
-          recommendation: 'Review recent transactions or adjust your budget for next month.',
+          title: 'Przekroczono budżet',
+          recommendation: 'Przejrzyj transakcje i dostosuj budżet na kolejny miesiąc.',
         });
       } else if (b.percentUsed >= 80) {
         insights.push({
           id: `budget-warn-${b.category_id}`,
           type: 'info',
-          text: `"${b.category_name}" is at ${b.percentUsed.toFixed(0)}% of budget.`,
-          value: `${b.percentUsed.toFixed(0)}%`,
+          text: `Kategoria „${b.category_name}" wykorzystała ${Math.round(b.percentUsed)}% budżetu. Zbliżasz się do limitu.`,
+          value: `${Math.round(b.percentUsed)}%`,
           categoryName: b.category_name,
-          title: `${b.category_name} approaching budget limit`,
-          recommendation: 'Reduce spending in this category or increase your budget.',
+          title: 'Zbliżasz się do limitu',
+          recommendation: 'Ogranicz wydatki w tej kategorii lub zwiększ limit budżetu.',
         });
       }
     }
 
     const totalBudget = budgetVsActual.reduce((s, b) => s + b.budgetAmount, 0);
     if (totalBudget > 0 && velocity.forecastThisMonth > totalBudget) {
+      const over = Math.round(velocity.forecastThisMonth - totalBudget);
       insights.push({
         id: 'velocity',
         type: 'warning',
-        text: 'At current spending pace, you will exceed your total budget this month.',
-        value: `~${Math.round(velocity.forecastThisMonth)} ${totalBudget > 0 ? `vs ${Math.round(totalBudget)}` : ''}`,
-        title: 'Spending pace ahead of budget',
-        recommendation: 'Slow down discretionary spending or adjust your budget to match your pace.',
+        text: `Przy obecnym tempie wydatków przekroczysz łączny budżet o ok. ${over} w tym miesiącu.`,
+        value: `~${Math.round(velocity.forecastThisMonth)} vs ${Math.round(totalBudget)}`,
+        title: 'Prognoza przekroczenia budżetu',
+        recommendation: 'Zwolnij wydatki dyskrecjonalne lub dostosuj budżet do aktualnego tempa.',
       });
     }
 

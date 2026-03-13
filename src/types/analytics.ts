@@ -14,9 +14,9 @@ export interface RangeComparisonResult {
   rangeA: { totalExpense: number; totalIncome: number; balance: number };
   rangeB: { totalExpense: number; totalIncome: number; balance: number };
   change: {
-    expense: number;
-    income: number;
-    balance: number;
+    expense: number | null;
+    income: number | null;
+    balance: number | null;
   };
   /** Category breakdown for both ranges */
   categoryChanges: CategoryRangeComparison[];
@@ -27,7 +27,8 @@ export interface CategoryRangeComparison {
   categoryName: string;
   rangeAAmount: number;
   rangeBAmount: number;
-  changePercent: number;
+  /** Null when rangeAAmount=0 (avoids misleading +100%) */
+  changePercent: number | null;
 }
 
 export interface CategoryDetails {
@@ -48,7 +49,8 @@ export interface CategoryPerformanceRow {
   budget: number;
   remaining: number;
   percentOfExpenses: number;
-  vsPrevMonthPercent: number;
+  /** Null when prev month had no spend in this category (avoids misleading +100%) */
+  vsPrevMonthPercent: number | null;
 }
 
 export interface HeatmapCell {

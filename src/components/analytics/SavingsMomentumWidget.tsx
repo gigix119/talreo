@@ -46,7 +46,7 @@ export function SavingsMomentumWidget({ velocity, currency, emptyText }: Savings
             </Text>
             <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.text.primary }}>
               {dailyDisplay}
-              <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.tertiary }}>/day</Text>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.tertiary }}> {t('analytics.dailyUnit')}</Text>
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>

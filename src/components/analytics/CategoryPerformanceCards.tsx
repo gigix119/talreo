@@ -96,24 +96,28 @@ export function CategoryPerformanceCards({
                         : `${formatAmount(Math.abs(row.remaining), currency)} ${t('analytics.budgetOver')}`
                       : '—'}
                   </Text>
-                  <View
-                    style={{
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: analyticsRadius.badge,
-                      backgroundColor: row.vsPrevMonthPercent < 0 ? analyticsColors.incomeMuted : row.vsPrevMonthPercent > 0 ? analyticsColors.expenseMuted : theme.colors.background,
-                    }}
-                  >
-                    <Text
+                  {row.vsPrevMonthPercent != null ? (
+                    <View
                       style={{
-                        fontSize: 12,
-                        fontWeight: '600',
-                        color: row.vsPrevMonthPercent < 0 ? analyticsColors.success : row.vsPrevMonthPercent > 0 ? analyticsColors.expense : theme.colors.text.secondary,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: analyticsRadius.badge,
+                        backgroundColor: row.vsPrevMonthPercent < 0 ? analyticsColors.incomeMuted : row.vsPrevMonthPercent > 0 ? analyticsColors.expenseMuted : theme.colors.background,
                       }}
                     >
-                      {row.vsPrevMonthPercent >= 0 ? '↑' : '↓'} {Math.abs(row.vsPrevMonthPercent).toFixed(0)}%
-                    </Text>
-                  </View>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: '600',
+                          color: row.vsPrevMonthPercent < 0 ? analyticsColors.success : row.vsPrevMonthPercent > 0 ? analyticsColors.expense : theme.colors.text.secondary,
+                        }}
+                      >
+                        {row.vsPrevMonthPercent >= 0 ? '↑' : '↓'} {Math.abs(row.vsPrevMonthPercent).toFixed(0)}%
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>—</Text>
+                  )}
                 </View>
               </>
             )}

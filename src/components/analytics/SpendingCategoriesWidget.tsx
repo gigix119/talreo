@@ -48,7 +48,7 @@ function CategoryCard({
 }: {
   item: CategoryBreakdownItem;
   currency: string;
-  vsPrevPercent?: number;
+  vsPrevPercent?: number | null;
   onPress?: () => void;
 }) {
   const icon = getCategoryIcon(item.category_name);
@@ -78,7 +78,7 @@ function CategoryCard({
               {formatAmount(item.amount, currency)}
             </Text>
             <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}>{item.percent.toFixed(0)}%</Text>
-            {vsPrevPercent !== undefined && !Number.isNaN(vsPrevPercent) && (
+            {vsPrevPercent != null && !Number.isNaN(vsPrevPercent) && (
               <>
                 <Text
                   style={{

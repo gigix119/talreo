@@ -1,6 +1,6 @@
 /**
- * Spending momentum insights: daily average, projected end-of-month spend.
- * Polish: średnio wydajesz X zł dziennie, przy obecnym tempie zakończysz miesiąc na Y zł.
+ * Prognoza wydatków: średnio dziennie, szacowane wydatki na koniec miesiąca.
+ * Polish-first, clear labels (not "Momentum wydatków").
  */
 import type { FinancialInsight } from '../types';
 import type { InsightEngineInput } from '../inputTypes';
@@ -17,7 +17,7 @@ export function generateMomentumInsights(input: InsightEngineInput): FinancialIn
       id: 'momentum-daily',
       type: 'momentum',
       severity: 'neutral',
-      title: 'Średnie dzienne wydatki',
+      title: 'Średnio dziennie',
       description: `Średnio wydajesz ${formatAmountForInsight(velocity.dailyAverage, currency)} dziennie.`,
       value: velocity.dailyAverage,
       valueUnit: currency,
@@ -29,7 +29,7 @@ export function generateMomentumInsights(input: InsightEngineInput): FinancialIn
       id: 'momentum-forecast',
       type: 'momentum',
       severity: 'neutral',
-      title: 'Prognoza na koniec miesiąca',
+      title: 'Szacowane wydatki na koniec miesiąca',
       description: `Przy obecnym tempie zakończysz miesiąc z wydatkami na poziomie ${formatAmountForInsight(velocity.forecastThisMonth, currency)}.`,
       value: velocity.forecastThisMonth,
       valueUnit: currency,

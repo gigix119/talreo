@@ -39,12 +39,12 @@ export function CategoryPerformanceTable({
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View>
             <View style={{ flexDirection: 'row', paddingVertical: theme.spacing.md, borderBottomWidth: 2, borderBottomColor: theme.colors.border }}>
-              <Cell header width={100}>Category</Cell>
-              <Cell header width={72}>Spent</Cell>
-              <Cell header width={72}>Budget</Cell>
-              <Cell header width={72}>Remaining</Cell>
-              <Cell header width={80}>Usage</Cell>
-              <Cell header width={56}>Trend</Cell>
+              <Cell header width={100}>{t('analytics.tableCategory')}</Cell>
+              <Cell header width={72}>{t('analytics.tableSpent')}</Cell>
+              <Cell header width={72}>{t('analytics.tableBudget')}</Cell>
+              <Cell header width={72}>{t('analytics.tableRemaining')}</Cell>
+              <Cell header width={80}>{t('analytics.tableUsage')}</Cell>
+              <Cell header width={56}>{t('analytics.tableTrend')}</Cell>
             </View>
             {data.map((row) => {
               const pctUsed = row.budget > 0 ? Math.min(100, (row.spent / row.budget) * 100) : 0;
@@ -79,8 +79,10 @@ export function CategoryPerformanceTable({
                       <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>-</Text>
                     )}
                   </View>
-                  <Cell width={56} success={row.vsPrevMonthPercent < 0} warning={row.vsPrevMonthPercent > 0}>
-                    {row.vsPrevMonthPercent >= 0 ? '↑' : '↓'} {Math.abs(row.vsPrevMonthPercent).toFixed(0)}%
+                  <Cell width={56} success={row.vsPrevMonthPercent != null && row.vsPrevMonthPercent < 0} warning={row.vsPrevMonthPercent != null && row.vsPrevMonthPercent > 0}>
+                    {row.vsPrevMonthPercent != null
+                      ? `${row.vsPrevMonthPercent >= 0 ? '↑' : '↓'} ${Math.abs(row.vsPrevMonthPercent).toFixed(0)}%`
+                      : t('analytics.noComparison')}
                   </Cell>
                 </View>
               );

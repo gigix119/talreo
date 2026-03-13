@@ -17,7 +17,10 @@ interface RangeComparisonCardProps {
   rangeBLabel: string;
 }
 
-function ChangeBadge({ value }: { value: number }) {
+function ChangeBadge({ value }: { value: number | null }) {
+  if (value == null) {
+    return <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>—</Text>;
+  }
   const isPos = value >= 0;
   return (
     <Text
@@ -75,7 +78,7 @@ function Row({
   label: string;
   a: number;
   b: number;
-  change: number;
+  change: number | null;
   currency: Currency;
 }) {
   return (

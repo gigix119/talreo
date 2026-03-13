@@ -1,6 +1,6 @@
 /**
- * Financial health score interpretation insights.
- * Polish: wynik zdrowia finansowego, dodatnie saldo i dobra kontrola, jedna kategoria przekracza limit.
+ * Zdrowie finansowe — grounded interpretation from savings, budgets, goals.
+ * Avoid synthetic "score" language; focus on what matters.
  */
 import type { FinancialInsight } from '../types';
 import type { InsightEngineInput } from '../inputTypes';
@@ -18,25 +18,24 @@ export function generateHealthScoreInsights(input: InsightEngineInput): Financia
   const insights: FinancialInsight[] = [];
 
   const gradeLabel = GRADE_LABELS[health.grade] ?? health.grade;
-
-  // Main health summary
   const positiveBalance = summary.balance > 0;
   const exceededNum = input.budgetUsage.filter((b) => b.isExceeded).length;
-  let description: string;
+  const warningNum = input.budgetUsage.filter((b) => b.isWarning).length;
 
-  if (health.grade === 'excellent' || health.grade === 'good') {
-    description = positiveBalance
-      ? `Twój wynik zdrowia finansowego (${gradeLabel}) wynika z dodatniego salda i dobrej kontroli budżetów.`
-      : `Twój wynik zdrowia finansowego to ${gradeLabel}. Popraw saldo, aby go podnieść.`;
-  } else if (exceededNum > 0) {
+  let description: string;
+  if (exceededNum > 0) {
     description =
       exceededNum === 1
-        ? 'Jedna kategoria przekracza limit, ale saldo netto nadal może być dodatnie.'
-        : `${exceededNum} kategorie przekraczają limit. Warto je skorygować.`;
+        ? 'Jedna kategoria przekracza limit. Warto dostosować budżet lub ograniczyć wydatki.'
+        : `${exceededNum} kategorie przekraczają limit. Przejrzyj budżety.`;
+  } else if (warningNum > 0) {
+    description = `${warningNum} ${warningNum === 1 ? 'kategoria zbliża się' : 'kategorie zbliżają się'} do limitu.`;
+  } else if (positiveBalance && input.budgetUsage.length > 0) {
+    description = 'Dodatnie saldo i budżety pod kontrolą.';
+  } else if (positiveBalance) {
+    description = 'Dodatnie saldo. Rozważ ustawienie budżetów dla lepszej kontroli.';
   } else {
-    const trendFactor = health.factors.find((f) => f.id === 'spending_trend');
-    const trendDesc = trendFactor?.description ?? '';
-    description = trendDesc || `Wynik zdrowia finansowego: ${gradeLabel}.`;
+    description = health.grade === 'poor' ? 'Wydatki przewyższają przychody. Skup się na redukcji wydatków.' : `${gradeLabel} — kontynuuj śledzenie.`;
   }
 
   insights.push({

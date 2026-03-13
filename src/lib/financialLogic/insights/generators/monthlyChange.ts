@@ -16,7 +16,7 @@ export function generateMonthlyChangeInsights(input: InsightEngineInput): Financ
 
   if (!summaryPrev) return insights;
 
-  // Expense change
+  // Expense change — only show percent when prev > 0 (avoid misleading +100% from zero)
   if (summaryPrev.expense > 0) {
     const changePercent = ((summary.expense - summaryPrev.expense) / summaryPrev.expense) * 100;
     if (Math.abs(changePercent) >= 5) {
@@ -35,6 +35,14 @@ export function generateMonthlyChangeInsights(input: InsightEngineInput): Financ
         valueUnit: '%',
       });
     }
+  } else if (summaryPrev.expense === 0 && summary.expense > 0) {
+    insights.push({
+      id: 'monthly-change-expense-new',
+      type: 'monthly_change',
+      severity: 'neutral',
+      title: 'Nowa aktywność',
+      description: 'Nowa aktywność wydatkowa w tym okresie. Brak danych do porównania z poprzednim miesiącem.',
+    });
   }
 
   // Income change
@@ -56,6 +64,14 @@ export function generateMonthlyChangeInsights(input: InsightEngineInput): Financ
         valueUnit: '%',
       });
     }
+  } else if (summaryPrev.income === 0 && summary.income > 0) {
+    insights.push({
+      id: 'monthly-change-income-new',
+      type: 'monthly_change',
+      severity: 'neutral',
+      title: 'Nowe przychody',
+      description: 'Nowa aktywność przychodowa w tym okresie. Brak danych do porównania.',
+    });
   }
 
   // Balance change (net flow)
