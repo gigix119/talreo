@@ -31,7 +31,7 @@ export function AnalyticsHeader({
     <View style={{ marginBottom: analyticsSpacing.sectionGap }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: analyticsSpacing.headerMargin }}>
         <View>
-          <Text style={{ fontSize: 26, fontWeight: '700', color: theme.colors.text.primary, letterSpacing: -0.6 }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary, letterSpacing: -0.4 }}>
             {t('analytics.title')}
           </Text>
           <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, marginTop: 4 }}>

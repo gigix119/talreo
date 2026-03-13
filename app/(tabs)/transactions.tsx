@@ -5,6 +5,7 @@
 import { useCallback, useState, useMemo } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useI18n } from '@/i18n';
 import { useTransactionsList } from '@/hooks/useTransactionsList';
 import {
@@ -26,6 +27,7 @@ import type { Transaction } from '@/types/database';
 
 export default function TransactionsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
@@ -144,9 +146,9 @@ export default function TransactionsScreen() {
       <View
         style={{
           flexShrink: 0,
-          paddingTop: 8,
+          paddingTop: insets.top + 8,
           paddingHorizontal: theme.spacing.lg,
-          paddingBottom: 4,
+          paddingBottom: 8,
           backgroundColor: theme.colors.background,
         }}
       >

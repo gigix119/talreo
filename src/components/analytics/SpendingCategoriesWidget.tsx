@@ -139,8 +139,8 @@ export const SpendingCategoriesWidget = memo(function SpendingCategoriesWidget({
   const perfMap = new Map(categoryPerformance.map((p) => [p.categoryName, p.vsPrevMonthPercent]));
 
   return (
-    <View style={{ gap: 10 }}>
-      <Text style={{ fontSize: 17, fontWeight: '700', color: theme.colors.text.primary }}>
+    <View style={{ gap: 12 }}>
+      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
         {t('analytics.spendingCategories')}
       </Text>
       {expenseData.slice(0, 8).map((item) => (

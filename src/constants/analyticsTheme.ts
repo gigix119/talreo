@@ -43,13 +43,13 @@ export const analyticsShadows = {
 } as const;
 
 export const analyticsSpacing = {
-  sectionGap: 28,
+  sectionGap: 20,
   cardGap: 12,
-  headerMargin: 12,
+  headerMargin: 8,
 } as const;
 
 export const analyticsRadius = {
-  card: 20,
+  card: 12,
   pill: 12,
   badge: 8,
 } as const;

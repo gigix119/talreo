@@ -99,7 +99,7 @@ export default function DashboardScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('dashboard.title')}
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
@@ -142,7 +142,7 @@ export default function DashboardScreen() {
         </View>
 
         {/* Top money cards: Przychody, Wydatki, Saldo */}
-        <Card padding="md" elevated style={{ marginTop: theme.spacing.md }}>
+        <Card padding="md" elevated style={{ marginTop: theme.spacing.lg }}>
           <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
             {t('dashboard.thisMonth')}
           </Text>
@@ -165,7 +165,7 @@ export default function DashboardScreen() {
         {budgetProgress.progress.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.budgetOverview')}
               </Text>
               <Text
@@ -236,7 +236,7 @@ export default function DashboardScreen() {
 
         {/* Recent transactions */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: theme.spacing.lg }}>
-          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
             {t('dashboard.recentTransactions')}
           </Text>
           <Text
@@ -288,7 +288,7 @@ export default function DashboardScreen() {
         {insights.insights && insights.insights.insights.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.insights')}
               </Text>
               <Text
@@ -348,7 +348,7 @@ export default function DashboardScreen() {
         {goals.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.goalsPreview')}
               </Text>
               <Text
@@ -401,7 +401,7 @@ export default function DashboardScreen() {
         {alerts.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg, marginBottom: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.alertsPreview')}
               </Text>
               <Text

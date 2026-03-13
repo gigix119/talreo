@@ -1,14 +1,15 @@
 /**
  * Card — base container for content blocks.
- * Clean, rounded, with optional shadow.
+ * Consistent radius, padding, and shadow across dashboard, budgets, analytics, goals.
  */
 import { View, type ViewProps } from 'react-native';
 import { theme } from '@/constants/theme';
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
+  /** Padding size from theme.spacing */
   padding?: keyof typeof theme.spacing;
-  /** Add subtle shadow */
+  /** Add subtle elevation (default: true) */
   elevated?: boolean;
 }
 
@@ -24,7 +25,7 @@ export function Card({
       style={[
         {
           backgroundColor: theme.colors.surface,
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radius.md,
           padding: theme.spacing[padding],
           ...(elevated ? theme.shadows.sm : {}),
         },

@@ -112,7 +112,7 @@ export function FinancialHealthScore({
       </View>
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
             {t('analytics.financialHealthScore')}
           </Text>
           <Text style={{ fontSize: 16 }}>{trendDir === 'up' ? '↑' : trendDir === 'down' ? '↓' : '→'}</Text>

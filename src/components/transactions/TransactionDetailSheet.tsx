@@ -1,7 +1,8 @@
 /**
- * TransactionDetailSheet — premium detail modal with modular components.
+ * TransactionDetailSheet — clean detail modal with safe area handling.
  */
 import { View, Text, Modal, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useI18n } from '@/i18n';
 import { Button } from '@/components/ui/Button';
 import { theme } from '@/constants/theme';
@@ -51,6 +52,7 @@ export function TransactionDetailSheet({
   deleteLoading = false,
 }: TransactionDetailSheetProps) {
   const { t } = useI18n();
+  const insets = useSafeAreaInsets();
 
   if (!transaction) return null;
 
@@ -67,14 +69,15 @@ export function TransactionDetailSheet({
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: theme.spacing.lg,
-            paddingTop: theme.spacing.xl,
+            paddingHorizontal: theme.spacing.lg,
+            paddingTop: insets.top + theme.spacing.md,
+            paddingBottom: theme.spacing.md,
             borderBottomWidth: 1,
             borderBottomColor: theme.colors.border,
             backgroundColor: theme.colors.surface,
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('transactions.detailTitle')}
           </Text>
           <Button variant="ghost" onPress={onClose}>
@@ -86,7 +89,7 @@ export function TransactionDetailSheet({
           style={{ flex: 1 }}
           contentContainerStyle={{
             padding: theme.spacing.lg,
-            paddingBottom: theme.spacing.xxl,
+            paddingBottom: insets.bottom + theme.spacing.xxl,
           }}
           showsVerticalScrollIndicator={false}
         >

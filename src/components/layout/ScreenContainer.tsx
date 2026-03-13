@@ -1,13 +1,15 @@
 /**
  * ScreenContainer — base layout wrapper with safe area insets.
- * Use on every screen for consistent padding and safe area handling.
+ * Mobile-first: top safe area for status bar, horizontal padding for content.
+ * Bottom padding NOT applied — scroll content uses BOTTOM_CONTENT_PADDING.
  */
 import { View, type ViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PAGE_PADDING_H } from '@/constants/layout';
 
 interface ScreenContainerProps extends ViewProps {
   children: React.ReactNode;
-  /** Add horizontal padding (default: 20) */
+  /** Add horizontal padding (default: true, uses PAGE_PADDING_H) */
   withPadding?: boolean;
 }
 
@@ -25,9 +27,9 @@ export function ScreenContainer({
         {
           flex: 1,
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: withPadding ? 20 : insets.left,
-          paddingRight: withPadding ? 20 : insets.right,
+          paddingBottom: 0,
+          paddingLeft: withPadding ? PAGE_PADDING_H : insets.left,
+          paddingRight: withPadding ? PAGE_PADDING_H : insets.right,
         },
         style,
       ]}

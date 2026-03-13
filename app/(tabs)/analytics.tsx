@@ -5,7 +5,7 @@
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard, fetchCategoryDetails } from '@/hooks/useAnalyticsDashboard';
@@ -167,49 +167,6 @@ export default function AnalyticsScreen() {
           onRangeChange={setMonthCount}
         />
 
-        {/* Time range: 1M / 3M / 6M / 12M */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: theme.spacing.sm,
-            marginBottom: theme.spacing.xs,
-            gap: theme.spacing.sm,
-          }}
-        >
-          {[
-            { label: '1M', value: 1 },
-            { label: '3M', value: 3 },
-            { label: '6M', value: 6 },
-            { label: '12M', value: 12 },
-          ].map((opt) => {
-            const active = monthCount === opt.value;
-            return (
-              <Pressable
-                key={opt.value}
-                onPress={() => setMonthCount(opt.value)}
-                style={({ pressed }) => ({
-                  paddingHorizontal: theme.spacing.md,
-                  paddingVertical: theme.spacing.xs,
-                  borderRadius: theme.radius.full,
-                  backgroundColor: active ? theme.colors.primary : theme.colors.backgroundElevated,
-                  opacity: pressed ? 0.9 : 1,
-                })}
-              >
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: '600',
-                    color: active ? '#FFFFFF' : theme.colors.text.secondary,
-                  }}
-                >
-                  {opt.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
         {error ? (
           <Text style={{ color: theme.colors.error, marginBottom: theme.spacing.md }}>{error}</Text>
         ) : null}
@@ -236,7 +193,7 @@ export default function AnalyticsScreen() {
                   padding: theme.spacing.md,
                   backgroundColor: theme.colors.surface,
                   borderRadius: theme.radius.md,
-                  borderLeftWidth: 4,
+                  borderLeftWidth: 3,
                   borderLeftColor:
                     insights[0].type === 'warning'
                       ? theme.colors.warning
@@ -245,7 +202,7 @@ export default function AnalyticsScreen() {
                         : theme.colors.primary,
                 }}
               >
-                <Text style={{ fontSize: 14, color: theme.colors.text.primary }}>{insights[0].text}</Text>
+                <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.text.primary }}>{insights[0].text}</Text>
               </View>
             )}
 

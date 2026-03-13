@@ -95,12 +95,12 @@ export const TransactionRow = memo(function TransactionRow({
             {title}
           </Text>
           {isRecurring ? (
-            <View style={{ backgroundColor: '#E8F4FF', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+            <View style={{ backgroundColor: theme.colors.primary + '18', paddingHorizontal: 6, paddingVertical: 2, borderRadius: theme.radius.sm }}>
               <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.primary }}>{t('transactions.labelRecurring')}</Text>
             </View>
           ) : null}
           {isSubscription ? (
-            <View style={{ backgroundColor: '#F2F2F7', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+            <View style={{ backgroundColor: theme.colors.backgroundElevated, paddingHorizontal: 6, paddingVertical: 2, borderRadius: theme.radius.sm }}>
               <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.text.secondary }}>{t('transactions.labelSubscription')}</Text>
             </View>
           ) : null}

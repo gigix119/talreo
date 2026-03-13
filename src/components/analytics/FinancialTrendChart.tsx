@@ -15,13 +15,14 @@ import { LineChart } from 'react-native-gifted-charts';
 import { Card } from '@/components/ui/Card';
 import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
+import { PAGE_PADDING_H } from '@/constants/layout';
 import { analyticsColors, analyticsShadows } from '@/constants/analyticsTheme';
 import { formatAmount } from '@/utils/currency';
 import { formatMonth } from '@/utils/date';
 import type { MonthlyTrendItem } from '@/types/database';
 
-const CHART_HEIGHT = 240;
-const screenWidth = Dimensions.get('window').width - 48;
+const CHART_HEIGHT = 200;
+const CHART_PADDING_H = 40;
 const LONG_PRESS_MS = 350;
 
 type ChartMode = 'inspect' | 'compare';
@@ -46,8 +47,9 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   const [crosshairIndex, setCrosshairIndex] = useState<number | null>(null);
   const [compareStart, setCompareStart] = useState<number | null>(null);
   const [compareEnd, setCompareEnd] = useState<number | null>(null);
-  const [chartLayout, setChartLayout] = useState({ width: screenWidth });
-  const layoutRef = useRef({ width: screenWidth, left: 0 });
+  const screenWidth = Dimensions.get('window').width - PAGE_PADDING_H * 2 - CHART_PADDING_H;
+  const [chartLayout, setChartLayout] = useState({ width: Math.max(200, screenWidth) });
+  const layoutRef = useRef({ width: Math.max(200, screenWidth), left: 0 });
   const compareRef = useRef({ start: null as number | null, end: null as number | null });
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const crosshairRef = useRef<number | null>(null);
@@ -186,9 +188,9 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   if (data.length === 0) {
     return (
       <Card
-        padding="xl"
+        padding="lg"
         elevated
-        style={{ marginTop: theme.spacing.md, alignItems: 'center', borderRadius: theme.radius.xl }}
+        style={{ marginTop: theme.spacing.sm, alignItems: 'center' }}
       >
         <Text style={{ fontSize: 16, color: theme.colors.text.secondary, fontWeight: '500' }}>
           {title}
@@ -206,9 +208,9 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   if (!hasEnoughData) {
     return (
       <Card
-        padding="xl"
+        padding="lg"
         elevated
-        style={{ marginTop: theme.spacing.md, alignItems: 'center', borderRadius: theme.radius.xl }}
+        style={{ marginTop: theme.spacing.sm, alignItems: 'center' }}
       >
         <Text style={{ fontSize: 16, color: theme.colors.text.secondary, fontWeight: '500' }}>
           {title}
@@ -220,20 +222,22 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
     );
   }
 
-  const chartWidthActual = screenWidth - 32;
+  const chartWidthActual = layoutRef.current.width;
 
   return (
-    <View style={{ marginTop: theme.spacing.xl }}>
-      <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+    <View style={{ marginTop: theme.spacing.lg }}>
+      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary, marginBottom: theme.spacing.sm }}>
         {title}
       </Text>
       <Card
-        padding="lg"
+        padding="md"
         elevated
-        style={{ marginTop: theme.spacing.sm, borderRadius: theme.radius.xl, overflow: 'hidden' }}
-        onLayout={(e: LayoutChangeEvent) =>
-          setChartLayout({ width: e.nativeEvent.layout.width - 48 })
-        }
+        style={{ overflow: 'hidden' }}
+        onLayout={(e: LayoutChangeEvent) => {
+          const w = Math.max(200, e.nativeEvent.layout.width - CHART_PADDING_H);
+          layoutRef.current.width = w;
+          setChartLayout({ width: w });
+        }}
       >
         {/* Mode: Inspect | Compare */}
         <View
@@ -344,7 +348,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
             endSpacing={28}
             yAxisColor={theme.colors.border}
             xAxisColor={theme.colors.border}
-            yAxisLabelWidth={54}
+            yAxisLabelWidth={50}
             noOfSections={4}
             formatYLabel={(v) => formatAmount(Number(v), currency)}
           />
@@ -471,7 +475,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
           )}
         </View>
 
-        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: 10 }}>
+        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: 8 }}>
           {mode === 'inspect'
             ? t('analytics.chartLongPressToInspect')
             : t('analytics.chartTapToCompare')}

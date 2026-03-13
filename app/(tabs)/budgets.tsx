@@ -164,7 +164,7 @@ export default function BudgetsScreen() {
     <ScreenContainer>
       <View style={{ flex: 1, paddingTop: 16 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('budgets.title')}
           </Text>
           <Button
