@@ -4,12 +4,13 @@
  */
 import { useEffect } from 'react';
 import { Tabs, useRouter } from 'expo-router';
-import { Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useI18n } from '@/i18n';
 import { LanguageSync } from '@/components/providers/LanguageSync';
+import { theme } from '@/constants/theme';
 
 function TabIcon({ name }: { name: string }) {
   return <Text style={{ fontSize: 18 }}>{name}</Text>;
@@ -18,6 +19,7 @@ function TabIcon({ name }: { name: string }) {
 export default function TabsLayout() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useI18n();
   const { session, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
 
@@ -31,9 +33,17 @@ export default function TabsLayout() {
     if (!profile?.onboarding_completed) router.replace('/onboarding');
   }, [session, authLoading, profile?.onboarding_completed, profileLoading]);
 
-  if (!session || !profile?.onboarding_completed) return null;
-
-  const { t } = useI18n();
+  // Show loading instead of null to prevent white screen while auth/profile resolve
+  const waitingForAuth = authLoading || !session;
+  const waitingForProfile = profileLoading || !profile?.onboarding_completed;
+  if (waitingForAuth || waitingForProfile) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>{t('common.loading')}</Text>
+      </View>
+    );
+  }
   const tabBarHeight = 56;
   const tabBarPaddingBottom = Math.max(insets.bottom, 8);
 
