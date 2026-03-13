@@ -1,17 +1,19 @@
 /**
- * Root layout — AuthProvider, I18nProvider, stack.
+ * Root layout — AuthProvider, I18nProvider, ErrorBoundary, stack.
  */
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/hooks/useAuth';
 import { I18nProvider } from '@/i18n';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <I18nProvider initialLocale="pl">
+          <ErrorBoundary>
           <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -57,6 +59,7 @@ export default function RootLayout() {
           options={{ presentation: 'modal' }}
         />
       </Stack>
+          </ErrorBoundary>
         </I18nProvider>
       </AuthProvider>
     </SafeAreaProvider>

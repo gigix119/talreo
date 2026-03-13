@@ -12,7 +12,7 @@ export default function AuthLayout() {
 
   useEffect(() => {
     if (loading) return;
-    if (session) router.replace('/(tabs)');
+    if (session) router.replace('/');
   }, [session, loading]);
 
   return (
