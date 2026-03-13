@@ -19,8 +19,8 @@ export function TransactionsSearch({ value, onChangeText }: TransactionsSearchPr
         backgroundColor: theme.colors.surface,
         borderRadius: theme.radius.md,
         paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.sm,
-        marginBottom: theme.spacing.sm,
+        paddingVertical: theme.spacing.xs,
+        marginBottom: theme.spacing.xs,
         borderWidth: 1,
         borderColor: theme.colors.border,
       }}

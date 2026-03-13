@@ -43,7 +43,7 @@ export function TransactionsFilters({
   ];
 
   return (
-    <View style={{ marginBottom: theme.spacing.sm }}>
+    <View style={{ marginBottom: theme.spacing.xs }}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -9,7 +9,7 @@ export function TransactionsHeader() {
   const { t } = useI18n();
 
   return (
-    <View style={{ marginBottom: theme.spacing.xs, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    <View style={{ marginBottom: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <Text
         style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary, letterSpacing: -0.3 }}
         numberOfLines={1}

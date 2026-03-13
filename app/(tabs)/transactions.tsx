@@ -139,13 +139,13 @@ export default function TransactionsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Sticky: header + search + filters — flexShrink: 0 so list gets remaining space */}
+      {/* Sticky: header + search + filters — compact to maximize list viewport */}
       <View
         style={{
           flexShrink: 0,
-          paddingTop: 16,
+          paddingTop: 8,
           paddingHorizontal: theme.spacing.lg,
-          paddingBottom: theme.spacing.xs,
+          paddingBottom: 4,
           backgroundColor: theme.colors.background,
         }}
       >

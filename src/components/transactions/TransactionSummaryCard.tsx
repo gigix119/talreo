@@ -29,8 +29,8 @@ export const TransactionSummaryCard = memo(function TransactionSummaryCard({
       style={{
         backgroundColor: theme.colors.surface,
         borderRadius: theme.radius.md,
-        padding: theme.spacing.sm + 4,
-        marginBottom: theme.spacing.sm,
+        padding: theme.spacing.sm,
+        marginBottom: theme.spacing.xs,
         borderWidth: 1,
         borderColor: theme.colors.border,
       }}
