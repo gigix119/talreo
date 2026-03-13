@@ -24,7 +24,7 @@ export function aggregateByCategory(
   const byCategory = new Map<string, { amount: number; count: number }>();
   for (const t of filtered) {
     const cid = t.category_id ?? '__uncategorized';
-    const name = cid === '__uncategorized' ? 'Bez kategorii' : (categoryNameMap[cid] ?? 'Unknown');
+    const name = cid === '__uncategorized' ? 'Bez kategorii' : (categoryNameMap[cid] ?? 'Nieznana');
     const key = cid;
     const existing = byCategory.get(key) ?? { amount: 0, count: 0 };
     byCategory.set(key, {
@@ -36,7 +36,7 @@ export function aggregateByCategory(
   const totals: CategoryTotal[] = [];
   for (const [cid, { amount, count }] of byCategory.entries()) {
     const categoryId = cid === '__uncategorized' ? null : cid;
-    const categoryName = categoryId ? (categoryNameMap[categoryId] ?? 'Unknown') : 'Bez kategorii';
+    const categoryName = categoryId ? (categoryNameMap[categoryId] ?? 'Nieznana') : 'Bez kategorii';
     totals.push({
       categoryId,
       categoryName,

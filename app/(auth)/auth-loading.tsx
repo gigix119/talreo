@@ -26,7 +26,7 @@ export default function AuthLoadingScreen() {
     <ScreenContainer>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Loading...</Text>
+        <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Ładowanie...</Text>
       </View>
     </ScreenContainer>
   );

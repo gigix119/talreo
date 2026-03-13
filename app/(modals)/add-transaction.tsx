@@ -90,11 +90,11 @@ export default function AddTransactionScreen() {
     setError('');
     const amt = parseFloat(amount.replace(',', '.'));
     if (isNaN(amt) || amt <= 0) {
-      setError('Please enter a valid amount.');
+      setError(t('validation.invalidAmount'));
       return;
     }
     if (categories.length > 0 && !categoryId) {
-      setError('Please select a category.');
+      setError(t('validation.selectCategory'));
       return;
     }
     setLoading(true);
@@ -108,7 +108,7 @@ export default function AddTransactionScreen() {
       });
       router.back();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save transaction.');
+      setError(e instanceof Error ? e.message : t('common.saveFailed'));
     } finally {
       setLoading(false);
     }
@@ -122,7 +122,7 @@ export default function AddTransactionScreen() {
             {t('transactions.addTransaction')}
           </Text>
           <Text onPress={() => router.back()} style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '500' }}>
-            Cancel
+            {t('common.cancel')}
           </Text>
         </View>
 
@@ -151,7 +151,7 @@ export default function AddTransactionScreen() {
             </View>
             <View style={{ marginTop: theme.spacing.lg }}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                Type
+                {t('transactions.labelType')}
               </Text>
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
                 <Button
@@ -159,20 +159,20 @@ export default function AddTransactionScreen() {
                   onPress={() => setType('expense')}
                   style={{ flex: 1 }}
                 >
-                  Expense
+                  {t('transactions.filterTypeExpense')}
                 </Button>
                 <Button
                   variant={type === 'income' ? 'primary' : 'secondary'}
                   onPress={() => setType('income')}
                   style={{ flex: 1 }}
                 >
-                  Income
+                  {t('transactions.filterTypeIncome')}
                 </Button>
               </View>
             </View>
 
             <Input
-              label="Amount"
+              label={t('transactions.labelAmount')}
               value={amount}
               onChangeText={setAmount}
               placeholder={`0.00 ${currency}`}
@@ -182,7 +182,7 @@ export default function AddTransactionScreen() {
             {categories.length > 0 ? (
               <View style={{ marginTop: theme.spacing.md }}>
                 <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                  Category
+                  {t('transactions.labelCategory')}
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
                   {categories.map((c) => (
@@ -199,22 +199,22 @@ export default function AddTransactionScreen() {
               </View>
             ) : (
               <Text style={{ fontSize: 14, color: theme.colors.warning, marginTop: theme.spacing.md }}>
-                No {type} categories. Using default categories.
+                {t('transactions.noCategoriesFallback')}
               </Text>
             )}
 
             <Input
-              label="Date"
+              label={t('transactions.labelDate')}
               value={date}
               onChangeText={setDate}
               placeholder="YYYY-MM-DD"
             />
 
             <Input
-              label="Note (optional)"
+              label={t('transactions.labelNote')}
               value={note}
               onChangeText={handleNoteChange}
-              placeholder="e.g. Groceries"
+              placeholder={t('transactions.quickAddPlaceholder')}
             />
 
             {error ? (
@@ -229,7 +229,7 @@ export default function AddTransactionScreen() {
               fullWidth
               style={{ marginTop: theme.spacing.xl }}
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? t('common.loading') : t('common.save')}
             </Button>
           </ScrollView>
         </KeyboardAvoidingView>

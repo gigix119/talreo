@@ -37,7 +37,7 @@ export default function AuthCallbackScreen() {
         if (err) throw err;
         if (mounted) router.replace('/');
       } catch {
-        if (mounted) setError('Could not complete sign in.');
+        if (mounted) setError('Nie udało się zalogować.');
       }
     }
 
@@ -61,7 +61,7 @@ export default function AuthCallbackScreen() {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: theme.colors.error, marginBottom: 16 }}>{error}</Text>
           <Text style={{ color: theme.colors.primary }} onPress={() => router.replace('/')}>
-            Back to Welcome
+            Powrót na stronę główną
           </Text>
         </View>
       </ScreenContainer>
@@ -72,7 +72,7 @@ export default function AuthCallbackScreen() {
     <ScreenContainer>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Signing you in...</Text>
+        <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Logowanie...</Text>
       </View>
     </ScreenContainer>
   );

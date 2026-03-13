@@ -85,7 +85,7 @@ export default function EditTransactionScreen() {
     setError('');
     const amt = parseFloat(amount.replace(',', '.'));
     if (isNaN(amt) || amt <= 0) {
-      setError('Please enter a valid amount.');
+      setError(t('validation.invalidAmount'));
       return;
     }
     setSaving(true);
@@ -99,7 +99,7 @@ export default function EditTransactionScreen() {
       });
       router.back();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save.');
+      setError(e instanceof Error ? e.message : t('common.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -109,7 +109,7 @@ export default function EditTransactionScreen() {
     return (
       <ScreenContainer>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: theme.colors.text.secondary }}>Loading...</Text>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('common.loading')}</Text>
         </View>
       </ScreenContainer>
     );
@@ -123,7 +123,7 @@ export default function EditTransactionScreen() {
             Edit transaction
           </Text>
           <Text onPress={() => router.back()} style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '500' }}>
-            Cancel
+            {t('common.cancel')}
           </Text>
         </View>
 
@@ -202,7 +202,7 @@ export default function EditTransactionScreen() {
             ) : null}
 
             <Button onPress={handleSave} disabled={saving} fullWidth style={{ marginTop: theme.spacing.xl }}>
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? t('common.loading') : t('common.save')}
             </Button>
           </ScrollView>
         </KeyboardAvoidingView>

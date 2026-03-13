@@ -52,7 +52,7 @@ export const analyticsAdvancedService = {
       }
       return Array.from(byCat.entries()).map(([key, amount]) => ({
         categoryId: key.startsWith('__') ? null : key,
-        categoryName: key.startsWith('__') ? 'Unknown' : (catMap.get(key) ?? 'Unknown'),
+        categoryName: key.startsWith('__') ? 'Nieznana' : (catMap.get(key) ?? 'Nieznana'),
         amount,
       }));
     };
@@ -84,7 +84,7 @@ export const analyticsAdvancedService = {
     for (const [key, { a: amtA, b: amtB, name }] of categoryMap.entries()) {
       categoryChanges.push({
         categoryId: key.startsWith('__') ? null : key,
-        categoryName: name ?? 'Unknown',
+        categoryName: name ?? 'Nieznana',
         rangeAAmount: amtA,
         rangeBAmount: amtB,
         changePercent: safeChangePercent(amtA, amtB),
@@ -284,7 +284,7 @@ export const analyticsAdvancedService = {
       id: t.id,
       note: t.note,
       amount: Number(t.amount),
-      categoryName: (t.category_id && catMap.get(t.category_id)) ?? 'Unknown',
+      categoryName: (t.category_id && catMap.get(t.category_id)) ?? 'Nieznana',
       transactionDate: t.transaction_date,
     }));
   },

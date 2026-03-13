@@ -57,7 +57,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
       <ActivityIndicator size="large" color={theme.colors.primary} />
-      <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Loading...</Text>
+      <Text style={{ marginTop: 16, color: theme.colors.text.secondary }}>Ładowanie...</Text>
     </View>
   );
 }

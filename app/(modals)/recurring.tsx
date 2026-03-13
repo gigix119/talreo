@@ -20,9 +20,9 @@ import { formatDate } from '@/utils/date';
 import type { RecurringTransaction } from '@/types/database';
 
 const FREQ_LABELS: Record<string, string> = {
-  daily: 'Daily',
-  weekly: 'Weekly',
-  monthly: 'Monthly',
+  daily: 'Dziennie',
+  weekly: 'Tygodniowo',
+  monthly: 'Miesięcznie',
 };
 
 function RecurringCard({
@@ -189,7 +189,7 @@ export default function RecurringScreen() {
                 <RecurringCard
                   r={r}
                   currency={currency}
-                  categoryName={r.category_id ? (catMap.get(r.category_id) ?? 'Unknown') : 'Uncategorized'}
+                  categoryName={r.category_id ? (catMap.get(r.category_id) ?? t('common.unknownCategory')) : t('common.uncategorized')}
                   onEdit={() =>
                     router.push({
                       pathname: '/(modals)/add-recurring',

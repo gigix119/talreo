@@ -24,7 +24,7 @@ export function useInsights(month: string) {
       const data = await insightsService.getMonthlyInsights(user.id, month);
       setInsights(data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not load insights.');
+      setError(e instanceof Error ? e.message : 'Nie udało się załadować spostrzeżeń.');
       setInsights(null);
     } finally {
       setLoading(false);

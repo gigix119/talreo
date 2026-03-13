@@ -263,7 +263,7 @@ export default function DashboardScreen() {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
                     <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                      {(t.note || t.type).replace(/^\[recurring:[^]+\]\s*/, '')}
+                      {(t.note || (t.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
                       {formatDate(t.transaction_date)}

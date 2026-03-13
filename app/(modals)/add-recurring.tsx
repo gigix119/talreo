@@ -13,12 +13,14 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { theme } from '@/constants/theme';
+import { useI18n } from '@/i18n';
 import type { TransactionType, RecurringFrequency } from '@/types/database';
 
 const FREQUENCIES: RecurringFrequency[] = ['daily', 'weekly', 'monthly'];
 
 export default function AddRecurringScreen() {
   const router = useRouter();
+  const { t } = useI18n();
   const params = useLocalSearchParams<{
     id?: string;
     type?: string;
@@ -135,7 +137,7 @@ export default function AddRecurringScreen() {
             onPress={() => router.back()}
             style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '500' }}
           >
-            Cancel
+            {t('common.cancel')}
           </Text>
         </View>
 
@@ -263,7 +265,7 @@ export default function AddRecurringScreen() {
               fullWidth
               style={{ marginTop: theme.spacing.xl }}
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? t('common.loading') : t('common.save')}
             </Button>
           </ScrollView>
         </KeyboardAvoidingView>

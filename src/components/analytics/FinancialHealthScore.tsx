@@ -17,10 +17,11 @@ interface FinancialHealthScoreProps {
 
 function computeScore(
   trend: MonthlyTrendItem[],
-  categoryPerformance: CategoryPerformanceRow[]
+  categoryPerformance: CategoryPerformanceRow[],
+  t: (key: string) => string
 ): { score: number; trend: 'up' | 'down' | 'flat'; explanation: string } {
   if (trend.length === 0) {
-    return { score: 50, trend: 'flat', explanation: 'Add more data to see your score.' };
+    return { score: 50, trend: 'flat', explanation: t('analytics.healthScoreNoData') };
   }
 
   const curr = trend[trend.length - 1];
@@ -57,16 +58,16 @@ function computeScore(
 
   let explanation = '';
   if (savingsRate >= 20) {
-    explanation = 'Strong savings rate.';
+    explanation = t('analytics.healthScoreStrongSavings');
   } else if (savingsRate >= 10) {
-    explanation = 'Good savings habits.';
+    explanation = t('analytics.healthScoreGoodSavings');
   } else {
-    explanation = 'Focus on increasing savings.';
+    explanation = t('analytics.healthScoreFocusSavings');
   }
   if (categoryPerformance.length > 0) {
     const overBudget = categoryPerformance.filter((r) => r.budget > 0 && r.spent > r.budget).length;
-    if (overBudget > 0) explanation += ` ${overBudget} category/categories over budget.`;
-    else explanation += ' All budgets on track.';
+    if (overBudget > 0) explanation += ` ${t('analytics.healthScoreOverBudget').replace('{{count}}', String(overBudget))}`;
+    else explanation += ` ${t('analytics.healthScoreAllOnTrack')}`;
   }
 
   return { score: clamped, trend: trendDir, explanation };
@@ -78,8 +79,8 @@ export function FinancialHealthScore({
 }: FinancialHealthScoreProps) {
   const { t } = useI18n();
   const { score, trend: trendDir, explanation } = useMemo(
-    () => computeScore(trend, categoryPerformance),
-    [trend, categoryPerformance]
+    () => computeScore(trend, categoryPerformance, t),
+    [trend, categoryPerformance, t]
   );
 
   const color = score >= 70 ? analyticsColors.success : score >= 50 ? analyticsColors.warning : analyticsColors.expense;

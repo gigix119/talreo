@@ -71,7 +71,7 @@ export const budgetsService = {
       const progressPercent = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
       return {
         budget,
-        category_name: categoryMap.get(budget.category_id) ?? 'Unknown',
+        category_name: categoryMap.get(budget.category_id) ?? 'Nieznana',
         budgetAmount,
         spentAmount: spent,
         remaining,

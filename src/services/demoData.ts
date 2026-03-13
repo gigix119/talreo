@@ -48,7 +48,7 @@ export async function createDemoData(userId: string, currency: Currency): Promis
         type: 'income',
         amount: 5000 + m * 200,
         category_id: salary.id,
-        note: 'Salary',
+        note: 'Wynagrodzenie',
         date: `${monthStr}-05`,
       });
     }
@@ -57,26 +57,26 @@ export async function createDemoData(userId: string, currency: Currency): Promis
         type: 'income',
         amount: 800,
         category_id: freelance.id,
-        note: 'Side project',
+        note: 'Projekt dodatkowy',
         date: `${monthStr}-20`,
       });
     }
 
     if (food) {
-      transactions.push({ type: 'expense', amount: 450, category_id: food.id, note: 'Groceries', date: `${monthStr}-01` });
-      transactions.push({ type: 'expense', amount: 320, category_id: food.id, note: 'Groceries', date: `${monthStr}-15` });
-      transactions.push({ type: 'expense', amount: 85, category_id: food.id, note: 'Restaurant', date: `${monthStr}-08` });
+      transactions.push({ type: 'expense', amount: 450, category_id: food.id, note: 'Zakupy spożywcze', date: `${monthStr}-01` });
+      transactions.push({ type: 'expense', amount: 320, category_id: food.id, note: 'Zakupy spożywcze', date: `${monthStr}-15` });
+      transactions.push({ type: 'expense', amount: 85, category_id: food.id, note: 'Restauracja', date: `${monthStr}-08` });
     }
     if (transport) {
-      transactions.push({ type: 'expense', amount: 150, category_id: transport.id, note: 'Fuel', date: `${monthStr}-03` });
+      transactions.push({ type: 'expense', amount: 150, category_id: transport.id, note: 'Paliwo', date: `${monthStr}-03` });
       transactions.push({ type: 'expense', amount: 45, category_id: transport.id, note: 'Parking', date: `${monthStr}-12` });
     }
     if (bills) {
-      transactions.push({ type: 'expense', amount: 320, category_id: bills.id, note: 'Rent', date: `${monthStr}-01` });
-      transactions.push({ type: 'expense', amount: 80, category_id: bills.id, note: 'Utilities', date: `${monthStr}-10` });
+      transactions.push({ type: 'expense', amount: 320, category_id: bills.id, note: 'Czynsz', date: `${monthStr}-01` });
+      transactions.push({ type: 'expense', amount: 80, category_id: bills.id, note: 'Media', date: `${monthStr}-10` });
     }
     if (shopping) {
-      transactions.push({ type: 'expense', amount: 120, category_id: shopping.id, note: 'Clothes', date: `${monthStr}-18` });
+      transactions.push({ type: 'expense', amount: 120, category_id: shopping.id, note: 'Ubrania', date: `${monthStr}-18` });
     }
   }
 
@@ -102,13 +102,13 @@ export async function createDemoData(userId: string, currency: Currency): Promis
   }
 
   await savingsGoalsService.createSavingsGoal(userId, {
-    name: 'Vacation',
+    name: 'Wakacje',
     target_amount: 3000,
     current_amount: 450,
     target_date: addMonths(today, 6).slice(0, 7) + '-01',
   });
   await savingsGoalsService.createSavingsGoal(userId, {
-    name: 'Emergency fund',
+    name: 'Fundusz awaryjny',
     target_amount: 10000,
     current_amount: 1200,
     target_date: null,
@@ -119,7 +119,7 @@ export async function createDemoData(userId: string, currency: Currency): Promis
       type: 'income',
       amount: 5200,
       category_id: salary.id,
-      note: 'Monthly salary',
+      note: 'Wynagrodzenie miesięczne',
       frequency: 'monthly',
       start_date: addMonths(today, -1).slice(0, 7) + '-05',
       end_date: null,
@@ -130,7 +130,7 @@ export async function createDemoData(userId: string, currency: Currency): Promis
       type: 'expense',
       amount: 320,
       category_id: bills.id,
-      note: 'Rent',
+      note: 'Czynsz',
       frequency: 'monthly',
       start_date: addMonths(today, -3).slice(0, 7) + '-01',
       end_date: null,

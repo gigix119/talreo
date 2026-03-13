@@ -156,7 +156,7 @@ export const alertsService = {
         const key = `tx:${t.id}`;
         const has = await this.hasRecentAlert(userId, 'unusual_expense', key);
         if (!has) {
-          const catName = catMap.get(t.category_id) ?? 'Unknown';
+          const catName = catMap.get(t.category_id) ?? 'Nieznana';
           await this.createAlert(userId, {
             type: 'unusual_expense',
             title: `Nietypowy wydatek`,

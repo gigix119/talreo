@@ -51,7 +51,7 @@ export const insightsService = {
     if (byExpenseCat.size > 0) {
       const [cid, amount] = [...byExpenseCat.entries()].sort((a, b) => b[1] - a[1])[0];
       topExpenseCategory = {
-        name: catMap.get(cid ?? '') ?? 'Unknown',
+        name: catMap.get(cid ?? '') ?? 'Nieznana',
         amount,
       };
     }
@@ -65,7 +65,7 @@ export const insightsService = {
     if (byIncomeCat.size > 0) {
       const [cid, amount] = [...byIncomeCat.entries()].sort((a, b) => b[1] - a[1])[0];
       topIncomeCategory = {
-        name: catMap.get(cid ?? '') ?? 'Unknown',
+        name: catMap.get(cid ?? '') ?? 'Nieznana',
         amount,
       };
     }
@@ -104,7 +104,7 @@ export const insightsService = {
       insights.push({
         id: 'top-expense',
         type: 'highlight',
-        text: `${topExpenseCategory.name} was your top expense category this month.`,
+        text: `${topExpenseCategory.name} to Twoja główna kategoria wydatków w tym miesiącu.`,
         value: topExpenseCategory.amount,
       });
     }
@@ -114,14 +114,14 @@ export const insightsService = {
         insights.push({
           id: 'expense-up',
           type: 'warning',
-          text: `You spent ${Math.round(expenseChangeVsPrev)}% more than last month.`,
+          text: `Wydałeś o ${Math.round(expenseChangeVsPrev)}% więcej niż w zeszłym miesiącu.`,
           value: expenseChangeVsPrev,
         });
       } else if (expenseChangeVsPrev < -10) {
         insights.push({
           id: 'expense-down',
           type: 'success',
-          text: `You spent ${Math.round(Math.abs(expenseChangeVsPrev))}% less than last month.`,
+          text: `Wydałeś o ${Math.round(Math.abs(expenseChangeVsPrev))}% mniej niż w zeszłym miesiącu.`,
           value: expenseChangeVsPrev,
         });
       }
@@ -131,44 +131,47 @@ export const insightsService = {
       insights.push({
         id: 'income-up',
         type: 'success',
-        text: `Income up ${Math.round(incomeChangeVsPrev)}% vs last month.`,
+        text: `Przychody wzrosły o ${Math.round(incomeChangeVsPrev)}% względem zeszłego miesiąca.`,
         value: incomeChangeVsPrev,
       });
     }
 
     if (budgetSummary.exceeded > 0) {
+      const word = budgetSummary.exceeded === 1 ? 'budżetu' : 'budżetów';
       insights.push({
         id: 'budget-exceeded',
         type: 'warning',
-        text: `You exceeded ${budgetSummary.exceeded} category budget${budgetSummary.exceeded > 1 ? 's' : ''}.`,
+        text: `Przekroczyłeś ${budgetSummary.exceeded} ${word} kategorii.`,
         value: budgetSummary.exceeded,
       });
     }
 
     if (budgetSummary.warning > 0 && budgetSummary.exceeded === 0) {
+      const word = budgetSummary.warning === 1 ? 'budżet blisko' : 'budżety blisko';
       insights.push({
         id: 'budget-warning',
         type: 'info',
-        text: `${budgetSummary.warning} budget${budgetSummary.warning > 1 ? 's' : ''} near limit.`,
+        text: `${budgetSummary.warning} ${word} limitu.`,
         value: budgetSummary.warning,
       });
     }
 
     if (tx.length > 0) {
+      const word = tx.length === 1 ? 'transakcja' : tx.length < 5 ? 'transakcje' : 'transakcji';
       insights.push({
         id: 'tx-count',
         type: 'info',
-        text: `${tx.length} transaction${tx.length > 1 ? 's' : ''} this month.`,
+        text: `${tx.length} ${word} w tym miesiącu.`,
         value: tx.length,
       });
     }
 
     if (biggestExpense) {
-      const note = biggestExpense.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'expense';
+      const note = biggestExpense.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'wydatek';
       insights.push({
         id: 'biggest-expense',
         type: 'info',
-        text: `Biggest expense: ${note}`,
+        text: `Największy wydatek: ${note}`,
         value: biggestExpense.amount,
       });
     }
@@ -182,13 +185,13 @@ export const insightsService = {
       topIncomeCategory,
       biggestExpenseTransaction: biggestExpense
         ? {
-            note: biggestExpense.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'expense',
+            note: biggestExpense.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'wydatek',
             amount: Number(biggestExpense.amount),
           }
         : null,
       biggestIncomeTransaction: biggestIncome
         ? {
-            note: biggestIncome.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'income',
+            note: biggestIncome.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'przychód',
             amount: Number(biggestIncome.amount),
           }
         : null,

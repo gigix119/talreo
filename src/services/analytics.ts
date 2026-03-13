@@ -53,7 +53,7 @@ export const analyticsService = {
     const byCategory = new Map<string, number>();
     for (const t of filtered) {
       const cid = t.category_id ?? 'unknown';
-      const name = catMap.get(cid) ?? 'Unknown';
+      const name = catMap.get(cid) ?? 'Nieznana';
       const key = cid === 'unknown' ? `__${name}` : cid;
       byCategory.set(key, (byCategory.get(key) ?? 0) + Number(t.amount));
     }
@@ -63,7 +63,7 @@ export const analyticsService = {
     for (const [key, amount] of byCategory.entries()) {
       const category_id = key.startsWith('__') ? null : key;
       const category_name = category_id
-        ? (catMap.get(category_id) ?? 'Unknown')
+        ? (catMap.get(category_id) ?? 'Nieznana')
         : key.replace('__', '');
       items.push({
         category_id,
@@ -185,7 +185,7 @@ export const analyticsService = {
         .reduce((s, t) => s + Number(t.amount), 0);
       return {
         categoryId: b.category_id,
-        categoryName: catMap.get(b.category_id) ?? 'Unknown',
+        categoryName: catMap.get(b.category_id) ?? 'Nieznana',
         spentAmount: spent,
         limitAmount: Number(b.amount),
       };

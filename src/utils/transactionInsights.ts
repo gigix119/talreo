@@ -29,7 +29,7 @@ export function getTransactionInsight(ctx: InsightContext): TransactionInsight {
     const percent = Math.round((amount / ctx.totalExpensesThisWeek) * 100);
     return {
       primaryText: formatAmountForInsight(amount, currency),
-      secondaryText: percent > 0 ? `${percent}% of spending this week` : undefined,
+      secondaryText: percent > 0 ? `${percent}% wydatków w tym tygodniu` : undefined,
     };
   }
 
@@ -42,10 +42,10 @@ export function getTransactionInsight(ctx: InsightContext): TransactionInsight {
     const change = ctx.totalExpensesThisMonth - ctx.totalExpensesLastMonth;
     const changePercent = Math.round((change / ctx.totalExpensesLastMonth) * 100);
     if (Math.abs(changePercent) >= 5) {
-      const dir = changePercent > 0 ? 'increased' : 'decreased';
+      const dir = changePercent > 0 ? 'wzrosły' : 'spadły';
       return {
         primaryText: formatAmountForInsight(amount, currency),
-        secondaryText: `Spending ${dir} ${Math.abs(changePercent)}% vs last month`,
+        secondaryText: `Wydatki ${dir} o ${Math.abs(changePercent)}% vs zeszły miesiąc`,
       };
     }
   }
@@ -56,7 +56,7 @@ export function getTransactionInsight(ctx: InsightContext): TransactionInsight {
       ctx.totalExpensesThisMonth != null &&
       ctx.totalExpensesThisMonth > 0 &&
       isExpense
-        ? `${Math.round((amount / ctx.totalExpensesThisMonth) * 100)}% of expenses this month`
+        ? `${Math.round((amount / ctx.totalExpensesThisMonth) * 100)}% wydatków w tym miesiącu`
         : undefined,
   };
 }
