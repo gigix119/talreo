@@ -9,12 +9,12 @@ export function TransactionsHeader() {
   const { t } = useI18n();
 
   return (
-    <View style={{ marginBottom: theme.spacing.md }}>
-      <Text style={{ fontSize: 28, fontWeight: '700', color: theme.colors.text.primary, letterSpacing: -0.5 }}>
+    <View style={{ marginBottom: theme.spacing.xs, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Text
+        style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary, letterSpacing: -0.3 }}
+        numberOfLines={1}
+      >
         {t('transactions.title')}
-      </Text>
-      <Text style={{ fontSize: 15, color: theme.colors.text.secondary, marginTop: 4 }}>
-        {t('transactions.subtitle')}
       </Text>
     </View>
   );

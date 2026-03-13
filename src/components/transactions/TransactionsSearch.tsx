@@ -17,15 +17,12 @@ export function TransactionsSearch({ value, onChangeText }: TransactionsSearchPr
     <View
       style={{
         backgroundColor: theme.colors.surface,
-        borderRadius: theme.radius.lg,
-        paddingHorizontal: theme.spacing.lg,
-        paddingVertical: theme.spacing.sm + 4,
-        marginBottom: theme.spacing.md,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
-        shadowRadius: 4,
-        elevation: 2,
+        borderRadius: theme.radius.md,
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        marginBottom: theme.spacing.sm,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
       }}
     >
       <TextInput
@@ -33,11 +30,7 @@ export function TransactionsSearch({ value, onChangeText }: TransactionsSearchPr
         onChangeText={onChangeText}
         placeholder={t('transactions.searchPlaceholder')}
         placeholderTextColor={theme.colors.text.tertiary}
-        style={{
-          fontSize: 16,
-          color: theme.colors.text.primary,
-          padding: 0,
-        }}
+        style={{ fontSize: 15, color: theme.colors.text.primary, padding: 0 }}
       />
     </View>
   );

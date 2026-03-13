@@ -4,7 +4,7 @@
  */
 import { useCallback, useState, useMemo } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useI18n } from '@/i18n';
 import { useTransactionsList } from '@/hooks/useTransactionsList';
 import {
@@ -139,12 +139,13 @@ export default function TransactionsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {/* Sticky: header + search + filters */}
+      {/* Sticky: header + search + filters — flexShrink: 0 so list gets remaining space */}
       <View
         style={{
-          paddingTop: 48,
+          flexShrink: 0,
+          paddingTop: 16,
           paddingHorizontal: theme.spacing.lg,
-          paddingBottom: theme.spacing.md,
+          paddingBottom: theme.spacing.xs,
           backgroundColor: theme.colors.background,
         }}
       >
@@ -169,53 +170,50 @@ export default function TransactionsScreen() {
         />
       </View>
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: theme.spacing.lg,
-          paddingBottom: 100,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {error ? (
-          <Text style={{ color: theme.colors.error, marginBottom: theme.spacing.md }}>{error}</Text>
-        ) : null}
+      {error ? (
+        <View style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.sm }}>
+          <Text style={{ color: theme.colors.error }}>{error}</Text>
+        </View>
+      ) : null}
 
-        {loading ? (
-          <View style={{ padding: theme.spacing.xl, alignItems: 'center' }}>
-            <Text style={{ color: theme.colors.text.secondary }}>Loading...</Text>
-          </View>
-        ) : transactions.length === 0 ? (
-          search.trim() ? (
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: 'center', padding: theme.spacing.xl, alignItems: 'center' }}>
+          <Text style={{ color: theme.colors.text.secondary }}>{t('common.loading')}</Text>
+        </View>
+      ) : transactions.length === 0 ? (
+        <View style={{ flex: 1 }}>
+          {search.trim() ? (
             <EmptySearchState onAddPress={() => router.push('/(modals)/add-transaction')} />
           ) : (
             <EmptyTransactionsState onAddPress={() => router.push('/(modals)/add-transaction')} />
-          )
-        ) : (
-          <>
-            <TransactionSummaryCard
-              income={summary.income}
-              expense={summary.expense}
-              currency={currency}
-              periodLabel={t(periodLabel)}
-            />
-            <TransactionList
-              transactions={transactions}
-              currency={currency}
-              recurringNoteSet={recurringNoteSet}
-              onTransactionPress={(tx) => {
-                if (multiSelect.isSelectionMode) return;
-                setSelectedTx(tx);
-                setDetailVisible(true);
-              }}
-              isSelectionMode={multiSelect.isSelectionMode}
-              selectedIds={selectedIdsSet}
-              onToggleSelect={multiSelect.toggleSelect}
-              onLongPress={handleLongPress}
-            />
-          </>
-        )}
-      </ScrollView>
+          )}
+        </View>
+      ) : (
+        <View style={{ flex: 1, minHeight: 0 }}>
+          <TransactionList
+            transactions={transactions}
+            currency={currency}
+            recurringNoteSet={recurringNoteSet}
+            onTransactionPress={(tx) => {
+              if (multiSelect.isSelectionMode) return;
+              setSelectedTx(tx);
+              setDetailVisible(true);
+            }}
+            isSelectionMode={multiSelect.isSelectionMode}
+            selectedIds={selectedIdsSet}
+            onToggleSelect={multiSelect.toggleSelect}
+            onLongPress={handleLongPress}
+            ListHeaderComponent={
+              <TransactionSummaryCard
+                income={summary.income}
+                expense={summary.expense}
+                currency={currency}
+                periodLabel={t(periodLabel)}
+              />
+            }
+          />
+        </View>
+      )}
 
       <Pressable
         onPress={() => router.push('/(modals)/add-transaction')}

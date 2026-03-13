@@ -71,7 +71,7 @@ function GoalCard({
     <Card key={g.id} padding="md" elevated>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
             {g.name}
           </Text>
           <Text style={{ fontSize: 13, color: theme.colors.text.secondary, marginTop: 4 }}>

@@ -1,7 +1,7 @@
 /**
- * Profile screen — email, full name, currency, recurring, settings, sign out.
+ * Profile screen — compact profile summary, recurring, export, settings, sign out.
  */
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -14,7 +14,7 @@ import { theme } from '@/constants/theme';
 function LabelValue({ label, value }: { label: string; value: string | null | undefined }) {
   if (value == null || value === '') return null;
   return (
-    <View style={{ marginBottom: theme.spacing.lg }}>
+    <View style={{ marginBottom: theme.spacing.sm }}>
       <Text style={{ fontSize: 12, fontWeight: '500', color: theme.colors.text.tertiary, marginBottom: 4 }}>
         {label}
       </Text>
@@ -46,57 +46,47 @@ export default function ProfileScreen() {
 
   return (
     <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: 48, paddingHorizontal: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: theme.spacing.xxl }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
           {t('profile.title')}
         </Text>
-        <Card padding="lg" elevated style={{ marginTop: theme.spacing.lg }}>
+        <Card padding="md" elevated style={{ marginTop: theme.spacing.md }}>
           <LabelValue label={t('profile.email')} value={user?.email} />
           <LabelValue label={t('profile.name')} value={profile?.full_name ?? undefined} />
           <LabelValue label={t('profile.currency')} value={profile?.currency} />
         </Card>
-        <Text
-          onPress={() => router.push('/(modals)/recurring')}
-          style={{
-            fontSize: 16,
-            color: theme.colors.primary,
-            fontWeight: '500',
-            marginTop: theme.spacing.lg,
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('profile.recurringTransactions')} →
-        </Text>
-        <Text
-          onPress={() => router.push('/(modals)/settings')}
-          style={{
-            fontSize: 16,
-            color: theme.colors.primary,
-            fontWeight: '500',
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('profile.settings')} →
-        </Text>
-        <Text
-          onPress={() => router.push('/(modals)/export')}
-          style={{
-            fontSize: 16,
-            color: theme.colors.primary,
-            fontWeight: '500',
-            marginBottom: theme.spacing.sm,
-          }}
-        >
-          {t('profile.export')} →
-        </Text>
+        <View style={{ marginTop: theme.spacing.md, gap: theme.spacing.xs }}>
+          <Text
+            onPress={() => router.push('/(modals)/recurring')}
+            style={{ fontSize: 15, color: theme.colors.primary, fontWeight: '500' }}
+          >
+            {t('profile.recurringTransactions')} →
+          </Text>
+          <Text
+            onPress={() => router.push('/(modals)/settings')}
+            style={{ fontSize: 15, color: theme.colors.primary, fontWeight: '500' }}
+          >
+            {t('profile.settings')} →
+          </Text>
+          <Text
+            onPress={() => router.push('/(modals)/export')}
+            style={{ fontSize: 15, color: theme.colors.primary, fontWeight: '500' }}
+          >
+            {t('profile.export')} →
+          </Text>
+        </View>
         <Button
           variant="secondary"
           onPress={handleSignOut}
-          style={{ marginTop: theme.spacing.xl, alignSelf: 'flex-start' }}
+          style={{ marginTop: theme.spacing.lg, alignSelf: 'flex-start' }}
         >
           {t('auth.signOut')}
         </Button>
-      </View>
+      </ScrollView>
     </ScreenContainer>
   );
 }

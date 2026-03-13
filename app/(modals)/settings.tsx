@@ -72,9 +72,9 @@ export default function SettingsScreen() {
 
   return (
     <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: 48, paddingHorizontal: 20 }}>
+      <View style={{ flex: 1, paddingTop: 16 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('settings.title')}
           </Text>
           <Text
@@ -86,7 +86,7 @@ export default function SettingsScreen() {
         </View>
 
         <ScrollView
-          style={{ marginTop: theme.spacing.xl }}
+          style={{ marginTop: theme.spacing.md }}
           contentContainerStyle={{ paddingBottom: theme.spacing.xxl }}
           showsVerticalScrollIndicator={false}
         >

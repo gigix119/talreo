@@ -1,13 +1,13 @@
 /**
- * TransactionList — grouped by date with swipeable cards.
+ * TransactionList — grouped by date, virtualized SectionList for performance.
  */
-import { memo, useMemo } from 'react';
-import { View } from 'react-native';
+import { memo, useMemo, useCallback } from 'react';
+import { SectionList, View, Text } from 'react-native';
 import { useI18n } from '@/i18n';
 import { TransactionRow } from './TransactionRow';
-import { TransactionSection } from './TransactionSection';
 import { normalizeNote } from '@/utils/recurringDetector';
 import { isSubscription } from '@/utils/categorySuggestion';
+import { theme } from '@/constants/theme';
 import type { Transaction } from '@/types/database';
 import type { Currency } from '@/types/database';
 
@@ -51,6 +51,12 @@ function groupByDate(txs: TransactionWithCategory[]): Map<DateGroupKey, Transact
   return result;
 }
 
+export interface TransactionListSection {
+  key: DateGroupKey;
+  title: string;
+  data: TransactionWithCategory[];
+}
+
 interface TransactionListProps {
   transactions: TransactionWithCategory[];
   currency: Currency;
@@ -60,6 +66,8 @@ interface TransactionListProps {
   selectedIds?: Set<string> | string[];
   onToggleSelect?: (id: string) => void;
   onLongPress?: (tx: Transaction) => void;
+  /** Rendered at top of list (e.g. summary card). */
+  ListHeaderComponent?: React.ReactElement | null;
 }
 
 const GROUP_LABELS: Record<DateGroupKey, string> = {
@@ -78,32 +86,84 @@ export const TransactionList = memo(function TransactionList({
   selectedIds = [],
   onToggleSelect,
   onLongPress,
+  ListHeaderComponent,
 }: TransactionListProps) {
   const { t } = useI18n();
   const selectedSet = selectedIds instanceof Set ? selectedIds : new Set(selectedIds as string[]);
   const groups = useMemo(() => groupByDate(transactions), [transactions]);
+  const sections = useMemo<TransactionListSection[]>(
+    () =>
+      Array.from(groups.entries()).map(([key, list]) => ({
+        key,
+        title: t(GROUP_LABELS[key]),
+        data: list,
+      })),
+    [groups, t]
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: TransactionWithCategory }) => (
+      <TransactionRow
+        transaction={item}
+        categoryName={item.categoryName}
+        currency={currency}
+        onPress={() => onTransactionPress(item)}
+        onLongPress={onLongPress ? () => onLongPress(item) : undefined}
+        isRecurring={recurringNoteSet.has(normalizeNote(item.note))}
+        isSubscription={isSubscription(item.note ?? '')}
+        isSelectionMode={isSelectionMode}
+        isSelected={selectedSet.has(item.id)}
+        onToggleSelect={onToggleSelect ? () => onToggleSelect(item.id) : undefined}
+      />
+    ),
+    [
+      currency,
+      onTransactionPress,
+      onLongPress,
+      recurringNoteSet,
+      isSelectionMode,
+      selectedSet,
+      onToggleSelect,
+    ]
+  );
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: TransactionListSection }) => (
+      <View style={{ marginTop: section.key === 'today' ? 0 : theme.spacing.md, marginBottom: theme.spacing.xs }}>
+        <Text
+          style={{
+            fontSize: 11,
+            fontWeight: '600',
+            color: theme.colors.text.tertiary,
+            marginHorizontal: 0,
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+          }}
+        >
+          {section.title}
+        </Text>
+      </View>
+    ),
+    []
+  );
+
+  const keyExtractor = useCallback((item: TransactionWithCategory) => item.id, []);
 
   return (
-    <View style={{ gap: 0 }}>
-      {Array.from(groups.entries()).map(([key, list]) => (
-        <TransactionSection key={key} title={t(GROUP_LABELS[key])}>
-          {list.map((item) => (
-            <TransactionRow
-              key={item.id}
-              transaction={item}
-              categoryName={item.categoryName}
-              currency={currency}
-              onPress={() => onTransactionPress(item)}
-              onLongPress={onLongPress ? () => onLongPress(item) : undefined}
-              isRecurring={recurringNoteSet.has(normalizeNote(item.note))}
-              isSubscription={isSubscription(item.note ?? '')}
-              isSelectionMode={isSelectionMode}
-              isSelected={selectedSet.has(item.id)}
-              onToggleSelect={onToggleSelect ? () => onToggleSelect(item.id) : undefined}
-            />
-          ))}
-        </TransactionSection>
-      ))}
-    </View>
+    <SectionList
+      sections={sections}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      renderSectionHeader={renderSectionHeader}
+      ListHeaderComponent={ListHeaderComponent}
+      stickySectionHeadersEnabled={true}
+      style={{ flex: 1, minHeight: 0 }}
+      contentContainerStyle={{ paddingHorizontal: theme.spacing.lg, paddingBottom: 100 }}
+      showsVerticalScrollIndicator={false}
+      removeClippedSubviews={true}
+      initialNumToRender={12}
+      maxToRenderPerBatch={10}
+      windowSize={6}
+    />
   );
 });

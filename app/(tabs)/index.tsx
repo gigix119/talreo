@@ -3,7 +3,7 @@
  */
 import { useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -37,7 +37,7 @@ function SummaryCard({
   return (
     <View style={{ flex: 1, minWidth: 100 }}>
       <Text style={{ fontSize: 12, color: theme.colors.text.secondary }}>{label}</Text>
-      <Text style={{ fontSize: 18, fontWeight: '700', color, marginTop: 4 }}>{amount}</Text>
+      <Text style={{ fontSize: 22, fontWeight: '700', color, marginTop: 4 }}>{amount}</Text>
     </View>
   );
 }
@@ -92,7 +92,11 @@ export default function DashboardScreen() {
 
   return (
     <ScreenContainer>
-      <View style={{ flex: 1, paddingTop: 48, paddingHorizontal: 20 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: theme.spacing.xxl }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
             {t('dashboard.title')}
@@ -136,7 +140,8 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <Card padding="lg" elevated style={{ marginTop: theme.spacing.lg }}>
+        {/* Top money cards: Przychody, Wydatki, Saldo */}
+        <Card padding="md" elevated style={{ marginTop: theme.spacing.md }}>
           <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
             {t('dashboard.thisMonth')}
           </Text>
@@ -155,8 +160,9 @@ export default function DashboardScreen() {
           </View>
         </Card>
 
+        {/* Budget progress */}
         {budgetProgress.progress.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.xl }}>
+          <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.budgetOverview')}
@@ -227,96 +233,59 @@ export default function DashboardScreen() {
           </View>
         ) : null}
 
-        {goals.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.xl }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
-                {t('dashboard.goalsPreview')}
-              </Text>
-              <Text
-                onPress={() => router.push('/(tabs)/goals')}
-                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-              >
-                {t('dashboard.seeAll')}
-              </Text>
-            </View>
-            {[...goals]
-              .filter((g) => g.status !== 'completed')
-              .sort((a, b) => (a.target_date ?? '9999').localeCompare(b.target_date ?? '9999'))
-              .slice(0, 3)
-              .map((g) => (
-                <Card key={g.id} padding="md" elevated style={{ marginTop: theme.spacing.sm }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                        {g.name}
-                      </Text>
-                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
-                        {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)}
-                        {' · '}{g.progressPercent.toFixed(0)}%
-                      </Text>
-                      <View
-                        style={{
-                          height: 4,
-                          backgroundColor: theme.colors.border,
-                          borderRadius: 2,
-                          marginTop: 6,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: `${Math.min(g.progressPercent, 100)}%`,
-                            height: '100%',
-                            backgroundColor: theme.colors.primary,
-                            borderRadius: 2,
-                          }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </Card>
-              ))}
-          </View>
-        ) : null}
+        {/* Recent transactions */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: theme.spacing.lg }}>
+          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+            {t('dashboard.recentTransactions')}
+          </Text>
+          <Text
+            onPress={() => router.push('/(tabs)/transactions')}
+            style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
+          >
+            {t('dashboard.seeAll')}
+          </Text>
+        </View>
 
-        {alerts.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.xl }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
-                {t('dashboard.alertsPreview')}
-              </Text>
-              <Text
-                onPress={() => router.push('/(modals)/alerts')}
-                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-              >
-                {t('dashboard.viewAllAlerts')}
-              </Text>
-            </View>
-            {alerts.slice(0, 3).map((a) => (
-              <Card
-                key={a.id}
-                padding="md"
-                elevated
-                style={{
-                  marginTop: theme.spacing.sm,
-                  borderLeftWidth: a.is_read ? 0 : 4,
-                  borderLeftColor: theme.colors.primary,
-                }}
-              >
-                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
-                  {a.title}
-                </Text>
-                <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 4 }}>
-                  {a.message}
-                </Text>
+        {recent.transactions.length === 0 ? (
+          <View style={{ marginTop: theme.spacing.md }}>
+            <EmptyState
+              title={t('dashboard.noTransactions')}
+              actionLabel={t('dashboard.addFirstTransaction')}
+              onAction={() => router.push('/(modals)/add-transaction')}
+              variant="compact"
+            />
+          </View>
+        ) : (
+          <View style={{ marginTop: theme.spacing.md, gap: theme.spacing.sm }}>
+            {recent.transactions.map((t) => (
+              <Card key={t.id} padding="md" elevated>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+                      {(t.note || t.type).replace(/^\[recurring:[^]+\]\s*/, '')}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
+                      {formatDate(t.transaction_date)}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: t.type === 'income' ? theme.colors.income : theme.colors.expense,
+                    }}
+                  >
+                    {t.type === 'income' ? '+' : '−'} {formatAmount(Number(t.amount), currency)}
+                  </Text>
+                </View>
               </Card>
             ))}
           </View>
-        ) : null}
+        )}
 
+        {/* AI insight card */}
         {insights.insights && insights.insights.insights.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.xl }}>
+          <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.insights')}
@@ -374,55 +343,95 @@ export default function DashboardScreen() {
           </View>
         ) : null}
 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: theme.spacing.xl }}>
-          <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
-            {t('dashboard.recentTransactions')}
-          </Text>
-          <Text
-            onPress={() => router.push('/(tabs)/transactions')}
-            style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-          >
-            {t('dashboard.seeAll')}
-          </Text>
-        </View>
-
-        {recent.transactions.length === 0 ? (
-          <View style={{ marginTop: theme.spacing.md }}>
-            <EmptyState
-              title={t('dashboard.noTransactions')}
-              actionLabel={t('dashboard.addFirstTransaction')}
-              onAction={() => router.push('/(modals)/add-transaction')}
-              variant="compact"
-            />
-          </View>
-        ) : (
-          <View style={{ marginTop: theme.spacing.md, gap: theme.spacing.sm }}>
-            {recent.transactions.map((t) => (
-              <Card key={t.id} padding="md" elevated>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                      {(t.note || t.type).replace(/^\[recurring:[^]+\]\s*/, '')}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
-                      {formatDate(t.transaction_date)}
-                    </Text>
+        {/* Goals & alerts previews remain below main content */}
+        {goals.length > 0 ? (
+          <View style={{ marginTop: theme.spacing.lg }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+                {t('dashboard.goalsPreview')}
+              </Text>
+              <Text
+                onPress={() => router.push('/(tabs)/goals')}
+                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
+              >
+                {t('dashboard.seeAll')}
+              </Text>
+            </View>
+            {[...goals]
+              .filter((g) => g.status !== 'completed')
+              .sort((a, b) => (a.target_date ?? '9999').localeCompare(b.target_date ?? '9999'))
+              .slice(0, 3)
+              .map((g) => (
+                <Card key={g.id} padding="md" elevated style={{ marginTop: theme.spacing.sm }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+                        {g.name}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
+                        {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)}
+                        {' · '}{g.progressPercent.toFixed(0)}%
+                      </Text>
+                      <View
+                        style={{
+                          height: 4,
+                          backgroundColor: theme.colors.border,
+                          borderRadius: 2,
+                          marginTop: 6,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: `${Math.min(g.progressPercent, 100)}%`,
+                            height: '100%',
+                            backgroundColor: theme.colors.primary,
+                            borderRadius: 2,
+                          }}
+                        />
+                      </View>
+                    </View>
                   </View>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: '600',
-                      color: t.type === 'income' ? theme.colors.income : theme.colors.expense,
-                    }}
-                  >
-                    {t.type === 'income' ? '+' : '−'} {formatAmount(Number(t.amount), currency)}
-                  </Text>
-                </View>
+                </Card>
+              ))}
+          </View>
+        ) : null}
+
+        {alerts.length > 0 ? (
+          <View style={{ marginTop: theme.spacing.lg, marginBottom: theme.spacing.lg }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary }}>
+                {t('dashboard.alertsPreview')}
+              </Text>
+              <Text
+                onPress={() => router.push('/(modals)/alerts')}
+                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
+              >
+                {t('dashboard.viewAllAlerts')}
+              </Text>
+            </View>
+            {alerts.slice(0, 3).map((a) => (
+              <Card
+                key={a.id}
+                padding="md"
+                elevated
+                style={{
+                  marginTop: theme.spacing.sm,
+                  borderLeftWidth: a.is_read ? 0 : 4,
+                  borderLeftColor: theme.colors.primary,
+                }}
+              >
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
+                  {a.title}
+                </Text>
+                <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 4 }}>
+                  {a.message}
+                </Text>
               </Card>
             ))}
           </View>
-        )}
-      </View>
+        ) : null}
+      </ScrollView>
     </ScreenContainer>
   );
 }

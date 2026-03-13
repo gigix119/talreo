@@ -5,7 +5,7 @@
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard, fetchCategoryDetails } from '@/hooks/useAnalyticsDashboard';
@@ -152,7 +152,7 @@ export default function AnalyticsScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{
           padding: theme.spacing.lg,
-          paddingTop: 48,
+          paddingTop: 32,
           paddingBottom: theme.spacing.xxl,
           backgroundColor: theme.colors.background,
         }}
@@ -165,6 +165,49 @@ export default function AnalyticsScreen() {
           onMonthChange={setMonth}
           onRangeChange={setMonthCount}
         />
+
+        {/* Time range switch: 1M / 3M / 6M / 12M */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: theme.spacing.md,
+            marginBottom: theme.spacing.sm,
+            gap: theme.spacing.sm,
+          }}
+        >
+          {[
+            { label: '1M', value: 1 },
+            { label: '3M', value: 3 },
+            { label: '6M', value: 6 },
+            { label: '12M', value: 12 },
+          ].map((opt) => {
+            const active = monthCount === opt.value;
+            return (
+              <Pressable
+                key={opt.value}
+                onPress={() => setMonthCount(opt.value)}
+                style={({ pressed }) => ({
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.xs,
+                  borderRadius: theme.radius.full,
+                  backgroundColor: active ? theme.colors.primary : theme.colors.backgroundElevated,
+                  opacity: pressed ? 0.9 : 1,
+                })}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    color: active ? '#FFFFFF' : theme.colors.text.secondary,
+                  }}
+                >
+                  {opt.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
         <CategoryFilterChips
           expenseCategories={rawExpenseBreakdown}
@@ -189,17 +232,7 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* 1. Financial Health Score */}
-            <FinancialHealthScore
-              trend={trend}
-              categoryPerformance={categoryPerformance}
-              currency={currency}
-            />
-
-            {/* 2. AI Financial Copilot */}
-            <AIInsightWidget insights={insights} />
-
-            {/* 3. Cashflow Chart */}
+            {/* Large cashflow chart */}
             <ChartSection
               trend={trend}
               currency={currency}
@@ -207,7 +240,7 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noData')}
             />
 
-            {/* 4. Spending Categories */}
+            {/* Categories list with percentages */}
             <SpendingCategoriesWidget
               expenseData={expenseBreakdown}
               categoryPerformance={categoryPerformance}
@@ -216,7 +249,16 @@ export default function AnalyticsScreen() {
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* 5. Budget Status */}
+            {/* Financial health & AI insights below core analytics */}
+            <FinancialHealthScore
+              trend={trend}
+              categoryPerformance={categoryPerformance}
+              currency={currency}
+            />
+
+            <AIInsightWidget insights={insights} />
+
+            {/* Budget status, momentum, largest transactions, comparisons */}
             <BudgetStatusWidget
               data={categoryPerformance}
               currency={currency}
@@ -224,29 +266,27 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noBudgets')}
             />
 
-            {/* 6. Spending Momentum */}
             <SavingsMomentumWidget
               velocity={velocity}
               currency={currency}
               emptyText={t('analytics.noExpenses')}
             />
 
-            {/* 7. Largest Transactions */}
             {largestExpenses.length > 0 && (
               <LargestExpensesList
-                  items={largestExpenses}
-                  currency={currency}
-                  emptyText={t('analytics.noExpenses')}
-                />
+                items={largestExpenses}
+                currency={currency}
+                emptyText={t('analytics.noExpenses')}
+              />
             )}
 
             {rangeComparison && (
               <RangeComparisonCard
-                  data={rangeComparison}
-                  currency={currency}
-                  rangeALabel={rangeALabel}
-                  rangeBLabel={rangeBLabel}
-                />
+                data={rangeComparison}
+                currency={currency}
+                rangeALabel={rangeALabel}
+                rangeBLabel={rangeBLabel}
+              />
             )}
           </View>
         )}

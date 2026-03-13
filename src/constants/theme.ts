@@ -1,25 +1,47 @@
 /**
  * Theme — design tokens for premium fintech UI.
- * Bright, clean, minimal. No dark hacker aesthetic.
+ * Light theme (default). Dark theme available via getTheme.
  */
-export const theme = {
-  colors: {
-    primary: '#0A84FF',
-    primaryHover: '#0071E3',
-    background: '#F2F2F7',
-    surface: '#FFFFFF',
-    text: {
-      primary: '#1C1C1E',
-      secondary: '#8E8E93',
-      tertiary: '#C7C7CC',
-    },
-    income: '#34C759',
-    expense: '#FF3B30',
-    success: '#34C759',
-    warning: '#FF9500',
-    error: '#FF3B30',
-    border: '#E5E5EA',
+export const lightColors = {
+  primary: '#0A84FF',
+  primaryHover: '#0071E3',
+  background: '#F2F2F7',
+  surface: '#FFFFFF',
+  backgroundElevated: '#E8E8ED',
+  text: {
+    primary: '#1C1C1E',
+    secondary: '#8E8E93',
+    tertiary: '#C7C7CC',
   },
+  income: '#34C759',
+  expense: '#FF3B30',
+  success: '#34C759',
+  warning: '#FF9500',
+  error: '#FF3B30',
+  border: '#E5E5EA',
+} as const;
+
+export const darkColors = {
+  primary: '#0A84FF',
+  primaryHover: '#409CFF',
+  background: '#000000',
+  surface: '#1C1C1E',
+  backgroundElevated: '#2C2C2E',
+  text: {
+    primary: '#FFFFFF',
+    secondary: '#EBEBF5',
+    tertiary: '#8E8E93',
+  },
+  income: '#30D158',
+  expense: '#FF453A',
+  success: '#30D158',
+  warning: '#FF9F0A',
+  error: '#FF453A',
+  border: '#38383A',
+} as const;
+
+export const theme = {
+  colors: lightColors,
   spacing: {
     xs: 4,
     sm: 8,

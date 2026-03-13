@@ -95,43 +95,37 @@ function BudgetCard({
   const { t } = useI18n();
   return (
     <Card key={p.budget.id} padding="md" elevated>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
             {p.category_name}
           </Text>
-          <View style={{ flexDirection: 'row', gap: theme.spacing.sm, marginTop: 8, flexWrap: 'wrap' }}>
+          <View style={{ marginTop: 4 }}>
             <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
-              {t('budgets.limit')}: {formatAmount(p.budgetAmount, currency)}
-            </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>
-              {t('budgets.spent')}: {formatAmount(p.spentAmount, currency)}
-            </Text>
-            <Text style={{ fontSize: 13, color: p.remaining >= 0 ? theme.colors.success : theme.colors.error }}>
-              {t('budgets.remaining')}: {formatAmount(p.remaining, currency)}
+              {formatAmount(p.spentAmount, currency)} / {formatAmount(p.budgetAmount, currency)}
             </Text>
           </View>
-          <View style={{ marginTop: theme.spacing.sm }}>
+          <View style={{ marginTop: 4 }}>
             <ProgressBar percent={p.progressPercent} status={p.status} />
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-              {p.progressPercent.toFixed(1)}%
-            </Text>
-            <StatusBadge status={p.status} />
-          </View>
+          <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 4 }}>
+            {p.progressPercent.toFixed(1)}%
+          </Text>
         </View>
-        <View style={{ flexDirection: 'row', gap: theme.spacing.xs }}>
-          <Button variant="ghost" onPress={onEdit} style={{ paddingHorizontal: 8 }}>
-            Edytuj
-          </Button>
-          <Pressable
-            onPress={onDelete}
-            hitSlop={8}
-            style={{ padding: 8, justifyContent: 'center' }}
-          >
-            <Text style={{ fontSize: 18, color: theme.colors.error }}>×</Text>
-          </Pressable>
+        <View style={{ alignItems: 'flex-end', gap: theme.spacing.xs, marginLeft: theme.spacing.sm }}>
+          <StatusBadge status={p.status} />
+          <View style={{ flexDirection: 'row', gap: theme.spacing.xs }}>
+            <Button variant="ghost" onPress={onEdit} style={{ paddingHorizontal: 8 }}>
+              {t('budgets.edit')}
+            </Button>
+            <Pressable
+              onPress={onDelete}
+              hitSlop={8}
+              style={{ padding: 8, justifyContent: 'center' }}
+            >
+              <Text style={{ fontSize: 18, color: theme.colors.error }}>×</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Card>

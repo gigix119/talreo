@@ -21,7 +21,7 @@ export const TransactionAmount = memo(function TransactionAmount({
   return (
     <Text
       style={{
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '700',
         color: isIncome ? theme.colors.income : theme.colors.expense,
       }}

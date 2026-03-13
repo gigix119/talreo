@@ -17,8 +17,12 @@ interface TransactionRowProps {
   categoryName: string;
   currency: Currency;
   onPress: () => void;
+  onLongPress?: (tx: Transaction) => void;
   isRecurring?: boolean;
   isSubscription?: boolean;
+  isSelectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
 export const TransactionRow = memo(function TransactionRow({
@@ -50,19 +54,12 @@ export const TransactionRow = memo(function TransactionRow({
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: theme.spacing.lg,
-        paddingHorizontal: theme.spacing.lg,
+        paddingVertical: theme.spacing.xs + 2,
+        paddingHorizontal: theme.spacing.sm,
         backgroundColor: theme.colors.surface,
-        marginHorizontal: theme.spacing.lg,
-        marginBottom: 8,
-        borderRadius: theme.radius.lg,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 6,
-        elevation: 3,
+        marginBottom: 4,
+        borderRadius: theme.radius.md,
         opacity: pressed ? 0.95 : 1,
-        transform: [{ scale: pressed ? 0.98 : 1 }],
         borderWidth: isSelected ? 2 : 0,
         borderColor: isSelected ? theme.colors.primary : 'transparent',
       })}
@@ -83,13 +80,13 @@ export const TransactionRow = memo(function TransactionRow({
       <TransactionIcon
         categoryName={categoryName}
         type={transaction.type}
-        size={40}
+        size={32}
       />
-      <View style={{ flex: 1, minWidth: 0, marginLeft: theme.spacing.md }}>
+      <View style={{ flex: 1, minWidth: 0, marginLeft: theme.spacing.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Text
             style={{
-              fontSize: 17,
+              fontSize: 15,
               fontWeight: '600',
               color: theme.colors.text.primary,
             }}
@@ -113,7 +110,7 @@ export const TransactionRow = memo(function TransactionRow({
           date={transaction.transaction_date}
         />
       </View>
-      <View style={{ marginLeft: theme.spacing.md }}>
+      <View style={{ marginLeft: theme.spacing.sm }}>
         <TransactionAmount
           amount={amount}
           isIncome={isIncome}

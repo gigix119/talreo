@@ -43,38 +43,31 @@ export function TransactionsFilters({
   ];
 
   return (
-    <View style={{ marginBottom: theme.spacing.lg }}>
-      {/* Segmented control: All | Expenses | Income */}
-      <View
-        style={{
-          flexDirection: 'row',
-          backgroundColor: theme.colors.background,
-          borderRadius: theme.radius.md,
-          padding: 4,
-          marginBottom: theme.spacing.md,
+    <View style={{ marginBottom: theme.spacing.sm }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingRight: theme.spacing.lg,
+          gap: theme.spacing.sm,
         }}
       >
+        {/* Type chips */}
         {typeOptions.map((opt) => (
           <Pressable
             key={opt.value}
             onPress={() => onTypeChange(opt.value)}
             style={({ pressed }) => ({
-              flex: 1,
-              paddingVertical: theme.spacing.sm + 2,
-              borderRadius: theme.radius.sm,
-              backgroundColor: typeFilter === opt.value ? theme.colors.surface : 'transparent',
-              alignItems: 'center',
+              paddingHorizontal: theme.spacing.sm + 4,
+              paddingVertical: theme.spacing.xs + 2,
+              borderRadius: theme.radius.full,
+              backgroundColor: typeFilter === opt.value ? theme.colors.surface : theme.colors.backgroundElevated,
               opacity: pressed ? 0.9 : 1,
-              shadowColor: typeFilter === opt.value ? '#000' : 'transparent',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.04,
-              shadowRadius: 2,
-              elevation: typeFilter === opt.value ? 2 : 0,
             })}
           >
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: '600',
                 color: typeFilter === opt.value ? theme.colors.text.primary : theme.colors.text.secondary,
               }}
@@ -83,25 +76,17 @@ export function TransactionsFilters({
             </Text>
           </Pressable>
         ))}
-      </View>
 
-      {/* Date filter row */}
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: theme.spacing.sm,
-          marginBottom: theme.spacing.md,
-        }}
-      >
+        {/* Date chips */}
         {dateOptions.map((opt) => (
           <Pressable
             key={opt.value}
             onPress={() => onDateChange(opt.value)}
             style={({ pressed }) => ({
               paddingHorizontal: theme.spacing.md,
-              paddingVertical: theme.spacing.sm + 2,
+              paddingVertical: theme.spacing.sm,
               borderRadius: theme.radius.full,
-              backgroundColor: dateFilter === opt.value ? theme.colors.primary : theme.colors.background,
+              backgroundColor: dateFilter === opt.value ? theme.colors.primary : theme.colors.backgroundElevated,
               opacity: pressed ? 0.9 : 1,
             })}
           >
@@ -120,9 +105,9 @@ export function TransactionsFilters({
           onPress={() => onDateChange('all')}
           style={({ pressed }) => ({
             paddingHorizontal: theme.spacing.md,
-            paddingVertical: theme.spacing.sm + 2,
+            paddingVertical: theme.spacing.sm,
             borderRadius: theme.radius.full,
-            backgroundColor: dateFilter === 'all' ? theme.colors.primary : theme.colors.background,
+            backgroundColor: dateFilter === 'all' ? theme.colors.primary : theme.colors.backgroundElevated,
             opacity: pressed ? 0.9 : 1,
           })}
         >
@@ -136,47 +121,17 @@ export function TransactionsFilters({
             {t('transactions.filterAll')}
           </Text>
         </Pressable>
-      </View>
 
-      {/* Category chips — horizontally scrollable */}
-      {categories.length > 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            gap: theme.spacing.sm,
-            paddingRight: theme.spacing.lg,
-          }}
-        >
-          <Pressable
-            onPress={() => onCategoryChange(null)}
-            style={({ pressed }) => ({
-              paddingHorizontal: theme.spacing.md,
-              paddingVertical: theme.spacing.sm + 2,
-              borderRadius: theme.radius.full,
-              backgroundColor: categoryId === null ? theme.colors.primary : theme.colors.background,
-              opacity: pressed ? 0.9 : 1,
-            })}
-          >
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: '600',
-                color: categoryId === null ? '#FFFFFF' : theme.colors.text.secondary,
-              }}
-            >
-              {t('transactions.filterTypeAll')}
-            </Text>
-          </Pressable>
-          {categories.slice(0, 10).map((c) => (
+        {/* Category chips */}
+        {categories.length > 0 && (
+          <>
             <Pressable
-              key={c.id}
-              onPress={() => onCategoryChange(c.id)}
+              onPress={() => onCategoryChange(null)}
               style={({ pressed }) => ({
                 paddingHorizontal: theme.spacing.md,
-                paddingVertical: theme.spacing.sm + 2,
+                paddingVertical: theme.spacing.sm,
                 borderRadius: theme.radius.full,
-                backgroundColor: categoryId === c.id ? theme.colors.primary : theme.colors.background,
+                backgroundColor: categoryId === null ? theme.colors.primary : theme.colors.backgroundElevated,
                 opacity: pressed ? 0.9 : 1,
               })}
             >
@@ -184,15 +139,38 @@ export function TransactionsFilters({
                 style={{
                   fontSize: 13,
                   fontWeight: '600',
-                  color: categoryId === c.id ? '#FFFFFF' : theme.colors.text.secondary,
+                  color: categoryId === null ? '#FFFFFF' : theme.colors.text.secondary,
                 }}
               >
-                {c.name}
+                {t('transactions.filterTypeAll')}
               </Text>
             </Pressable>
-          ))}
-        </ScrollView>
-      )}
+            {categories.slice(0, 10).map((c) => (
+              <Pressable
+                key={c.id}
+                onPress={() => onCategoryChange(c.id)}
+                style={({ pressed }) => ({
+                  paddingHorizontal: theme.spacing.md,
+                  paddingVertical: theme.spacing.sm,
+                  borderRadius: theme.radius.full,
+                  backgroundColor: categoryId === c.id ? theme.colors.primary : theme.colors.backgroundElevated,
+                  opacity: pressed ? 0.9 : 1,
+                })}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    color: categoryId === c.id ? '#FFFFFF' : theme.colors.text.secondary,
+                  }}
+                >
+                  {c.name}
+                </Text>
+              </Pressable>
+            ))}
+          </>
+        )}
+      </ScrollView>
     </View>
   );
 }

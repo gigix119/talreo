@@ -18,9 +18,9 @@ export const TransactionMeta = memo(function TransactionMeta({
   return (
     <Text
       style={{
-        fontSize: 13,
+        fontSize: 12,
         color: theme.colors.text.secondary,
-        marginTop: 4,
+        marginTop: 2,
       }}
       numberOfLines={1}
     >
