@@ -258,25 +258,25 @@ export default function DashboardScreen() {
           </View>
         ) : (
           <View style={{ marginTop: theme.spacing.md, gap: theme.spacing.sm }}>
-            {recent.transactions.map((t) => (
-              <Card key={t.id} padding="md" elevated>
+            {recent.transactions.map((tx) => (
+              <Card key={tx.id} padding="md" elevated>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
                     <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                      {(t.note || (t.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
+                      {(tx.note || (tx.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
-                      {formatDate(t.transaction_date)}
+                      {formatDate(tx.transaction_date)}
                     </Text>
                   </View>
                   <Text
                     style={{
                       fontSize: 16,
                       fontWeight: '600',
-                      color: t.type === 'income' ? theme.colors.income : theme.colors.expense,
+                      color: tx.type === 'income' ? theme.colors.income : theme.colors.expense,
                     }}
                   >
-                    {t.type === 'income' ? '+' : '−'} {formatAmount(Number(t.amount), currency)}
+                    {tx.type === 'income' ? '+' : '−'} {formatAmount(Number(tx.amount), currency)}
                   </Text>
                 </View>
               </Card>
