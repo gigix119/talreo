@@ -5,11 +5,13 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { Input } from '@/components/ui/Input';
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { t } = useI18n();
   const { signUp } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,11 +22,11 @@ export default function SignUpScreen() {
   async function handleSubmit() {
     setError('');
     if (!email.trim() || !password) {
-      setError('Email and password are required.');
+      setError(t('auth.emailRequired'));
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError(t('auth.passwordMin'));
       return;
     }
     setLoading(true);
@@ -37,7 +39,7 @@ export default function SignUpScreen() {
         router.replace({ pathname: '/(auth)/check-email', params: { email: email.trim() } });
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not create account. Please try again.');
+      setError(e instanceof Error ? e.message : t('auth.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -54,14 +56,14 @@ export default function SignUpScreen() {
         showsVerticalScrollIndicator={false}
       >
         <AuthScreen
-          title="Create account"
-          subtitle="Get started with Talreo"
-          primaryAction={{ label: 'Create account', onPress: handleSubmit, loading, loadingLabel: 'Creating account...' }}
-          footerText="Already have an account?"
-          footerLink={{ label: 'Sign in', href: '/(auth)/sign-in' }}
+          title={t('auth.createAccountTitle')}
+          subtitle={t('auth.getStartedSubtitle')}
+          primaryAction={{ label: t('auth.createAccount'), onPress: handleSubmit, loading, loadingLabel: t('auth.creatingAccount') }}
+          footerText={t('auth.alreadyHaveAccountQuestion')}
+          footerLink={{ label: t('auth.signIn'), href: '/(auth)/sign-in' }}
         >
           <Input
-            label="Email"
+            label={t('auth.email')}
             value={email}
             onChangeText={setEmail}
             placeholder="you@example.com"
@@ -70,7 +72,7 @@ export default function SignUpScreen() {
             autoCorrect={false}
           />
           <Input
-            label="Password"
+            label={t('auth.password')}
             value={password}
             onChangeText={setPassword}
             placeholder="At least 6 characters"
@@ -78,7 +80,7 @@ export default function SignUpScreen() {
             error={error || undefined}
           />
           <Input
-            label="Full name (optional)"
+            label={t('auth.fullName')}
             value={fullName}
             onChangeText={setFullName}
             placeholder="Jane Doe"

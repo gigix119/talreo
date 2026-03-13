@@ -28,8 +28,8 @@ export function ScreenContainer({
           flex: 1,
           paddingTop: insets.top,
           paddingBottom: 0,
-          paddingLeft: withPadding ? PAGE_PADDING_H : insets.left,
-          paddingRight: withPadding ? PAGE_PADDING_H : insets.right,
+          paddingLeft: withPadding ? Math.max(PAGE_PADDING_H, insets.left) : insets.left,
+          paddingRight: withPadding ? Math.max(PAGE_PADDING_H, insets.right) : insets.right,
         },
         style,
       ]}

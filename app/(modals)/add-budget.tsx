@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { useI18n } from '@/i18n';
 import { useProfile } from '@/hooks/useProfile';
 import { useCategories } from '@/hooks/useCategories';
 import { useBudgets } from '@/hooks/useBudgets';
@@ -17,6 +18,7 @@ import { getCurrentMonth, getFirstDayOfMonth, formatMonth } from '@/utils/date';
 
 export default function AddBudgetScreen() {
   const router = useRouter();
+  const { t } = useI18n();
   const params = useLocalSearchParams<{
     budgetId?: string;
     categoryId?: string;
@@ -167,7 +169,7 @@ export default function AddBudgetScreen() {
               fullWidth
               style={{ marginTop: theme.spacing.xl }}
             >
-              {loading ? 'Zapisywanie...' : 'Zapisz'}
+              {loading ? t('common.saving') : t('common.save')}
             </Button>
           </ScrollView>
         </KeyboardAvoidingView>

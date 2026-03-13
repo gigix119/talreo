@@ -6,12 +6,14 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { theme } from '@/constants/theme';
 import { Input } from '@/components/ui/Input';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const { t } = useI18n();
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export default function ForgotPasswordScreen() {
   async function handleSubmit() {
     setError('');
     if (!email.trim()) {
-      setError('Email is required.');
+      setError(t('auth.emailRequired'));
       return;
     }
     setLoading(true);
@@ -29,7 +31,7 @@ export default function ForgotPasswordScreen() {
       await resetPassword(email.trim());
       setSent(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+      setError(e instanceof Error ? e.message : t('auth.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -38,9 +40,9 @@ export default function ForgotPasswordScreen() {
   if (sent) {
     return (
       <AuthScreen
-        title="Check your email"
-        subtitle="If an account exists with that email, you will receive a link to reset your password. Check your inbox and click the link."
-        secondaryLink={{ label: 'Back to sign in', href: '/(auth)/sign-in' }}
+        title={t('auth.checkEmail')}
+        subtitle={t('auth.checkEmailSubtitle')}
+        secondaryLink={{ label: t('auth.backToSignIn'), href: '/(auth)/sign-in' }}
       >
         <View
           style={{
@@ -70,13 +72,13 @@ export default function ForgotPasswordScreen() {
         showsVerticalScrollIndicator={false}
       >
         <AuthScreen
-          title="Reset password"
-          subtitle="Enter your email and we'll send you a link to reset your password."
-          primaryAction={{ label: 'Send reset link', onPress: handleSubmit, loading, loadingLabel: 'Sending...' }}
-          secondaryLink={{ label: 'Back to sign in', href: '/(auth)/sign-in' }}
+          title={t('auth.resetPassword')}
+          subtitle={t('auth.resetPasswordSubtitle')}
+          primaryAction={{ label: t('auth.sendResetLink'), onPress: handleSubmit, loading, loadingLabel: t('auth.sendingResetLink') }}
+          secondaryLink={{ label: t('auth.backToSignIn'), href: '/(auth)/sign-in' }}
         >
           <Input
-            label="Email"
+            label={t('auth.email')}
             value={email}
             onChangeText={setEmail}
             placeholder="you@example.com"

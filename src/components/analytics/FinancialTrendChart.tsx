@@ -348,7 +348,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
             endSpacing={28}
             yAxisColor={theme.colors.border}
             xAxisColor={theme.colors.border}
-            yAxisLabelWidth={50}
+            yAxisLabelWidth={58}
             noOfSections={4}
             formatYLabel={(v) => formatAmount(Number(v), currency)}
           />
@@ -373,10 +373,10 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                 style={{
                   position: 'absolute',
                   top: 8,
-                  left: Math.min(
-                    Math.max(8, (crosshairIndex / (data.length - 1)) * (chartWidthActual - 56) - 75),
-                    chartLayout.width - 180
-                  ),
+                  left: Math.max(8, Math.min(
+                    (crosshairIndex / (data.length - 1)) * (chartWidthActual - 56) - 75,
+                    Math.max(8, chartLayout.width - 158)
+                  )),
                   backgroundColor: theme.colors.surface,
                   borderRadius: theme.radius.lg,
                   padding: theme.spacing.md,
@@ -423,10 +423,10 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                 {formatMonth(data[rangeStart].month)} → {formatMonth(data[rangeEnd].month)}
               </Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg, marginBottom: 12 }}>
-                <Col label="Start" value={data[rangeStart].balance} currency={currency} />
-                <Col label="End" value={data[rangeEnd].balance} currency={currency} />
+                <Col label={t('analytics.chartStart')} value={data[rangeStart].balance} currency={currency} />
+                <Col label={t('analytics.chartEnd')} value={data[rangeEnd].balance} currency={currency} />
                 <Col
-                  label="Change"
+                  label={t('analytics.chartChange')}
                   value={compDiff}
                   currency={currency}
                   pct={compPct}
@@ -440,10 +440,10 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 16, flexWrap: 'wrap' }}>
                   <Text style={{ fontSize: 12, color: theme.colors.text.secondary }}>
-                    Income: {formatAmount(rangeIncome, currency)}
+                    {t('analytics.chartRangeIncome')}: {formatAmount(rangeIncome, currency)}
                   </Text>
                   <Text style={{ fontSize: 12, color: theme.colors.text.secondary }}>
-                    Expenses: {formatAmount(rangeExpense, currency)}
+                    {t('analytics.chartRangeExpenses')}: {formatAmount(rangeExpense, currency)}
                   </Text>
                   <Text
                     style={{
@@ -452,7 +452,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                       color: rangeBalance >= 0 ? analyticsColors.success : analyticsColors.expense,
                     }}
                   >
-                    Net: {rangeBalance >= 0 ? '+' : ''}{formatAmount(rangeBalance, currency)} ({rangeBalancePct >= 0 ? '+' : ''}{rangeBalancePct.toFixed(1)}%)
+                    {t('analytics.chartRangeNet')}: {rangeBalance >= 0 ? '+' : ''}{formatAmount(rangeBalance, currency)} ({rangeBalancePct >= 0 ? '+' : ''}{rangeBalancePct.toFixed(1)}%)
                   </Text>
                 </View>
               </View>

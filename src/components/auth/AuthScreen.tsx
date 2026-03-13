@@ -4,6 +4,7 @@
  */
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
 import { Button } from '@/components/ui/Button';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
@@ -33,6 +34,7 @@ export function AuthScreen({
   footerLink,
 }: AuthScreenProps) {
   const router = useRouter();
+  const { t } = useI18n();
 
   return (
     <ScreenContainer>
@@ -69,7 +71,7 @@ export function AuthScreen({
             fullWidth
             style={{ marginTop: theme.spacing.lg }}
           >
-            {primaryAction.loading ? (primaryAction.loadingLabel ?? 'Please wait...') : primaryAction.label}
+            {primaryAction.loading ? (primaryAction.loadingLabel ?? t('common.pleaseWait')) : primaryAction.label}
           </Button>
         ) : null}
 
