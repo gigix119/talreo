@@ -42,9 +42,12 @@ export function RangeComparisonCard({
   rangeBLabel,
 }: RangeComparisonCardProps) {
   const { t } = useI18n();
-  if (!data) return null;
+  if (!data || !data.rangeA || !data.rangeB) return null;
 
-  const hasAnyChange = data.change.expense != null || data.change.income != null || data.change.balance != null;
+  const rangeA = data.rangeA;
+  const rangeB = data.rangeB;
+  const change = data.change ?? {};
+  const hasAnyChange = change.expense != null || change.income != null || change.balance != null;
 
   return (
     <View
@@ -62,9 +65,9 @@ export function RangeComparisonCard({
         {rangeALabel} → {rangeBLabel}
       </Text>
 
-      <Row label={t('analytics.totalExpenses')} a={data.rangeA.totalExpense} b={data.rangeB.totalExpense} change={data.change.expense} currency={currency} />
-      <Row label={t('analytics.totalIncome')} a={data.rangeA.totalIncome} b={data.rangeB.totalIncome} change={data.change.income} currency={currency} />
-      <Row label={t('analytics.balance')} a={data.rangeA.balance} b={data.rangeB.balance} change={data.change.balance} currency={currency} />
+      <Row label={t('analytics.totalExpenses')} a={rangeA.totalExpense} b={rangeB.totalExpense} change={change.expense ?? null} currency={currency} />
+      <Row label={t('analytics.totalIncome')} a={rangeA.totalIncome} b={rangeB.totalIncome} change={change.income ?? null} currency={currency} />
+      <Row label={t('analytics.balance')} a={rangeA.balance} b={rangeB.balance} change={change.balance ?? null} currency={currency} />
 
       {!hasAnyChange && (
         <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: theme.spacing.xs }}>

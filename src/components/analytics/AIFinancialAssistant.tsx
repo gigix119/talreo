@@ -156,14 +156,16 @@ export function AIFinancialAssistant({ insights }: AIFinancialAssistantProps) {
       </View>
 
       {/* Insight Cards */}
-      {visibleInsights.map((insight) => {
+      {visibleInsights.filter((i) => i && typeof i === 'object').map((insight, idx) => {
         const cfg = getConfig(insight);
-        const title = insight.title ?? insight.text.split('.')[0];
-        const explanation = insight.title ? insight.text : insight.text.split('.').slice(1).join('.').trim();
+        const text = insight?.text ?? '';
+        const parts = text.split('.');
+        const title = insight?.title ?? (parts[0] ?? '');
+        const explanation = insight?.title ? text : parts.slice(1).join('.').trim();
 
         return (
           <View
-            key={insight.id}
+            key={insight?.id ?? `insight-${idx}`}
             style={{
               backgroundColor: theme.colors.surface,
               borderRadius: analyticsRadius.card,
@@ -244,7 +246,7 @@ export function AIFinancialAssistant({ insights }: AIFinancialAssistantProps) {
                       lineHeight: 20,
                     }}
                   >
-                    {explanation || insight.text}
+                    {explanation || text}
                   </Text>
 
                   {insight.recommendation && (
@@ -314,7 +316,7 @@ export function AIFinancialAssistant({ insights }: AIFinancialAssistantProps) {
                         {t('analytics.aiCompareMonth')}
                       </Text>
                     </Pressable>
-                    {insight.id.startsWith('budget') && (
+                    {insight?.id?.startsWith('budget') && (
                       <Pressable
                         onPress={() => {}}
                         style={{
@@ -330,7 +332,7 @@ export function AIFinancialAssistant({ insights }: AIFinancialAssistantProps) {
                       </Pressable>
                     )}
                     <Pressable
-                      onPress={() => hideInsight(insight.id)}
+                      onPress={() => hideInsight(insight?.id ?? `insight-${idx}`)}
                       style={({ pressed }) => ({
                         paddingHorizontal: 12,
                         paddingVertical: 8,

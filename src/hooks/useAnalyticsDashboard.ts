@@ -137,16 +137,18 @@ export function useAnalyticsDashboard(
           );
         }),
       ]);
-      setExpenseBreakdown(exp);
-      setIncomeBreakdown(inc);
-      setTrend(tr);
-      setBudgetVsActual(bva);
-      setCategoryPerformance(perf);
+      setExpenseBreakdown(Array.isArray(exp) ? exp : []);
+      setIncomeBreakdown(Array.isArray(inc) ? inc : []);
+      setTrend(Array.isArray(tr) ? tr : []);
+      setBudgetVsActual(Array.isArray(bva) ? bva : []);
+      setCategoryPerformance(Array.isArray(perf) ? perf : []);
       setHeatmap(hm);
-      setLargestExpenses(largest);
+      setLargestExpenses(Array.isArray(largest) ? largest : []);
       setVelocity(vel);
-      setInsights(ins);
-      setRangeComparison(range);
+      setInsights(Array.isArray(ins) ? ins : []);
+      setRangeComparison(
+        range && typeof range === 'object' && range.rangeA && range.rangeB ? range : null
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not load analytics.');
       setExpenseBreakdown([]);

@@ -75,16 +75,23 @@ export default function AnalyticsScreen() {
     refetch,
   } = useAnalyticsDashboard(month, monthCount, filters);
 
+  const safeTrend = Array.isArray(trend) ? trend : [];
+  const safeRawExpense = Array.isArray(rawExpenseBreakdown) ? rawExpenseBreakdown : [];
+  const safeRawIncome = Array.isArray(rawIncomeBreakdown) ? rawIncomeBreakdown : [];
+  const safeCategoryPerf = Array.isArray(categoryPerformance) ? categoryPerformance : [];
+  const safeInsights = Array.isArray(insights) ? insights : [];
+  const safeExpenseBreakdown = Array.isArray(expenseBreakdown) ? expenseBreakdown : [];
+
   const budgetInfoForCategory = useCallback(
     (categoryId: string | null, categoryName: string) => {
-      const row = categoryPerformance.find(
+      const row = safeCategoryPerf.find(
         (r) => (r.categoryId && r.categoryId === categoryId) || r.categoryName === categoryName
       );
       return row && row.budget > 0
         ? { spent: row.spent, budget: row.budget, remaining: row.remaining }
         : null;
     },
-    [categoryPerformance]
+    [safeCategoryPerf]
   );
 
   const [selectedBudgetInfo, setSelectedBudgetInfo] = useState<{ spent: number; budget: number; remaining: number } | null>(null);
@@ -116,10 +123,10 @@ export default function AnalyticsScreen() {
   const rangeBLabel = formatMonth(month);
 
   const hasAnyData =
-    rawExpenseBreakdown.length > 0 ||
-    rawIncomeBreakdown.length > 0 ||
-    trend.some((item) => item.balance !== 0 || item.income !== 0 || item.expense !== 0) ||
-    categoryPerformance.length > 0;
+    safeRawExpense.length > 0 ||
+    safeRawIncome.length > 0 ||
+    safeTrend.some((item) => (item?.balance ?? 0) !== 0 || (item?.income ?? 0) !== 0 || (item?.expense ?? 0) !== 0) ||
+    safeCategoryPerf.length > 0;
 
   if (loading) {
     return (
@@ -177,10 +184,10 @@ export default function AnalyticsScreen() {
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
             {/* 1. Key metrics */}
-            <KPISummaryRow trend={trend} currency={currency} />
+            <KPISummaryRow trend={safeTrend} currency={currency} />
 
             {/* 2. Insight / warning */}
-            {insights.length > 0 && (
+            {safeInsights.length > 0 && (
               <View
                 style={{
                   padding: theme.spacing.md,
@@ -188,20 +195,20 @@ export default function AnalyticsScreen() {
                   borderRadius: theme.radius.md,
                   borderLeftWidth: 3,
                   borderLeftColor:
-                    insights[0].type === 'warning'
+                    safeInsights[0]?.type === 'warning'
                       ? theme.colors.warning
-                      : insights[0].type === 'success'
+                      : safeInsights[0]?.type === 'success'
                         ? theme.colors.success
                         : theme.colors.primary,
                 }}
               >
-                <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.text.primary }}>{insights[0].text}</Text>
+                <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.text.primary }}>{safeInsights[0]?.text ?? ''}</Text>
               </View>
             )}
 
             {/* 3. Trend chart */}
             <ChartSection
-              trend={trend}
+              trend={safeTrend}
               currency={currency}
               title={t('analytics.monthlyTrend')}
               emptyText={t('analytics.noData')}
@@ -209,8 +216,8 @@ export default function AnalyticsScreen() {
 
             {/* 4. Categories */}
             <SpendingCategoriesWidget
-              expenseData={expenseBreakdown}
-              categoryPerformance={categoryPerformance}
+              expenseData={safeExpenseBreakdown}
+              categoryPerformance={safeCategoryPerf}
               currency={currency}
               emptyText={t('analytics.noExpenses')}
               onCategoryPress={handleCategoryPress}
@@ -227,7 +234,7 @@ export default function AnalyticsScreen() {
             )}
 
             {/* 6. AI insights */}
-            <AIInsightWidget insights={insights} />
+            <AIInsightWidget insights={safeInsights} />
           </View>
         )}
       </ScrollView>

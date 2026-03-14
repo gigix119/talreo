@@ -80,23 +80,32 @@ function KPICard({
 
 export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
   const { t } = useI18n();
-  if (trend.length === 0) return null;
+  const safeTrend = Array.isArray(trend) ? trend : [];
+  if (safeTrend.length === 0) return null;
 
-  const curr = trend[trend.length - 1];
-  const prev = trend.length > 1 ? trend[trend.length - 2] : null;
+  const curr = safeTrend[safeTrend.length - 1];
+  const prev = safeTrend.length > 1 ? safeTrend[safeTrend.length - 2] : null;
+  if (!curr) return null;
 
-  const incomeTrend = prev && prev.income > 0
-    ? ((curr.income - prev.income) / prev.income) * 100
+  const currIncome = typeof curr.income === 'number' ? curr.income : 0;
+  const currExpense = typeof curr.expense === 'number' ? curr.expense : 0;
+  const currBalance = typeof curr.balance === 'number' ? curr.balance : 0;
+  const prevIncome = prev && typeof prev.income === 'number' ? prev.income : 0;
+  const prevExpense = prev && typeof prev.expense === 'number' ? prev.expense : 0;
+  const prevBalance = prev && typeof prev.balance === 'number' ? prev.balance : 0;
+
+  const incomeTrend = prev && prevIncome > 0
+    ? ((currIncome - prevIncome) / prevIncome) * 100
     : null;
-  const expenseTrend = prev && prev.expense > 0
-    ? ((curr.expense - prev.expense) / prev.expense) * 100
+  const expenseTrend = prev && prevExpense > 0
+    ? ((currExpense - prevExpense) / prevExpense) * 100
     : null;
-  const balanceTrend = prev && prev.balance !== 0
-    ? ((curr.balance - prev.balance) / Math.abs(prev.balance)) * 100
+  const balanceTrend = prev && prevBalance !== 0
+    ? ((currBalance - prevBalance) / Math.abs(prevBalance)) * 100
     : null;
 
-  const savingsRate = curr.income > 0
-    ? Math.max(0, ((curr.income - curr.expense) / curr.income) * 100)
+  const savingsRate = currIncome > 0
+    ? Math.max(0, ((currIncome - currExpense) / currIncome) * 100)
     : 0;
 
   return (
@@ -112,10 +121,10 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
       >
         <KPICard
           label={t('analytics.totalIncome')}
-          value={curr.income}
+          value={currIncome}
           valueFormatter={(v) => formatAmount(v, currency)}
           trendPercent={incomeTrend}
-          sparklineData={trend.map((x) => x.income)}
+          sparklineData={safeTrend.map((x) => (typeof x?.income === 'number' ? x.income : 0))}
           color={analyticsColors.income}
           isExpense={false}
           trendVsLast={t('analytics.trendVsLast')}
@@ -125,17 +134,17 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
           value={curr.expense}
           valueFormatter={(v) => formatAmount(v, currency)}
           trendPercent={expenseTrend}
-          sparklineData={trend.map((x) => x.expense)}
+          sparklineData={safeTrend.map((x) => (typeof x?.expense === 'number' ? x.expense : 0))}
           color={analyticsColors.expense}
           isExpense={true}
           trendVsLast={t('analytics.trendVsLast')}
         />
         <KPICard
           label={t('analytics.balance')}
-          value={curr.balance}
+          value={currBalance}
           valueFormatter={(v) => formatAmount(v, currency)}
           trendPercent={balanceTrend}
-          sparklineData={trend.map((x) => x.balance)}
+          sparklineData={safeTrend.map((x) => (typeof x?.balance === 'number' ? x.balance : 0))}
           color={analyticsColors.balance}
           isExpense={false}
           trendVsLast={t('analytics.trendVsLast')}

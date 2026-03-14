@@ -60,14 +60,15 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   modeRef.current = mode;
   crosshairRef.current = crosshairIndex;
 
-  const hasEnoughData = data.length >= 2;
+  const safeData = Array.isArray(data) ? data : [];
+  const hasEnoughData = safeData.length >= 2;
 
   const xToIndex = useCallback((x: number) => {
     const w = layoutRef.current.width;
-    if (w <= 0) return 0;
-    const idx = Math.round((x / w) * (data.length - 1));
-    return Math.max(0, Math.min(data.length - 1, idx));
-  }, [data.length]);
+    if (w <= 0 || safeData.length <= 1) return 0;
+    const idx = Math.round((x / w) * (safeData.length - 1));
+    return Math.max(0, Math.min(safeData.length - 1, idx));
+  }, [safeData.length]);
 
   const clearComparison = useCallback(() => {
     setCompareStart(null);
@@ -147,12 +148,19 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
 
   const chartData = useMemo(
     () =>
-      data.map((d, i) => ({
-        value: d[primarySeries],
-        label: new Date(d.month + 'T00:00:00').toLocaleDateString('pl-PL', { month: 'short' }),
-        dataPointText: formatAmount(d[primarySeries], currency),
-      })),
-    [data, primarySeries, currency]
+      safeData.map((d) => {
+        const val = typeof d?.[primarySeries] === 'number' ? d[primarySeries]! : 0;
+        const monthStr = d?.month ?? '';
+        const label = monthStr
+          ? new Date(monthStr + 'T00:00:00').toLocaleDateString('pl-PL', { month: 'short' })
+          : '';
+        return {
+          value: Number.isFinite(val) ? val : 0,
+          label,
+          dataPointText: formatAmount(val, currency),
+        };
+      }),
+    [safeData, primarySeries, currency]
   );
 
   const primaryColor =
@@ -165,7 +173,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   const showCompare = compareStart !== null && compareEnd !== null;
   const rangeStart = showCompare ? Math.min(compareStart, compareEnd) : 0;
   const rangeEnd = showCompare ? Math.max(compareStart, compareEnd) : 0;
-  const rangeData = showCompare ? data.slice(rangeStart, rangeEnd + 1) : [];
+  const rangeData = showCompare ? safeData.slice(rangeStart, rangeEnd + 1) : [];
 
   const rangeIncome = rangeData.reduce((s, d) => s + d.income, 0);
   const rangeExpense = rangeData.reduce((s, d) => s + d.expense, 0);
@@ -177,15 +185,15 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
       ? (rangeBalance / Math.abs(rangeData[0].balance)) * 100
       : 0;
 
-  const compDiff = showCompare
-    ? data[rangeEnd].balance - data[rangeStart].balance
+  const compDiff = showCompare && safeData[rangeStart] && safeData[rangeEnd]
+    ? (safeData[rangeEnd]!.balance ?? 0) - (safeData[rangeStart]!.balance ?? 0)
     : 0;
   const compPct =
-    showCompare && data[rangeStart].balance !== 0
-      ? ((data[rangeEnd].balance - data[rangeStart].balance) / Math.abs(data[rangeStart].balance)) * 100
+    showCompare && safeData[rangeStart] && (safeData[rangeStart]!.balance ?? 0) !== 0
+      ? ((compDiff) / Math.abs(safeData[rangeStart]!.balance ?? 1)) * 100
       : 0;
 
-  if (data.length === 0) {
+  if (safeData.length === 0) {
     return (
       <Card
         padding="lg"
@@ -354,13 +362,13 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
           />
 
           {/* Crosshair (inspect mode, long-press) */}
-          {crosshairIndex !== null && data[crosshairIndex] && (
+          {crosshairIndex !== null && safeData[crosshairIndex] && (
             <>
               <View
                 pointerEvents="none"
                 style={{
                   position: 'absolute',
-                  left: 28 + (crosshairIndex / (data.length - 1)) * (chartWidthActual - 56),
+                  left: 28 + (crosshairIndex / Math.max(1, safeData.length - 1)) * (chartWidthActual - 56),
                   top: 0,
                   bottom: 0,
                   width: 2,
@@ -374,7 +382,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                   position: 'absolute',
                   top: 8,
                   left: Math.max(8, Math.min(
-                    (crosshairIndex / (data.length - 1)) * (chartWidthActual - 56) - 75,
+                    (crosshairIndex / Math.max(1, safeData.length - 1)) * (chartWidthActual - 56) - 75,
                     Math.max(8, chartLayout.width - 158)
                   )),
                   backgroundColor: theme.colors.surface,
@@ -385,18 +393,18 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
                 }}
               >
                 <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.text.primary, marginBottom: 10 }}>
-                  {formatMonth(data[crosshairIndex].month)}
+                  {formatMonth(safeData[crosshairIndex]!.month ?? '')}
                 </Text>
                 <View style={{ gap: 6 }}>
-                  <Row label={t('analytics.totalIncome')} value={data[crosshairIndex].income} currency={currency} color={analyticsColors.income} />
-                  <Row label={t('analytics.totalExpenses')} value={data[crosshairIndex].expense} currency={currency} color={analyticsColors.expense} />
-                  <Row label={t('analytics.balance')} value={data[crosshairIndex].balance} currency={currency} color={analyticsColors.balance} bold />
-                  {crosshairIndex > 0 && (
+                  <Row label={t('analytics.totalIncome')} value={safeData[crosshairIndex]!.income ?? 0} currency={currency} color={analyticsColors.income} />
+                  <Row label={t('analytics.totalExpenses')} value={safeData[crosshairIndex]!.expense ?? 0} currency={currency} color={analyticsColors.expense} />
+                  <Row label={t('analytics.balance')} value={safeData[crosshairIndex]!.balance ?? 0} currency={currency} color={analyticsColors.balance} bold />
+                  {crosshairIndex > 0 && safeData[crosshairIndex - 1] && (
                     <Row
                       label={t('analytics.changeVsPrev')}
-                      value={data[crosshairIndex].balance - data[crosshairIndex - 1].balance}
+                      value={(safeData[crosshairIndex]!.balance ?? 0) - (safeData[crosshairIndex - 1]!.balance ?? 0)}
                       currency={currency}
-                      color={data[crosshairIndex].balance >= data[crosshairIndex - 1].balance ? analyticsColors.success : analyticsColors.expense}
+                      color={(safeData[crosshairIndex]!.balance ?? 0) >= (safeData[crosshairIndex - 1]!.balance ?? 0) ? analyticsColors.success : analyticsColors.expense}
                     />
                   )}
                 </View>
@@ -420,11 +428,11 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
               }}
             >
               <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.text.primary, marginBottom: 12 }}>
-                {formatMonth(data[rangeStart].month)} → {formatMonth(data[rangeEnd].month)}
+                {formatMonth(safeData[rangeStart]?.month ?? '')} → {formatMonth(safeData[rangeEnd]?.month ?? '')}
               </Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.lg, marginBottom: 12 }}>
-                <Col label={t('analytics.chartStart')} value={data[rangeStart].balance} currency={currency} />
-                <Col label={t('analytics.chartEnd')} value={data[rangeEnd].balance} currency={currency} />
+                <Col label={t('analytics.chartStart')} value={safeData[rangeStart]?.balance ?? 0} currency={currency} />
+                <Col label={t('analytics.chartEnd')} value={safeData[rangeEnd]?.balance ?? 0} currency={currency} />
                 <Col
                   label={t('analytics.chartChange')}
                   value={compDiff}

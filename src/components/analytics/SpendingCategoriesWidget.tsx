@@ -55,7 +55,7 @@ function CategoryCard({
   topLabel?: string;
   onPress?: () => void;
 }) {
-  const icon = getCategoryIcon(item.category_name);
+  const icon = getCategoryIcon(item?.category_name ?? '');
 
   return (
     <AnalyticsCard onPress={onPress} padding="md">
@@ -76,7 +76,7 @@ function CategoryCard({
         <View style={{ flex: 1, minWidth: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
-              {item.category_name}
+              {item?.category_name ?? ''}
             </Text>
             {isTop && topLabel && (
               <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.text.tertiary }}>
@@ -86,9 +86,9 @@ function CategoryCard({
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 8 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: analyticsColors.expense }}>
-              {formatAmount(item.amount, currency)}
+              {formatAmount(item?.amount ?? 0, currency)}
             </Text>
-            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}>{item.percent.toFixed(0)}%</Text>
+            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}>{(item.percent ?? 0).toFixed(0)}%</Text>
             {vsPrevPercent != null && !Number.isNaN(vsPrevPercent) && (
               <>
                 <Text
@@ -147,7 +147,11 @@ export const SpendingCategoriesWidget = memo(function SpendingCategoriesWidget({
     );
   }
 
-  const perfMap = new Map(categoryPerformance.map((p) => [p.categoryName, p.vsPrevMonthPercent]));
+  const perfMap = new Map(
+    (Array.isArray(categoryPerformance) ? categoryPerformance : [])
+      .filter((p) => p && typeof p === 'object')
+      .map((p) => [p.categoryName ?? '', p.vsPrevMonthPercent])
+  );
 
   return (
     <View style={{ gap: 12 }}>
@@ -156,13 +160,13 @@ export const SpendingCategoriesWidget = memo(function SpendingCategoriesWidget({
       </Text>
       {expenseData.slice(0, 8).map((item, idx) => (
         <CategoryCard
-          key={item.category_id ?? item.category_name}
+          key={item.category_id ?? item.category_name ?? `cat-${idx}`}
           item={item}
           currency={currency}
-          vsPrevPercent={perfMap.get(item.category_name)}
+          vsPrevPercent={perfMap.get(item?.category_name ?? '')}
           isTop={idx === 0}
           topLabel={idx === 0 ? t('analytics.topCategory') : undefined}
-          onPress={onCategoryPress ? () => onCategoryPress(item) : undefined}
+          onPress={onCategoryPress && item ? () => onCategoryPress(item) : undefined}
         />
       ))}
       <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
