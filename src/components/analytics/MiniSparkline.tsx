@@ -13,17 +13,23 @@ interface MiniSparklineProps {
 }
 
 export function MiniSparkline({ data, color }: MiniSparklineProps) {
-  if (data.length < 2) return null;
+  const safeData = Array.isArray(data) ? data : [];
+  if (safeData.length < 2) return null;
 
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  const numericValues = safeData
+    .map((v) => (typeof v === 'number' && Number.isFinite(v) ? v : 0));
+  if (numericValues.length < 2) return null;
+
+  const min = Math.min(...numericValues);
+  const max = Math.max(...numericValues);
   const range = max - min || 1;
-  const step = (W - 4) / (data.length - 1);
+  const step = (W - 4) / Math.max(1, numericValues.length - 1);
 
-  const points = data.map((v, i) => {
+  const points = numericValues.map((v, i) => {
     const x = 2 + i * step;
     const y = H - 4 - ((v - min) / range) * (H - 8);
-    return `${x},${y}`;
+    const yNum = Number.isFinite(y) ? y : H / 2;
+    return `${x},${yNum}`;
   });
 
   const d = `M ${points.join(' L ')}`;

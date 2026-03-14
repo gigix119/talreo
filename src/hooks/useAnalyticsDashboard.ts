@@ -171,18 +171,20 @@ export function useAnalyticsDashboard(
   }, [refetch]);
 
   const filteredExpenseBreakdown = useMemo(() => {
+    const arr = Array.isArray(expenseBreakdown) ? expenseBreakdown : [];
     if (filters.type === 'income') return [];
-    if (filters.categoryIds.length === 0) return expenseBreakdown;
-    return expenseBreakdown.filter(
-      (c) => c.category_id && filters.categoryIds.includes(c.category_id)
+    if (!Array.isArray(filters.categoryIds) || filters.categoryIds.length === 0) return arr;
+    return arr.filter(
+      (c) => c && c.category_id && filters.categoryIds.includes(c.category_id)
     );
   }, [expenseBreakdown, filters.categoryIds, filters.type]);
 
   const filteredIncomeBreakdown = useMemo(() => {
+    const arr = Array.isArray(incomeBreakdown) ? incomeBreakdown : [];
     if (filters.type === 'expense') return [];
-    if (filters.categoryIds.length === 0) return incomeBreakdown;
-    return incomeBreakdown.filter(
-      (c) => c.category_id && filters.categoryIds.includes(c.category_id)
+    if (!Array.isArray(filters.categoryIds) || filters.categoryIds.length === 0) return arr;
+    return arr.filter(
+      (c) => c && c.category_id && filters.categoryIds.includes(c.category_id)
     );
   }, [incomeBreakdown, filters.categoryIds, filters.type]);
 

@@ -151,13 +151,19 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
       safeData.map((d) => {
         const val = typeof d?.[primarySeries] === 'number' ? d[primarySeries]! : 0;
         const monthStr = d?.month ?? '';
-        const label = monthStr
-          ? new Date(monthStr + 'T00:00:00').toLocaleDateString('pl-PL', { month: 'short' })
-          : '';
+        let label = '';
+        if (monthStr) {
+          try {
+            const date = new Date(monthStr + 'T00:00:00');
+            label = Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('pl-PL', { month: 'short' });
+          } catch {
+            label = '';
+          }
+        }
         return {
           value: Number.isFinite(val) ? val : 0,
           label,
-          dataPointText: formatAmount(val, currency),
+          dataPointText: formatAmount(Number.isFinite(val) ? val : 0, currency),
         };
       }),
     [safeData, primarySeries, currency]
@@ -175,14 +181,14 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
   const rangeEnd = showCompare ? Math.max(compareStart, compareEnd) : 0;
   const rangeData = showCompare ? safeData.slice(rangeStart, rangeEnd + 1) : [];
 
-  const rangeIncome = rangeData.reduce((s, d) => s + d.income, 0);
-  const rangeExpense = rangeData.reduce((s, d) => s + d.expense, 0);
-  const rangeBalance = rangeData.length
-    ? rangeData[rangeData.length - 1].balance - rangeData[0].balance
+  const rangeIncome = rangeData.reduce((s, d) => s + (d?.income ?? 0), 0);
+  const rangeExpense = rangeData.reduce((s, d) => s + (d?.expense ?? 0), 0);
+  const rangeBalance = rangeData.length && rangeData[0] != null && rangeData[rangeData.length - 1] != null
+    ? (rangeData[rangeData.length - 1]!.balance ?? 0) - (rangeData[0]!.balance ?? 0)
     : 0;
   const rangeBalancePct =
-    rangeData.length && rangeData[0].balance !== 0
-      ? (rangeBalance / Math.abs(rangeData[0].balance)) * 100
+    rangeData.length && rangeData[0] != null && (rangeData[0]!.balance ?? 0) !== 0
+      ? (rangeBalance / Math.abs(rangeData[0]!.balance ?? 1)) * 100
       : 0;
 
   const compDiff = showCompare && safeData[rangeStart] && safeData[rangeEnd]
@@ -358,7 +364,14 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
             xAxisColor={theme.colors.border}
             yAxisLabelWidth={60}
             noOfSections={4}
-            formatYLabel={(v) => formatAmountShort(Number(v), currency)}
+            formatYLabel={(v) => {
+              try {
+                const num = typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0;
+                return formatAmountShort(num, currency);
+              } catch {
+                return '0';
+              }
+            }}
           />
 
           {/* Crosshair (inspect mode, long-press) */}

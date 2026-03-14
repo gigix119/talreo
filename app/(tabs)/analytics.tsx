@@ -3,13 +3,15 @@
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard, fetchCategoryDetails } from '@/hooks/useAnalyticsDashboard';
 import { useI18n } from '@/i18n';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { SectionErrorBoundary } from '@/components/ui/SectionErrorBoundary';
 import {
   AnalyticsHeader,
   FinancialTrendChart,
@@ -28,7 +30,9 @@ import type { CategoryBreakdownItem } from '@/types/database';
 import type { CategoryDetails } from '@/types/analytics';
 
 function monthAdd(month: string, delta: number): string {
+  if (!month || typeof month !== 'string') return getCurrentMonth();
   const d = new Date(month + 'T00:00:00');
+  if (Number.isNaN(d.getTime())) return getCurrentMonth();
   d.setMonth(d.getMonth() + delta);
   return getFirstDayOfMonth(d.getFullYear(), d.getMonth());
 }
@@ -118,9 +122,10 @@ export default function AnalyticsScreen() {
     [user?.id, month, budgetInfoForCategory]
   );
 
-  const recentMonths = getRecentMonths(12);
-  const rangeALabel = `${formatMonth(monthAdd(month, -3))} - ${formatMonth(monthAdd(month, -1))}`;
-  const rangeBLabel = formatMonth(month);
+  const safeMonth = month && typeof month === 'string' ? month : getCurrentMonth();
+  const recentMonths = Array.isArray(getRecentMonths(12)) ? getRecentMonths(12) : [];
+  const rangeALabel = `${formatMonth(monthAdd(safeMonth, -3))} - ${formatMonth(monthAdd(safeMonth, -1))}`;
+  const rangeBLabel = formatMonth(safeMonth);
 
   const hasAnyData =
     safeRawExpense.length > 0 ||
@@ -146,8 +151,8 @@ export default function AnalyticsScreen() {
     );
   }
 
-  return (
-    <ScreenContainer>
+  const analyticsContent = (
+    <>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
@@ -160,7 +165,7 @@ export default function AnalyticsScreen() {
         showsHorizontalScrollIndicator={false}
       >
         <AnalyticsHeader
-          month={month}
+          month={safeMonth}
           monthCount={monthCount}
           recentMonths={recentMonths}
           onMonthChange={setMonth}
@@ -184,7 +189,9 @@ export default function AnalyticsScreen() {
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
             {/* 1. Key metrics */}
-            <KPISummaryRow trend={safeTrend} currency={currency} />
+            <SectionErrorBoundary sectionName="KPISummaryRow">
+              <KPISummaryRow trend={safeTrend} currency={currency} />
+            </SectionErrorBoundary>
 
             {/* 2. Insight / warning */}
             {safeInsights.length > 0 && (
@@ -207,14 +214,17 @@ export default function AnalyticsScreen() {
             )}
 
             {/* 3. Trend chart */}
-            <ChartSection
-              trend={safeTrend}
-              currency={currency}
-              title={t('analytics.monthlyTrend')}
-              emptyText={t('analytics.noData')}
-            />
+            <SectionErrorBoundary sectionName="FinancialTrendChart">
+              <ChartSection
+                trend={safeTrend}
+                currency={currency}
+                title={t('analytics.monthlyTrend')}
+                emptyText={t('analytics.noData')}
+              />
+            </SectionErrorBoundary>
 
             {/* 4. Categories */}
+            <SectionErrorBoundary sectionName="SpendingCategoriesWidget">
             <SpendingCategoriesWidget
               expenseData={safeExpenseBreakdown}
               categoryPerformance={safeCategoryPerf}
@@ -222,23 +232,29 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noExpenses')}
               onCategoryPress={handleCategoryPress}
             />
+            </SectionErrorBoundary>
 
             {/* 5. Comparison */}
             {rangeComparison && (
+            <SectionErrorBoundary sectionName="RangeComparisonCard">
               <RangeComparisonCard
                 data={rangeComparison}
                 currency={currency}
                 rangeALabel={rangeALabel}
                 rangeBLabel={rangeBLabel}
               />
+            </SectionErrorBoundary>
             )}
 
             {/* 6. AI insights */}
-            <AIInsightWidget insights={safeInsights} />
+            <SectionErrorBoundary sectionName="AIInsightWidget">
+              <AIInsightWidget insights={safeInsights} />
+            </SectionErrorBoundary>
           </View>
         )}
       </ScrollView>
 
+      <SectionErrorBoundary sectionName="CategoryDetailsPanel">
       <CategoryDetailsPanel
         visible={detailsPanelVisible}
         details={categoryDetails}
@@ -250,6 +266,34 @@ export default function AnalyticsScreen() {
           setSelectedBudgetInfo(null);
         }}
       />
+      </SectionErrorBoundary>
+    </>
+  );
+
+  const analyticsFallback = (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: theme.spacing.xl, backgroundColor: theme.colors.background }}>
+      <Text style={{ fontSize: 16, color: theme.colors.text.secondary, textAlign: 'center', marginBottom: 16 }}>
+        Nie udało się załadować analityki
+      </Text>
+      <Pressable
+        onPress={() => refetch()}
+        style={{
+          paddingHorizontal: theme.spacing.lg,
+          paddingVertical: theme.spacing.md,
+          backgroundColor: theme.colors.primary,
+          borderRadius: theme.radius.md,
+        }}
+      >
+        <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>Spróbuj ponownie</Text>
+      </Pressable>
+    </View>
+  );
+
+  return (
+    <ScreenContainer>
+      <ErrorBoundary fallback={analyticsFallback}>
+        {analyticsContent}
+      </ErrorBoundary>
     </ScreenContainer>
   );
 }
