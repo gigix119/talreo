@@ -51,7 +51,7 @@ export function SavingsMomentumWidget({ velocity, currency, emptyText }: Savings
           </View>
         </View>
         <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>
-          {v.daysElapsed}/{v.daysInMonth} dni · {formatAmount(v.spentSoFar, currency)}
+          {t('analytics.projContext')} {v.daysElapsed}/{v.daysInMonth} dni.
         </Text>
       </View>
     </InteractiveWidget>

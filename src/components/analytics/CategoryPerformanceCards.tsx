@@ -88,12 +88,12 @@ export function CategoryPerformanceCards({
                     }}
                   />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
                   <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
                     {row.budget > 0
                       ? row.remaining >= 0
-                        ? `${formatAmount(row.remaining, currency)} ${t('analytics.budgetLeft')}`
-                        : `${formatAmount(Math.abs(row.remaining), currency)} ${t('analytics.budgetOver')}`
+                        ? `${t('analytics.budgetLeft')} ${formatAmount(row.remaining, currency)}`
+                        : `${t('analytics.budgetOver')} ${formatAmount(Math.abs(row.remaining), currency)}`
                       : '—'}
                   </Text>
                   {row.vsPrevMonthPercent != null ? (

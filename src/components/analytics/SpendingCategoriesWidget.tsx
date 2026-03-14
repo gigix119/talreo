@@ -44,11 +44,15 @@ function CategoryCard({
   item,
   currency,
   vsPrevPercent,
+  isTop,
+  topLabel,
   onPress,
 }: {
   item: CategoryBreakdownItem;
   currency: string;
   vsPrevPercent?: number | null;
+  isTop?: boolean;
+  topLabel?: string;
   onPress?: () => void;
 }) {
   const icon = getCategoryIcon(item.category_name);
@@ -70,9 +74,16 @@ function CategoryCard({
           <Text style={{ fontSize: 22 }}>{icon}</Text>
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
-            {item.category_name}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+              {item.category_name}
+            </Text>
+            {isTop && topLabel && (
+              <Text style={{ fontSize: 10, fontWeight: '600', color: theme.colors.text.tertiary }}>
+                {topLabel}
+              </Text>
+            )}
+          </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 8 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: analyticsColors.expense }}>
               {formatAmount(item.amount, currency)}
@@ -143,12 +154,14 @@ export const SpendingCategoriesWidget = memo(function SpendingCategoriesWidget({
       <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
         {t('analytics.spendingCategories')}
       </Text>
-      {expenseData.slice(0, 8).map((item) => (
+      {expenseData.slice(0, 8).map((item, idx) => (
         <CategoryCard
           key={item.category_id ?? item.category_name}
           item={item}
           currency={currency}
           vsPrevPercent={perfMap.get(item.category_name)}
+          isTop={idx === 0}
+          topLabel={idx === 0 ? t('analytics.topCategory') : undefined}
           onPress={onCategoryPress ? () => onCategoryPress(item) : undefined}
         />
       ))}
