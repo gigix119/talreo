@@ -1,7 +1,6 @@
 /**
- * Analytics tab — premium fintech experience.
- * Order: 1) Header + time  2) Top summary  3) Key insight  4) Trend chart
- * 5) Categories  6) Comparison  7) AI insights  8) Budget status  9) Largest transactions
+ * Analytics — mobile-first, 7 core sections.
+ * 1) Header + range  2) Summary  3) Key insight  4) Chart  5) Categories  6) Comparison  7) AI block
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -14,13 +13,10 @@ import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
   AnalyticsHeader,
-  FinancialHealthScore,
   FinancialTrendChart,
   CategoryDetailsPanel,
   RangeComparisonCard,
-  LargestExpensesList,
   BudgetStatusWidget,
-  SavingsMomentumWidget,
   AIInsightWidget,
   SpendingCategoriesWidget,
   KPISummaryRow,
@@ -74,8 +70,6 @@ export default function AnalyticsScreen() {
     rawIncomeBreakdown,
     trend,
     categoryPerformance,
-    largestExpenses,
-    velocity,
     insights,
     rangeComparison,
     loading,
@@ -183,10 +177,10 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* 1. Top summary: Przychody / Wydatki / Saldo */}
+            {/* 1. Financial summary */}
             <KPISummaryRow trend={trend} currency={currency} />
 
-            {/* 2. Key insight — first prominent insight */}
+            {/* 2. Key insight or warning */}
             {insights.length > 0 && (
               <View
                 style={{
@@ -206,7 +200,7 @@ export default function AnalyticsScreen() {
               </View>
             )}
 
-            {/* 3. Monthly trend chart */}
+            {/* 3. Trend chart */}
             <ChartSection
               trend={trend}
               currency={currency}
@@ -223,7 +217,7 @@ export default function AnalyticsScreen() {
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* 5. Comparison to previous period */}
+            {/* 5. Comparison block */}
             {rangeComparison && (
               <RangeComparisonCard
                 data={rangeComparison}
@@ -233,17 +227,7 @@ export default function AnalyticsScreen() {
               />
             )}
 
-            {/* 6. Financial health score */}
-            <FinancialHealthScore
-              trend={trend}
-              categoryPerformance={categoryPerformance}
-              currency={currency}
-            />
-
-            {/* 7. AI insights */}
-            <AIInsightWidget insights={insights} />
-
-            {/* 8. Budget status */}
+            {/* 6. Compact budget status strip */}
             <BudgetStatusWidget
               data={categoryPerformance}
               currency={currency}
@@ -251,21 +235,8 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noBudgets')}
             />
 
-            {/* 9. Prognoza wydatków (renamed from Momentum) */}
-            <SavingsMomentumWidget
-              velocity={velocity}
-              currency={currency}
-              emptyText={t('analytics.noExpenses')}
-            />
-
-            {/* 10. Largest transactions */}
-            {largestExpenses.length > 0 && (
-              <LargestExpensesList
-                items={largestExpenses}
-                currency={currency}
-                emptyText={t('analytics.noExpenses')}
-              />
-            )}
+            {/* 7. AI recommendation block */}
+            <AIInsightWidget insights={insights} />
           </View>
         )}
       </ScrollView>

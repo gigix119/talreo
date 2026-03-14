@@ -11,7 +11,6 @@ import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 import { useI18n } from '@/i18n';
 import { ScreenContainer } from '@/components/layout/ScreenContainer';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { theme } from '@/constants/theme';
@@ -78,19 +77,27 @@ function GoalCard({
   };
 
   return (
-    <Card key={g.id} padding="md" elevated>
+    <View
+      style={{
+        padding: theme.spacing.md,
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.radius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+      }}
+    >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs }}>
             <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
               {g.name}
             </Text>
             {g.status !== 'active' ? <StatusBadge status={g.status} /> : null}
           </View>
-          <Text style={{ fontSize: 17, fontWeight: '700', color: theme.colors.text.primary, marginTop: 4 }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary, marginTop: 2 }}>
             {formatAmount(g.current_amount, currency)}
-            <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.tertiary }}> / {formatAmount(g.target_amount, currency)}</Text>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}> ({g.progressPercent.toFixed(0)}%)</Text>
+            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}> / {formatAmount(g.target_amount, currency)}</Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}> · {g.progressPercent.toFixed(0)}%</Text>
           </Text>
           <View
             style={{
@@ -110,25 +117,23 @@ function GoalCard({
               }}
             />
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: theme.spacing.sm, flexWrap: 'wrap' }}>
-            <Button variant="primary" onPress={onAddFunds} style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: theme.spacing.sm }}>
+            <Button variant="primary" onPress={onAddFunds} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
               {t('goals.addFunds')}
             </Button>
-            <Pressable onPress={onWithdraw} style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.secondary }}>{t('goals.withdraw')}</Text>
+            <Pressable onPress={onWithdraw} style={{ paddingVertical: 6 }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.secondary }}>{t('goals.withdraw')}</Text>
             </Pressable>
             {g.target_date ? (
-              <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginLeft: theme.spacing.xs }}>
-                {formatDate(g.target_date)}
-              </Text>
+              <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>{formatDate(g.target_date)}</Text>
             ) : null}
           </View>
         </View>
-        <Pressable onPress={showOverflowMenu} hitSlop={12} style={{ padding: 8, marginLeft: 4 }}>
-          <Text style={{ fontSize: 16, color: theme.colors.text.tertiary, fontWeight: '600' }}>⋯</Text>
+        <Pressable onPress={showOverflowMenu} hitSlop={12} style={{ padding: 4 }}>
+          <Text style={{ fontSize: 14, color: theme.colors.text.tertiary }}>⋯</Text>
         </Pressable>
       </View>
-    </Card>
+    </View>
   );
 }
 

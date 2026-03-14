@@ -3,7 +3,7 @@
  */
 import { useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -161,77 +161,42 @@ export default function DashboardScreen() {
           </View>
         </Card>
 
-        {/* Budget progress */}
+        {/* Budget strip — compact scan */}
         {budgetProgress.progress.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.lg }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                {t('dashboard.budgetOverview')}
-              </Text>
-              <Text
-                onPress={() => router.push('/(tabs)/budgets')}
-                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-              >
-                {t('dashboard.seeAll')}
-              </Text>
+          <Pressable
+            onPress={() => router.push('/(tabs)/budgets')}
+            style={({ pressed }) => ({
+              marginTop: theme.spacing.md,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: theme.spacing.sm + 4,
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.radius.sm,
+              opacity: pressed ? 0.95 : 1,
+            })}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.secondary }}>
+              {t('dashboard.budgetOverview')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
+              {(() => {
+                const ok = budgetProgress.progress.filter((p) => p.status === 'ok').length;
+                const warning = budgetProgress.progress.filter((p) => p.status === 'warning').length;
+                const exceeded = budgetProgress.progress.filter((p) => p.status === 'exceeded').length;
+                const parts: string[] = [];
+                if (ok) parts.push(`${ok} ${t('budgets.ok')}`);
+                if (warning) parts.push(`${warning} ${t('budgets.warning')}`);
+                if (exceeded) parts.push(`${exceeded} ${t('budgets.exceeded')}`);
+                return (
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
+                    {parts.join(' · ')}
+                  </Text>
+                );
+              })()}
             </View>
-            {budgetProgress.progress
-              .sort((a, b) => b.progressPercent - a.progressPercent)
-              .slice(0, 5)
-              .map((p) => (
-                <Card key={p.budget.id} padding="md" elevated style={{ marginTop: theme.spacing.sm }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                        {p.category_name}
-                      </Text>
-                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
-                        {formatAmount(p.spentAmount, currency)} / {formatAmount(p.budgetAmount, currency)}
-                        {' · '}{p.progressPercent.toFixed(0)}%
-                      </Text>
-                      <View
-                        style={{
-                          height: 4,
-                          backgroundColor: theme.colors.border,
-                          borderRadius: 2,
-                          marginTop: 6,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: `${Math.min(p.progressPercent, 100)}%`,
-                            height: '100%',
-                            backgroundColor:
-                              p.status === 'exceeded'
-                                ? theme.colors.error
-                                : p.status === 'warning'
-                                  ? theme.colors.warning
-                                  : theme.colors.primary,
-                            borderRadius: 2,
-                          }}
-                        />
-                      </View>
-                    </View>
-                    {p.status === 'exceeded' ? (
-                      <View
-                        style={{
-                          backgroundColor: theme.colors.error + '20',
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: theme.radius.sm,
-                          marginLeft: theme.spacing.sm,
-                        }}
-                      >
-                        <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.error }}>
-                          {t('budgets.exceeded')}
-                        </Text>
-                      </View>
-                    ) : null}
-                  </View>
-                </Card>
-              ))}
-          </View>
+            <Text style={{ fontSize: 13, color: theme.colors.primary }}>→</Text>
+          </Pressable>
         ) : null}
 
         {/* Recent transactions */}
@@ -284,7 +249,7 @@ export default function DashboardScreen() {
           </View>
         )}
 
-        {/* AI insight card */}
+        {/* Key insight — 1–2 max */}
         {insights.insights && insights.insights.insights.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -298,8 +263,22 @@ export default function DashboardScreen() {
                 {t('dashboard.analytics')}
               </Text>
             </View>
-            <Card padding="md" elevated style={{ marginTop: theme.spacing.sm }}>
-              {insights.insights.insights.slice(0, 4).map((i, idx, arr) => (
+            <View
+              style={{
+                marginTop: theme.spacing.sm,
+                padding: theme.spacing.md,
+                backgroundColor: theme.colors.surface,
+                borderRadius: theme.radius.md,
+                borderLeftWidth: 3,
+                borderLeftColor:
+                  insights.insights.insights[0].type === 'warning'
+                    ? theme.colors.warning
+                    : insights.insights.insights[0].type === 'success'
+                      ? theme.colors.success
+                      : theme.colors.primary,
+              }}
+            >
+              {insights.insights.insights.slice(0, 2).map((i, idx, arr) => (
                 <View
                   key={i.id}
                   style={{
@@ -340,11 +319,11 @@ export default function DashboardScreen() {
                   ) : null}
                 </View>
               ))}
-            </Card>
+            </View>
           </View>
         ) : null}
 
-        {/* Goals & alerts previews remain below main content */}
+        {/* Goals preview */}
         {goals.length > 0 ? (
           <View style={{ marginTop: theme.spacing.lg }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -363,37 +342,44 @@ export default function DashboardScreen() {
               .sort((a, b) => (a.target_date ?? '9999').localeCompare(b.target_date ?? '9999'))
               .slice(0, 3)
               .map((g) => (
-                <Card key={g.id} padding="md" elevated style={{ marginTop: theme.spacing.sm }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                        {g.name}
-                      </Text>
-                      <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
-                        {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)}
-                        {' · '}{g.progressPercent.toFixed(0)}%
-                      </Text>
-                      <View
-                        style={{
-                          height: 4,
-                          backgroundColor: theme.colors.border,
-                          borderRadius: 2,
-                          marginTop: 6,
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: `${Math.min(g.progressPercent, 100)}%`,
-                            height: '100%',
-                            backgroundColor: theme.colors.primary,
-                            borderRadius: 2,
-                          }}
-                        />
-                      </View>
-                    </View>
+                <Pressable
+                  key={g.id}
+                  onPress={() => router.push('/(tabs)/goals')}
+                  style={({ pressed }) => ({
+                    marginTop: theme.spacing.sm,
+                    padding: theme.spacing.md,
+                    backgroundColor: theme.colors.surface,
+                    borderRadius: theme.radius.sm,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    opacity: pressed ? 0.95 : 1,
+                  })}
+                >
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+                    {g.name}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
+                    {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)} · {g.progressPercent.toFixed(0)}%
+                  </Text>
+                  <View
+                    style={{
+                      height: 4,
+                      backgroundColor: theme.colors.border,
+                      borderRadius: 2,
+                      marginTop: 6,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: `${Math.min(g.progressPercent, 100)}%`,
+                        height: '100%',
+                        backgroundColor: theme.colors.primary,
+                        borderRadius: 2,
+                      }}
+                    />
                   </View>
-                </Card>
+                </Pressable>
               ))}
           </View>
         ) : null}
@@ -411,7 +397,7 @@ export default function DashboardScreen() {
                 {t('dashboard.viewAllAlerts')}
               </Text>
             </View>
-            {alerts.slice(0, 3).map((a) => (
+            {alerts.slice(0, 2).map((a) => (
               <Card
                 key={a.id}
                 padding="md"
