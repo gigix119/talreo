@@ -332,19 +332,17 @@ export const analyticsAdvancedService = {
         id: 'total',
         type: totalChange > 0 ? 'warning' : 'success',
         text: totalChange > 0
-          ? `Wydatki wzrosły o ${Math.round(Math.abs(totalChange))}% względem poprzedniego miesiąca.`
-          : `Wydatki spadły o ${Math.round(Math.abs(totalChange))}% względem poprzedniego miesiąca.`,
+          ? `Wydatki +${Math.round(Math.abs(totalChange))}% vs poprz. miesiąc.`
+          : `Wydatki −${Math.round(Math.abs(totalChange))}% vs poprz. miesiąc.`,
         value: `${totalChange > 0 ? '+' : ''}${Math.round(totalChange)}%`,
         title: totalChange > 0 ? 'Wzrost wydatków' : 'Spadek wydatków',
-        recommendation: totalChange > 0
-          ? 'Przejrzyj kategorie z największym wzrostem i rozważ dostosowanie budżetu.'
-          : 'Oszczędzasz więcej. Rozważ przeznaczenie nadwyżki na cele oszczędnościowe.',
+        recommendation: totalChange > 0 ? 'Sprawdź kategorie z największym wzrostem.' : 'Nadwyżka — rozważ cele oszczędnościowe.',
       });
     } else if (prevTotal === 0 && currTotal > 0) {
       insights.push({
         id: 'total-new',
         type: 'info',
-        text: 'Nowa aktywność wydatkowa w tym okresie. Brak danych do porównania z poprzednim miesiącem.',
+        text: 'Nowe wydatki w tym okresie. Brak danych do porównania.',
         title: 'Nowa aktywność',
       });
     }
@@ -357,22 +355,20 @@ export const analyticsAdvancedService = {
         insights.push({
           id: `cat-${c.category_id ?? c.category_name}`,
           type: change > 0 ? 'warning' : 'success',
-          text: `Kategoria „${c.category_name}" ${change > 0 ? 'wzrosła' : 'spadła'} o ${Math.round(Math.abs(change))}% względem poprzedniego miesiąca.`,
+          text: `„${c.category_name}": ${change > 0 ? '+' : ''}${Math.round(change)}% vs poprz.`,
           value: `${change > 0 ? '+' : ''}${Math.round(change)}%`,
           categoryName: c.category_name,
-          title: change > 0 ? 'Wzrost wydatków' : 'Spadek wydatków',
-          recommendation: change > 0
-            ? `Sprawdź transakcje w kategorii ${c.category_name} i rozważ ograniczenie wydatków.`
-            : `Kategoria ${c.category_name} jest pod kontrolą — kontynuuj.`,
+          title: change > 0 ? 'Wzrost' : 'Spadek',
+          recommendation: change > 0 ? 'Ogranicz wydatki w tej kategorii.' : 'Kontrola OK.',
         });
       } else if (prevAmt === 0 && c.amount > 0 && c.amount > 50) {
         insights.push({
           id: `cat-new-${c.category_id ?? c.category_name}`,
           type: 'info',
-          text: `Nowa aktywność w kategorii „${c.category_name}".`,
+          text: `Nowa kategoria „${c.category_name}".`,
           value: undefined,
           categoryName: c.category_name,
-          title: 'Nowa kategoria',
+          title: 'Nowa',
         });
       }
     }
@@ -382,21 +378,21 @@ export const analyticsAdvancedService = {
         insights.push({
           id: `budget-${b.category_id}`,
           type: 'warning',
-          text: `Przekroczyłeś budżet kategorii „${b.category_name}".`,
+          text: `„${b.category_name}": przekroczono limit.`,
           value: `${Math.round(b.percentUsed)}%`,
           categoryName: b.category_name,
-          title: 'Przekroczono budżet',
-          recommendation: 'Przejrzyj transakcje i dostosuj budżet na kolejny miesiąc.',
+          title: 'Przekroczono',
+          recommendation: 'Dostosuj budżet lub ogranicz wydatki.',
         });
       } else if (b.percentUsed >= 80) {
         insights.push({
           id: `budget-warn-${b.category_id}`,
           type: 'info',
-          text: `Kategoria „${b.category_name}" wykorzystała ${Math.round(b.percentUsed)}% budżetu. Zbliżasz się do limitu.`,
+          text: `„${b.category_name}": ${Math.round(b.percentUsed)}% budżetu.`,
           value: `${Math.round(b.percentUsed)}%`,
           categoryName: b.category_name,
-          title: 'Zbliżasz się do limitu',
-          recommendation: 'Ogranicz wydatki w tej kategorii lub zwiększ limit budżetu.',
+          title: 'Blisko limitu',
+          recommendation: 'Ogranicz wydatki lub zwiększ limit.',
         });
       }
     }
@@ -407,10 +403,10 @@ export const analyticsAdvancedService = {
       insights.push({
         id: 'velocity',
         type: 'warning',
-        text: `Przy obecnym tempie wydatków przekroczysz łączny budżet o ok. ${over} w tym miesiącu.`,
+        text: `Prognoza: przekroczysz budżet o ~${over}.`,
         value: `~${Math.round(velocity.forecastThisMonth)} vs ${Math.round(totalBudget)}`,
-        title: 'Prognoza przekroczenia budżetu',
-        recommendation: 'Zwolnij wydatki dyskrecjonalne lub dostosuj budżet do aktualnego tempa.',
+        title: 'Ryzyko przekroczenia',
+        recommendation: 'Zwolnij wydatki lub dostosuj budżet.',
       });
     }
 

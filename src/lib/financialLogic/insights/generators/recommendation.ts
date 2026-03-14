@@ -19,7 +19,7 @@ export function generateRecommendationInsights(input: InsightEngineInput): Finan
         type: 'recommendation',
         severity: 'neutral',
         title: 'Skupienie wydatków',
-        description: `Ponad ${Math.round(share)}% wydatków to ${top!.categoryName}. Warto przejrzeć tę kategorię.`,
+        description: `${top!.categoryName}: ${Math.round(share)}% wydatków.`,
         relatedCategoryId: top!.categoryId,
         ctaLabel: 'Analityki',
         ctaAction: 'analytics',
@@ -34,7 +34,7 @@ export function generateRecommendationInsights(input: InsightEngineInput): Finan
       type: 'recommendation',
       severity: 'neutral',
       title: 'Ustaw budżety',
-      description: 'Ustaw limity dla kategorii, aby lepiej kontrolować wydatki.',
+      description: 'Ustaw limity — lepsza kontrola wydatków.',
       ctaLabel: 'Budżety',
       ctaAction: 'budgets',
     });
@@ -47,7 +47,7 @@ export function generateRecommendationInsights(input: InsightEngineInput): Finan
       type: 'recommendation',
       severity: 'neutral',
       title: 'Cel oszczędnościowy',
-      description: 'Masz dodatnie saldo. Rozważ ustawienie celu oszczędnościowego.',
+      description: 'Saldo dodatnie — rozważ cel oszczędnościowy.',
       ctaLabel: 'Cele',
       ctaAction: 'goals',
     });

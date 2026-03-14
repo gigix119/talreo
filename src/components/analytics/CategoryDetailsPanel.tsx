@@ -68,7 +68,7 @@ export function CategoryDetailsPanel({
         >
           <Card padding="lg" elevated style={{ marginBottom: theme.spacing.md }}>
             <Text style={{ fontSize: 14, color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-              Summary
+              {t('analytics.sectionSummary')}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>
               <StatBlock label={t('analytics.totalSpent')} value={formatAmount(details.totalSpent, currency)} />

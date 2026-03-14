@@ -100,28 +100,29 @@ export const insightsService = {
 
     const insights: MonthlyInsight[] = [];
 
-    if (topExpenseCategory) {
+    if (topExpenseCategory && topExpenseCategory.amount > 0) {
+      const pct = totalExpense > 0 ? Math.round((topExpenseCategory.amount / totalExpense) * 100) : 0;
       insights.push({
         id: 'top-expense',
         type: 'highlight',
-        text: `${topExpenseCategory.name} to Twoja główna kategoria wydatków w tym miesiącu.`,
+        text: `Główna kategoria: ${topExpenseCategory.name} (${pct}%).`,
         value: topExpenseCategory.amount,
       });
     }
 
-    if (expenseChangeVsPrev !== null) {
-      if (expenseChangeVsPrev > 10) {
+    if (expenseChangeVsPrev !== null && Math.abs(expenseChangeVsPrev) >= 10) {
+      if (expenseChangeVsPrev > 0) {
         insights.push({
           id: 'expense-up',
           type: 'warning',
-          text: `Wydałeś o ${Math.round(expenseChangeVsPrev)}% więcej niż w zeszłym miesiącu.`,
+          text: `Wydatki +${Math.round(expenseChangeVsPrev)}% vs zeszły miesiąc.`,
           value: expenseChangeVsPrev,
         });
-      } else if (expenseChangeVsPrev < -10) {
+      } else {
         insights.push({
           id: 'expense-down',
           type: 'success',
-          text: `Wydałeś o ${Math.round(Math.abs(expenseChangeVsPrev))}% mniej niż w zeszłym miesiącu.`,
+          text: `Wydatki −${Math.round(Math.abs(expenseChangeVsPrev))}% vs zeszły miesiąc.`,
           value: expenseChangeVsPrev,
         });
       }
@@ -131,49 +132,42 @@ export const insightsService = {
       insights.push({
         id: 'income-up',
         type: 'success',
-        text: `Przychody wzrosły o ${Math.round(incomeChangeVsPrev)}% względem zeszłego miesiąca.`,
+        text: `Przychody +${Math.round(incomeChangeVsPrev)}%.`,
         value: incomeChangeVsPrev,
       });
     }
 
     if (budgetSummary.exceeded > 0) {
-      const word = budgetSummary.exceeded === 1 ? 'budżetu' : 'budżetów';
+      const w = budgetSummary.exceeded === 1 ? 'budżet' : 'budżety';
       insights.push({
         id: 'budget-exceeded',
         type: 'warning',
-        text: `Przekroczyłeś ${budgetSummary.exceeded} ${word} kategorii.`,
+        text: `Przekroczono ${budgetSummary.exceeded} ${w}.`,
         value: budgetSummary.exceeded,
       });
     }
 
     if (budgetSummary.warning > 0 && budgetSummary.exceeded === 0) {
-      const word = budgetSummary.warning === 1 ? 'budżet blisko' : 'budżety blisko';
+      const w = budgetSummary.warning === 1 ? 'budżet blisko' : 'budżety blisko';
       insights.push({
         id: 'budget-warning',
         type: 'info',
-        text: `${budgetSummary.warning} ${word} limitu.`,
+        text: `${budgetSummary.warning} ${w} limitu.`,
         value: budgetSummary.warning,
       });
     }
 
-    if (tx.length > 0) {
-      const word = tx.length === 1 ? 'transakcja' : tx.length < 5 ? 'transakcje' : 'transakcji';
-      insights.push({
-        id: 'tx-count',
-        type: 'info',
-        text: `${tx.length} ${word} w tym miesiącu.`,
-        value: tx.length,
-      });
-    }
-
-    if (biggestExpense) {
-      const note = biggestExpense.note?.replace(/\[recurring:[^]+\]\s*/, '') || 'wydatek';
-      insights.push({
-        id: 'biggest-expense',
-        type: 'info',
-        text: `Największy wydatek: ${note}`,
-        value: biggestExpense.amount,
-      });
+    if (biggestExpense && biggestExpense.amount > 0 && totalExpense > 0) {
+      const share = Math.round((Number(biggestExpense.amount) / totalExpense) * 100);
+      if (share >= 15) {
+        const note = (biggestExpense.note || '').replace(/\[recurring:[^]+\]\s*/, '').slice(0, 30) || 'wydatek';
+        insights.push({
+          id: 'biggest-expense',
+          type: 'info',
+          text: `Największy: ${note} (${share}%).`,
+          value: biggestExpense.amount,
+        });
+      }
     }
 
     return {

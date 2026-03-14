@@ -44,26 +44,33 @@ export function RangeComparisonCard({
   const { t } = useI18n();
   if (!data) return null;
 
+  const hasAnyChange = data.change.expense != null || data.change.income != null || data.change.balance != null;
+
   return (
     <View
       style={{
         backgroundColor: theme.colors.surface,
         borderRadius: analyticsRadius.card,
-        padding: theme.spacing.lg,
+        padding: theme.spacing.md,
         ...analyticsShadows.card,
       }}
     >
-      <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text.primary, marginBottom: theme.spacing.md }}>
+      <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary, marginBottom: theme.spacing.sm }}>
         {t('analytics.rangeComparison')}
+      </Text>
+      <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: theme.spacing.sm }}>
+        {rangeALabel} → {rangeBLabel}
       </Text>
 
       <Row label={t('analytics.totalExpenses')} a={data.rangeA.totalExpense} b={data.rangeB.totalExpense} change={data.change.expense} currency={currency} />
       <Row label={t('analytics.totalIncome')} a={data.rangeA.totalIncome} b={data.rangeB.totalIncome} change={data.change.income} currency={currency} />
       <Row label={t('analytics.balance')} a={data.rangeA.balance} b={data.rangeB.balance} change={data.change.balance} currency={currency} />
 
-      <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: theme.spacing.sm }}>
-        {rangeALabel} vs {rangeBLabel}
-      </Text>
+      {!hasAnyChange && (
+        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: theme.spacing.xs }}>
+          {t('analytics.noComparisonData')}
+        </Text>
+      )}
     </View>
   );
 }
@@ -87,15 +94,21 @@ function Row({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: theme.spacing.sm,
+        paddingVertical: theme.spacing.xs + 2,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.border,
       }}
     >
-      <Text style={{ fontSize: 14, color: theme.colors.text.secondary }}>{label}</Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
-        <Text style={{ fontSize: 13, color: theme.colors.text.secondary }}>{formatAmount(a, currency)}</Text>
-        <Text style={{ fontSize: 13, color: theme.colors.text.primary }}>{formatAmount(b, currency)}</Text>
+      <Text style={{ fontSize: 13, color: theme.colors.text.secondary }} numberOfLines={1}>
+        {label}
+      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, flexShrink: 0 }}>
+        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }} numberOfLines={1}>
+          {formatAmount(a, currency)}
+        </Text>
+        <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+          {formatAmount(b, currency)}
+        </Text>
         <ChangeBadge value={change} />
       </View>
     </View>

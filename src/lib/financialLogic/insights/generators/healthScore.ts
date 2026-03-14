@@ -24,18 +24,15 @@ export function generateHealthScoreInsights(input: InsightEngineInput): Financia
 
   let description: string;
   if (exceededNum > 0) {
-    description =
-      exceededNum === 1
-        ? 'Jedna kategoria przekracza limit. Warto dostosować budżet lub ograniczyć wydatki.'
-        : `${exceededNum} kategorie przekraczają limit. Przejrzyj budżety.`;
+    description = exceededNum === 1 ? '1 kategoria ponad limit.' : `${exceededNum} kategorie ponad limit.`;
   } else if (warningNum > 0) {
-    description = `${warningNum} ${warningNum === 1 ? 'kategoria zbliża się' : 'kategorie zbliżają się'} do limitu.`;
+    description = `${warningNum} ${warningNum === 1 ? 'kategoria blisko' : 'kategorie blisko'} limitu.`;
   } else if (positiveBalance && input.budgetUsage.length > 0) {
-    description = 'Dodatnie saldo i budżety pod kontrolą.';
+    description = 'Saldo +, budżety OK.';
   } else if (positiveBalance) {
-    description = 'Dodatnie saldo. Rozważ ustawienie budżetów dla lepszej kontroli.';
+    description = 'Saldo dodatnie. Ustaw budżety.';
   } else {
-    description = health.grade === 'poor' ? 'Wydatki przewyższają przychody. Skup się na redukcji wydatków.' : `${gradeLabel} — kontynuuj śledzenie.`;
+    description = health.grade === 'poor' ? 'Wydatki > przychody.' : 'Kontynuuj śledzenie.';
   }
 
   insights.push({

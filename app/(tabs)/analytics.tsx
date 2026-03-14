@@ -20,6 +20,7 @@ import {
   AIInsightWidget,
   SpendingCategoriesWidget,
   KPISummaryRow,
+  SavingsMomentumWidget,
 } from '@/components/analytics';
 import { AnalyticsSkeleton } from '@/components/analytics/AnalyticsSkeleton';
 import { theme } from '@/constants/theme';
@@ -72,6 +73,7 @@ export default function AnalyticsScreen() {
     categoryPerformance,
     insights,
     rangeComparison,
+    velocity,
     loading,
     error,
     refetch,
@@ -200,7 +202,16 @@ export default function AnalyticsScreen() {
               </View>
             )}
 
-            {/* 3. Trend chart */}
+            {/* 3. Prognoza wydatków */}
+            {velocity && (
+              <SavingsMomentumWidget
+                velocity={velocity}
+                currency={currency}
+                emptyText={t('analytics.noExpenses')}
+              />
+            )}
+
+            {/* 4. Trend chart */}
             <ChartSection
               trend={trend}
               currency={currency}
@@ -208,7 +219,7 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noData')}
             />
 
-            {/* 4. Expense categories */}
+            {/* 5. Expense categories */}
             <SpendingCategoriesWidget
               expenseData={expenseBreakdown}
               categoryPerformance={categoryPerformance}
@@ -217,7 +228,7 @@ export default function AnalyticsScreen() {
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* 5. Comparison block */}
+            {/* 6. Comparison block */}
             {rangeComparison && (
               <RangeComparisonCard
                 data={rangeComparison}
@@ -227,7 +238,7 @@ export default function AnalyticsScreen() {
               />
             )}
 
-            {/* 6. Compact budget status strip */}
+            {/* 7. Compact budget status strip */}
             <BudgetStatusWidget
               data={categoryPerformance}
               currency={currency}
@@ -235,7 +246,7 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noBudgets')}
             />
 
-            {/* 7. AI recommendation block */}
+            {/* 8. AI recommendation block */}
             <AIInsightWidget insights={insights} />
           </View>
         )}

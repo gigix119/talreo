@@ -34,49 +34,24 @@ export function SavingsMomentumWidget({ velocity, currency, emptyText }: Savings
   }
 
   const v = velocity!;
-  const progressPct = v.daysInMonth > 0 ? Math.min(100, (v.daysElapsed / v.daysInMonth) * 100) : 0;
 
   return (
     <InteractiveWidget title={t('analytics.spendingMomentum')} icon="📈">
-      <View style={{ gap: 16 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+      <View style={{ gap: 12 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <View>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-              {t('analytics.dailySpending')}
-            </Text>
-            <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.text.primary }}>
-              {dailyDisplay}
-              <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.tertiary }}> {t('analytics.dailyUnit')}</Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>{t('analytics.dailyAvg')}</Text>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary }}>
+              {dailyDisplay} <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.tertiary }}>/ {t('analytics.day')}</Text>
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginBottom: 4 }}>
-              {t('analytics.projectedMonthEnd')}
-            </Text>
-            <Text style={{ fontSize: 22, fontWeight: '700', color: analyticsColors.expense }}>
-              {forecastDisplay}
-            </Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>{t('analytics.projMonth')}</Text>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: analyticsColors.expense }}>{forecastDisplay}</Text>
           </View>
         </View>
-        <View
-          style={{
-            height: 8,
-            backgroundColor: theme.colors.background,
-            borderRadius: 4,
-            overflow: 'hidden',
-          }}
-        >
-          <View
-            style={{
-              width: `${progressPct}%`,
-              height: '100%',
-              backgroundColor: analyticsColors.balance,
-              borderRadius: 4,
-            }}
-          />
-        </View>
-        <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-          {v.daysElapsed} {t('analytics.daysElapsed')} · {formatAmount(v.spentSoFar, currency)} {t('analytics.spent')}
+        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>
+          {v.daysElapsed}/{v.daysInMonth} dni · {formatAmount(v.spentSoFar, currency)}
         </Text>
       </View>
     </InteractiveWidget>
