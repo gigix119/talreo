@@ -89,13 +89,13 @@ export default function AddBudgetScreen() {
       <View style={{ paddingHorizontal: 20, paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.lg }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
-            {params.budgetId ? 'Edytuj budżet' : 'Dodaj budżet'}
+            {params.budgetId ? t('budgets.editBudget') : t('budgets.addBudget')}
           </Text>
           <Text
             onPress={() => router.back()}
             style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '500' }}
           >
-            Anuluj
+            {t('common.cancel')}
           </Text>
         </View>
 

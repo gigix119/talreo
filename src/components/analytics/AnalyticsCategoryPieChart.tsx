@@ -7,7 +7,7 @@ import { PieChart } from 'react-native-gifted-charts';
 import { useI18n } from '@/i18n';
 import { Card } from '@/components/ui/Card';
 import { theme } from '@/constants/theme';
-import { formatAmount } from '@/utils/currency';
+import { formatAmount, formatPercent } from '@/utils/currency';
 import type { CategoryBreakdownItem } from '@/types/database';
 
 const CHART_COLORS = [
@@ -38,7 +38,7 @@ export function AnalyticsCategoryPieChart({
   currency,
   onSegmentPress,
 }: AnalyticsCategoryPieChartProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [selectedItem, setSelectedItem] = useState<CategoryBreakdownItem | null>(null);
 
   if (data.length === 0) {
@@ -102,7 +102,7 @@ export function AnalyticsCategoryPieChart({
               {formatAmount(selectedItem.amount, currency)}
             </Text>
             <Text style={{ fontSize: 12, color: theme.colors.text.secondary, marginTop: 2 }}>
-              {selectedItem.percent.toFixed(1)}% of expenses
+              {formatPercent(selectedItem.percent, 1, locale)} {t('analytics.percentOfExpensesLabel')}
             </Text>
             <Text style={{ fontSize: 12, color: theme.colors.primary, marginTop: 4 }}>
               {t('analytics.tapToSeeDetails')}

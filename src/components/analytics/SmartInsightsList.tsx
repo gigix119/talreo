@@ -39,7 +39,7 @@ export function SmartInsightsList({ insights, title }: SmartInsightsListProps) {
         </View>
         <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.secondary }}>{sectionTitle}</Text>
         <Text style={{ fontSize: 14, color: theme.colors.text.tertiary, marginTop: 4, textAlign: 'center' }}>
-          No insights this month. Add more transactions to unlock.
+          {t('analytics.emptyInsights')}
         </Text>
       </View>
     );

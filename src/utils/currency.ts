@@ -26,6 +26,16 @@ export function formatAmountSigned(amount: number, currency: Currency = 'PLN', l
   return `${prefix} ${formatAmount(amount, currency, locale)}`;
 }
 
+/** Format percentage with locale-appropriate decimal separator (e.g. 5,2% in pl) */
+export function formatPercent(value: number, decimals: number = 1, locale: string = 'pl'): string {
+  const l = locale === 'pl' ? 'pl-PL' : 'en-US';
+  const formatted = new Intl.NumberFormat(l, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+  return `${formatted}%`;
+}
+
 /** Compact format for chart axis (avoids clipped labels on mobile) */
 export function formatAmountShort(amount: number, currency: Currency | string = 'PLN'): string {
   const symbol = CURRENCY_SYMBOLS[currency as Currency] ?? String(currency);

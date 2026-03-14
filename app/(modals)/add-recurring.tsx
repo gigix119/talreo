@@ -131,7 +131,7 @@ export default function AddRecurringScreen() {
       <View style={{ paddingHorizontal: 20, paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.lg }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
-            {isEdit ? 'Edit recurring' : 'Add recurring'}
+            {isEdit ? t('recurring.editRecurring') : t('recurring.addRecurring')}
           </Text>
           <Text
             onPress={() => router.back()}
@@ -152,7 +152,7 @@ export default function AddRecurringScreen() {
           >
             <View style={{ marginTop: theme.spacing.xl }}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                Type
+                {t('transactions.labelType')}
               </Text>
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
                 <Button
@@ -160,30 +160,30 @@ export default function AddRecurringScreen() {
                   onPress={() => setType('expense')}
                   style={{ flex: 1 }}
                 >
-                  Expense
+                  {t('transactions.filterTypeExpense')}
                 </Button>
                 <Button
                   variant={type === 'income' ? 'primary' : 'secondary'}
                   onPress={() => setType('income')}
                   style={{ flex: 1 }}
                 >
-                  Income
+                  {t('transactions.filterTypeIncome')}
                 </Button>
               </View>
             </View>
 
             <Input
-              label="Amount"
+              label={t('transactions.labelAmount')}
               value={amount}
               onChangeText={setAmount}
-              placeholder={`0.00 ${currency}`}
+              placeholder={t('goals.placeholderAmount')}
               keyboardType="decimal-pad"
             />
 
             {categories.length > 0 ? (
               <View style={{ marginTop: theme.spacing.md }}>
                 <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                  Category
+                  {t('transactions.labelCategory')}
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
                   {categories.map((c) => (
@@ -201,7 +201,7 @@ export default function AddRecurringScreen() {
             ) : null}
 
             <Input
-              label="Note (optional)"
+              label={t('transactions.labelNote')}
               value={note}
               onChangeText={setNote}
               placeholder={t('recurring.placeholderNote')}
@@ -209,7 +209,7 @@ export default function AddRecurringScreen() {
 
             <View style={{ marginTop: theme.spacing.md }}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                Frequency
+                {t('recurring.labelFrequency')}
               </Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
                 {FREQUENCIES.map((f) => (
@@ -219,21 +219,21 @@ export default function AddRecurringScreen() {
                     onPress={() => setFrequency(f)}
                     style={{ paddingHorizontal: 12 }}
                   >
-                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                    {t(`recurring.frequency${f.charAt(0).toUpperCase() + f.slice(1)}`)}
                   </Button>
                 ))}
               </View>
             </View>
 
             <Input
-              label="Start date"
+              label={t('recurring.labelStartDate')}
               value={startDate}
               onChangeText={setStartDate}
               placeholder={t('recurring.placeholderDate')}
             />
 
             <Input
-              label="End date (optional)"
+              label={t('recurring.labelEndDate')}
               value={endDate}
               onChangeText={setEndDate}
               placeholder={t('recurring.placeholderDate')}
@@ -242,7 +242,7 @@ export default function AddRecurringScreen() {
             {isEdit ? (
               <View style={{ marginTop: theme.spacing.md, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary }}>
-                  Active
+                  {t('recurring.labelActive')}
                 </Text>
                 <Switch
                   value={isActive}

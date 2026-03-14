@@ -120,7 +120,7 @@ export default function EditTransactionScreen() {
       <View style={{ paddingHorizontal: 20, paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.lg }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.text.primary }}>
-            Edit transaction
+            {t('transactions.editTransaction')}
           </Text>
           <Text onPress={() => router.back()} style={{ fontSize: 16, color: theme.colors.primary, fontWeight: '500' }}>
             {t('common.cancel')}
@@ -138,7 +138,7 @@ export default function EditTransactionScreen() {
           >
             <View style={{ marginTop: theme.spacing.xl }}>
               <Text style={{ fontSize: 14, fontWeight: '500', color: theme.colors.text.secondary, marginBottom: theme.spacing.sm }}>
-                Type
+                {t('transactions.labelType')}
               </Text>
               <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
                 <Button
@@ -146,14 +146,14 @@ export default function EditTransactionScreen() {
                   onPress={() => setType('expense')}
                   style={{ flex: 1 }}
                 >
-                  Expense
+                  {t('transactions.filterTypeExpense')}
                 </Button>
                 <Button
                   variant={type === 'income' ? 'primary' : 'secondary'}
                   onPress={() => setType('income')}
                   style={{ flex: 1 }}
                 >
-                  Income
+                  {t('transactions.filterTypeIncome')}
                 </Button>
               </View>
             </View>

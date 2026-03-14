@@ -207,7 +207,7 @@ export default function AddTransactionScreen() {
               label={t('transactions.labelDate')}
               value={date}
               onChangeText={setDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('goals.placeholderDate')}
             />
 
             <Input
