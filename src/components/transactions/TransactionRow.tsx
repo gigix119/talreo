@@ -77,11 +77,13 @@ export const TransactionRow = memo(function TransactionRow({
           }}
         />
       ) : null}
-      <TransactionIcon
-        categoryName={categoryName}
-        type={transaction.type}
-        size={32}
-      />
+      <View style={{ flexShrink: 0 }}>
+        <TransactionIcon
+          categoryName={categoryName}
+          type={transaction.type}
+          size={32}
+        />
+      </View>
       <View style={{ flex: 1, minWidth: 0, marginLeft: theme.spacing.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Text
@@ -110,7 +112,7 @@ export const TransactionRow = memo(function TransactionRow({
           date={transaction.transaction_date}
         />
       </View>
-      <View style={{ marginLeft: theme.spacing.sm }}>
+      <View style={{ marginLeft: theme.spacing.sm, flexShrink: 0 }}>
         <TransactionAmount
           amount={amount}
           isIncome={isIncome}

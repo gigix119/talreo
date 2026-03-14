@@ -3,7 +3,7 @@
  * Ensures content is never cut off by bottom nav, FAB, or browser chrome.
  */
 /** Bottom padding for scroll content: clear tab bar (~64px) + safe area + breathing room */
-export const BOTTOM_CONTENT_PADDING = 120;
+export const BOTTOM_CONTENT_PADDING = 132;
 
 /** FAB offset from bottom so it clears tab bar and safe area on iPhone */
 export const FAB_BOTTOM_OFFSET = 92;

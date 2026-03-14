@@ -324,7 +324,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
         <View
           ref={chartContainerRef}
           {...panResponder.panHandlers}
-          style={{ position: 'relative' }}
+          style={{ position: 'relative', overflow: 'hidden' }}
           onLayout={(e) => {
             layoutRef.current.width = e.nativeEvent.layout.width - 32;
             chartContainerRef.current?.measureInWindow((x) => {

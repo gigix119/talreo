@@ -141,7 +141,7 @@ export default function TransactionsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background, overflow: 'hidden' }}>
       {/* Sticky: header + search + filters — compact to maximize list viewport */}
       <View
         style={{
