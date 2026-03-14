@@ -15,7 +15,7 @@ import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { theme } from '@/constants/theme';
-import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
+import { BOTTOM_CONTENT_PADDING, CARD_GAP, SECTION_GAP } from '@/constants/layout';
 import { formatAmount } from '@/utils/currency';
 import { getCurrentMonth, formatMonth } from '@/utils/date';
 import type { BudgetProgress, BudgetStatus } from '@/types/database';
@@ -64,7 +64,7 @@ function ProgressBar({
   return (
     <View
       style={{
-        height: 6,
+        height: 8,
         backgroundColor: theme.colors.border,
         borderRadius: theme.radius.full,
         overflow: 'hidden',
@@ -195,12 +195,12 @@ export default function BudgetsScreen() {
           </View>
         ) : (
           <ScrollView
-            style={{ marginTop: theme.spacing.lg }}
+            style={{ marginTop: SECTION_GAP }}
             contentContainerStyle={{ paddingBottom: BOTTOM_CONTENT_PADDING }}
             showsVerticalScrollIndicator={false}
           >
             {progress.map((p) => (
-              <View key={p.budget.id} style={{ marginBottom: theme.spacing.sm }}>
+              <View key={p.budget.id} style={{ marginBottom: CARD_GAP }}>
                 <BudgetCard
                   p={p}
                   currency={currency}

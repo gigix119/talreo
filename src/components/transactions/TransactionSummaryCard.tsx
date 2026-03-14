@@ -35,19 +35,19 @@ export const TransactionSummaryCard = memo(function TransactionSummaryCard({
         borderColor: theme.colors.border,
       }}
     >
-      <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginBottom: 4 }}>{periodLabel}</Text>
+      <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, marginBottom: 6, fontWeight: '500' }}>{periodLabel}</Text>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: theme.spacing.sm }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: theme.colors.text.secondary }}>{t('transactions.summaryIncome')}</Text>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.income }}>+{formatAmount(income, currency)}</Text>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text style={{ fontSize: 10, color: theme.colors.text.tertiary }}>{t('transactions.summaryIncome')}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: theme.colors.income, letterSpacing: -0.3 }} numberOfLines={1}>+{formatAmount(income, currency)}</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: theme.colors.text.secondary }}>{t('transactions.summaryExpenses')}</Text>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.expense }}>−{formatAmount(expense, currency)}</Text>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text style={{ fontSize: 10, color: theme.colors.text.tertiary }}>{t('transactions.summaryExpenses')}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: theme.colors.expense, letterSpacing: -0.3 }} numberOfLines={1}>−{formatAmount(expense, currency)}</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: theme.colors.text.secondary }}>{t('transactions.summaryBalance')}</Text>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: balance >= 0 ? theme.colors.income : theme.colors.expense }}>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text style={{ fontSize: 10, color: theme.colors.text.tertiary }}>{t('transactions.summaryBalance')}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: balance >= 0 ? theme.colors.income : theme.colors.expense, letterSpacing: -0.3 }} numberOfLines={1}>
             {balance >= 0 ? '+' : ''}{formatAmount(balance, currency)}
           </Text>
         </View>

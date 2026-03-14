@@ -27,6 +27,7 @@ export function Card({
           backgroundColor: theme.colors.surface,
           borderRadius: theme.radius.md,
           padding: theme.spacing[padding],
+          maxWidth: '100%',
           ...(elevated ? theme.shadows.sm : {}),
         },
         style,

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { theme } from '@/constants/theme';
-import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
+import { BOTTOM_CONTENT_PADDING, CARD_GAP, SECTION_GAP } from '@/constants/layout';
 import { formatAmount } from '@/utils/currency';
 import { formatDate } from '@/utils/date';
 import type { SavingsGoalWithStatus, GoalStatus } from '@/types/database';
@@ -101,9 +101,9 @@ function GoalCard({
           </Text>
           <View
             style={{
-              height: 4,
+              height: 8,
               backgroundColor: theme.colors.border,
-              borderRadius: 2,
+              borderRadius: theme.radius.full,
               marginTop: 6,
               overflow: 'hidden',
             }}
@@ -113,7 +113,7 @@ function GoalCard({
                 width: `${Math.min(g.progressPercent, 100)}%`,
                 height: '100%',
                 backgroundColor: progressColor,
-                borderRadius: 2,
+                borderRadius: theme.radius.full,
               }}
             />
           </View>
@@ -205,12 +205,12 @@ export default function GoalsScreen() {
           </View>
         ) : (
           <ScrollView
-            style={{ marginTop: theme.spacing.lg }}
+            style={{ marginTop: SECTION_GAP }}
             contentContainerStyle={{ paddingBottom: BOTTOM_CONTENT_PADDING }}
             showsVerticalScrollIndicator={false}
           >
             {sorted.map((g) => (
-              <View key={g.id} style={{ marginBottom: theme.spacing.sm }}>
+              <View key={g.id} style={{ marginBottom: CARD_GAP }}>
                 <GoalCard
                   g={g}
                   currency={currency}

@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { theme } from '@/constants/theme';
-import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
+import { BOTTOM_CONTENT_PADDING, SECTION_GAP, CARD_GAP } from '@/constants/layout';
 import { formatAmount, formatAmountSigned } from '@/utils/currency';
 import { getCurrentMonthRange, formatDate, getCurrentMonth } from '@/utils/date';
 import { alertsService } from '@/services/alerts';
@@ -36,9 +36,11 @@ function SummaryCard({
   const color =
     isPositive === undefined ? theme.colors.text.primary : isPositive ? theme.colors.income : theme.colors.expense;
   return (
-    <View style={{ flex: 1, minWidth: 100 }}>
-      <Text style={{ fontSize: 12, color: theme.colors.text.secondary }}>{label}</Text>
-      <Text style={{ fontSize: 22, fontWeight: '700', color, marginTop: 4 }}>{amount}</Text>
+    <View style={{ flex: 1, minWidth: 0 }}>
+      <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, fontWeight: '500' }}>{label}</Text>
+      <Text style={{ fontSize: 20, fontWeight: '800', color, marginTop: 4, letterSpacing: -0.3 }} numberOfLines={1} adjustsFontSizeToFit>
+        {amount}
+      </Text>
     </View>
   );
 }
@@ -142,7 +144,7 @@ export default function DashboardScreen() {
         </View>
 
         {/* Top money cards: Przychody, Wydatki, Saldo */}
-        <Card padding="md" elevated style={{ marginTop: theme.spacing.lg }}>
+        <Card padding="md" elevated style={{ marginTop: SECTION_GAP }}>
           <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
             {t('dashboard.thisMonth')}
           </Text>
@@ -166,7 +168,7 @@ export default function DashboardScreen() {
           <Pressable
             onPress={() => router.push('/(tabs)/budgets')}
             style={({ pressed }) => ({
-              marginTop: theme.spacing.md,
+              marginTop: SECTION_GAP,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -200,7 +202,7 @@ export default function DashboardScreen() {
         ) : null}
 
         {/* Recent transactions */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: theme.spacing.lg }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: SECTION_GAP }}>
           <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
             {t('dashboard.recentTransactions')}
           </Text>
@@ -213,7 +215,7 @@ export default function DashboardScreen() {
         </View>
 
         {recent.transactions.length === 0 ? (
-          <View style={{ marginTop: theme.spacing.md }}>
+          <View style={{ marginTop: CARD_GAP }}>
             <EmptyState
               title={t('dashboard.noTransactions')}
               actionLabel={t('dashboard.addFirstTransaction')}
@@ -222,12 +224,12 @@ export default function DashboardScreen() {
             />
           </View>
         ) : (
-          <View style={{ marginTop: theme.spacing.md, gap: theme.spacing.sm }}>
+          <View style={{ marginTop: CARD_GAP, gap: CARD_GAP }}>
             {recent.transactions.map((tx) => (
               <Card key={tx.id} padding="md" elevated>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+                  <View style={{ flex: 1, minWidth: 0, marginRight: theme.spacing.sm }}>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
                       {(tx.note || (tx.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
@@ -239,7 +241,9 @@ export default function DashboardScreen() {
                       fontSize: 16,
                       fontWeight: '600',
                       color: tx.type === 'income' ? theme.colors.income : theme.colors.expense,
+                      flexShrink: 0,
                     }}
+                    numberOfLines={1}
                   >
                     {tx.type === 'income' ? '+' : '−'} {formatAmount(Number(tx.amount), currency)}
                   </Text>
@@ -251,7 +255,7 @@ export default function DashboardScreen() {
 
         {/* Key insight — 1–2 max */}
         {insights.insights && insights.insights.insights.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.lg }}>
+          <View style={{ marginTop: SECTION_GAP }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.insights')}
@@ -325,7 +329,7 @@ export default function DashboardScreen() {
 
         {/* Goals preview */}
         {goals.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.lg }}>
+          <View style={{ marginTop: SECTION_GAP }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.goalsPreview')}
@@ -346,7 +350,7 @@ export default function DashboardScreen() {
                   key={g.id}
                   onPress={() => router.push('/(tabs)/goals')}
                   style={({ pressed }) => ({
-                    marginTop: theme.spacing.sm,
+                    marginTop: CARD_GAP,
                     padding: theme.spacing.md,
                     backgroundColor: theme.colors.surface,
                     borderRadius: theme.radius.sm,
@@ -363,9 +367,9 @@ export default function DashboardScreen() {
                   </Text>
                   <View
                     style={{
-                      height: 4,
+                      height: 6,
                       backgroundColor: theme.colors.border,
-                      borderRadius: 2,
+                      borderRadius: theme.radius.full,
                       marginTop: 6,
                       overflow: 'hidden',
                     }}
@@ -375,7 +379,7 @@ export default function DashboardScreen() {
                         width: `${Math.min(g.progressPercent, 100)}%`,
                         height: '100%',
                         backgroundColor: theme.colors.primary,
-                        borderRadius: 2,
+                        borderRadius: theme.radius.full,
                       }}
                     />
                   </View>
@@ -385,7 +389,7 @@ export default function DashboardScreen() {
         ) : null}
 
         {alerts.length > 0 ? (
-          <View style={{ marginTop: theme.spacing.lg, marginBottom: theme.spacing.lg }}>
+          <View style={{ marginTop: SECTION_GAP, marginBottom: SECTION_GAP }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
                 {t('dashboard.alertsPreview')}
@@ -403,7 +407,7 @@ export default function DashboardScreen() {
                 padding="md"
                 elevated
                 style={{
-                  marginTop: theme.spacing.sm,
+                  marginTop: CARD_GAP,
                   borderLeftWidth: a.is_read ? 0 : 4,
                   borderLeftColor: theme.colors.primary,
                 }}

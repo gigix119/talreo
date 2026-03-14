@@ -49,10 +49,10 @@ function KPICard({
     >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, fontWeight: '500' }}>
+          <Text style={{ fontSize: 10, color: theme.colors.text.tertiary, fontWeight: '600' }}>
             {label}
           </Text>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.text.primary, marginTop: 2, letterSpacing: -0.3 }} numberOfLines={1}>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: theme.colors.text.primary, marginTop: 4, letterSpacing: -0.3 }} numberOfLines={1}>
             {valueFormatter(value)}
           </Text>
           {showTrend && (
