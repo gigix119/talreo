@@ -1,6 +1,5 @@
 /**
- * Analytics — mobile-first, 7 core sections.
- * 1) Header + range  2) Summary  3) Key insight  4) Chart  5) Categories  6) Comparison  7) AI block
+ * Analytics — mobile-first hierarchy: Header → Key metrics → Insight → Chart → Categories → Comparison → AI
  */
 import { memo, useCallback, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -16,11 +15,9 @@ import {
   FinancialTrendChart,
   CategoryDetailsPanel,
   RangeComparisonCard,
-  BudgetStatusWidget,
   AIInsightWidget,
   SpendingCategoriesWidget,
   KPISummaryRow,
-  SavingsMomentumWidget,
 } from '@/components/analytics';
 import { AnalyticsSkeleton } from '@/components/analytics/AnalyticsSkeleton';
 import { theme } from '@/constants/theme';
@@ -73,7 +70,6 @@ export default function AnalyticsScreen() {
     categoryPerformance,
     insights,
     rangeComparison,
-    velocity,
     loading,
     error,
     refetch,
@@ -180,10 +176,10 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <View style={{ gap: analyticsSpacing.sectionGap }}>
-            {/* 1. Financial summary */}
+            {/* 1. Key metrics */}
             <KPISummaryRow trend={trend} currency={currency} />
 
-            {/* 2. Key insight or warning */}
+            {/* 2. Insight / warning */}
             {insights.length > 0 && (
               <View
                 style={{
@@ -203,16 +199,7 @@ export default function AnalyticsScreen() {
               </View>
             )}
 
-            {/* 3. Prognoza wydatków */}
-            {velocity && (
-              <SavingsMomentumWidget
-                velocity={velocity}
-                currency={currency}
-                emptyText={t('analytics.noExpenses')}
-              />
-            )}
-
-            {/* 4. Trend chart */}
+            {/* 3. Trend chart */}
             <ChartSection
               trend={trend}
               currency={currency}
@@ -220,7 +207,7 @@ export default function AnalyticsScreen() {
               emptyText={t('analytics.noData')}
             />
 
-            {/* 5. Expense categories */}
+            {/* 4. Categories */}
             <SpendingCategoriesWidget
               expenseData={expenseBreakdown}
               categoryPerformance={categoryPerformance}
@@ -229,7 +216,7 @@ export default function AnalyticsScreen() {
               onCategoryPress={handleCategoryPress}
             />
 
-            {/* 6. Comparison block */}
+            {/* 5. Comparison */}
             {rangeComparison && (
               <RangeComparisonCard
                 data={rangeComparison}
@@ -239,15 +226,7 @@ export default function AnalyticsScreen() {
               />
             )}
 
-            {/* 7. Compact budget status strip */}
-            <BudgetStatusWidget
-              data={categoryPerformance}
-              currency={currency}
-              month={month}
-              emptyText={t('analytics.noBudgets')}
-            />
-
-            {/* 8. AI recommendation block */}
+            {/* 6. AI insights */}
             <AIInsightWidget insights={insights} />
           </View>
         )}

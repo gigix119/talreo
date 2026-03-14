@@ -1,5 +1,5 @@
 /**
- * Dashboard — summary, budget overview, goals preview, alerts preview, insights, transactions.
+ * Dashboard — mobile-first: Header → Key metrics → Insight → Budget → Recent tx → Goals → Alerts
  */
 import { useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
@@ -143,11 +143,8 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        {/* Top money cards: Przychody, Wydatki, Saldo */}
+        {/* Key metrics */}
         <Card padding="md" elevated style={{ marginTop: SECTION_GAP }}>
-          <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-            {t('dashboard.thisMonth')}
-          </Text>
           <View
             style={{
               flexDirection: 'row',
@@ -163,113 +160,11 @@ export default function DashboardScreen() {
           </View>
         </Card>
 
-        {/* Budget strip — compact scan */}
-        {budgetProgress.progress.length > 0 ? (
-          <Pressable
-            onPress={() => router.push('/(tabs)/budgets')}
-            style={({ pressed }) => ({
-              marginTop: SECTION_GAP,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: theme.spacing.sm + 4,
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.radius.sm,
-              opacity: pressed ? 0.95 : 1,
-            })}
-          >
-            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.secondary }}>
-              {t('dashboard.budgetOverview')}
-            </Text>
-            <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
-              {(() => {
-                const ok = budgetProgress.progress.filter((p) => p.status === 'ok').length;
-                const warning = budgetProgress.progress.filter((p) => p.status === 'warning').length;
-                const exceeded = budgetProgress.progress.filter((p) => p.status === 'exceeded').length;
-                const parts: string[] = [];
-                if (ok) parts.push(`${ok} ${t('budgets.ok')}`);
-                if (warning) parts.push(`${warning} ${t('budgets.warning')}`);
-                if (exceeded) parts.push(`${exceeded} ${t('budgets.exceeded')}`);
-                return (
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
-                    {parts.join(' · ')}
-                  </Text>
-                );
-              })()}
-            </View>
-            <Text style={{ fontSize: 13, color: theme.colors.primary }}>→</Text>
-          </Pressable>
-        ) : null}
-
-        {/* Recent transactions */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: SECTION_GAP }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-            {t('dashboard.recentTransactions')}
-          </Text>
-          <Text
-            onPress={() => router.push('/(tabs)/transactions')}
-            style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-          >
-            {t('dashboard.seeAll')}
-          </Text>
-        </View>
-
-        {recent.transactions.length === 0 ? (
-          <View style={{ marginTop: CARD_GAP }}>
-            <EmptyState
-              title={t('dashboard.noTransactions')}
-              actionLabel={t('dashboard.addFirstTransaction')}
-              onAction={() => router.push('/(modals)/add-transaction')}
-              variant="compact"
-            />
-          </View>
-        ) : (
-          <View style={{ marginTop: CARD_GAP, gap: CARD_GAP }}>
-            {recent.transactions.map((tx) => (
-              <Card key={tx.id} padding="md" elevated>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <View style={{ flex: 1, minWidth: 0, marginRight: theme.spacing.sm }}>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
-                      {(tx.note || (tx.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
-                      {formatDate(tx.transaction_date)}
-                    </Text>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: '600',
-                      color: tx.type === 'income' ? theme.colors.income : theme.colors.expense,
-                      flexShrink: 0,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {tx.type === 'income' ? '+' : '−'} {formatAmount(Number(tx.amount), currency)}
-                  </Text>
-                </View>
-              </Card>
-            ))}
-          </View>
-        )}
-
-        {/* Key insight — 1–2 max */}
+        {/* Insight / warning */}
         {insights.insights && insights.insights.insights.length > 0 ? (
           <View style={{ marginTop: SECTION_GAP }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
-                {t('dashboard.insights')}
-              </Text>
-              <Text
-                onPress={() => router.push('/(tabs)/analytics')}
-                style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
-              >
-                {t('dashboard.analytics')}
-              </Text>
-            </View>
             <View
               style={{
-                marginTop: theme.spacing.sm,
                 padding: theme.spacing.md,
                 backgroundColor: theme.colors.surface,
                 borderRadius: theme.radius.md,
@@ -324,10 +219,106 @@ export default function DashboardScreen() {
                 </View>
               ))}
             </View>
+            <Text
+              onPress={() => router.push('/(tabs)/analytics')}
+              style={{ fontSize: 13, color: theme.colors.primary, fontWeight: '500', marginTop: theme.spacing.sm }}
+            >
+              {t('dashboard.analytics')} →
+            </Text>
           </View>
         ) : null}
 
-        {/* Goals preview */}
+        {/* Budget strip */}
+        {budgetProgress.progress.length > 0 ? (
+          <Pressable
+            onPress={() => router.push('/(tabs)/budgets')}
+            style={({ pressed }) => ({
+              marginTop: SECTION_GAP,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: theme.spacing.sm + 4,
+              backgroundColor: theme.colors.surface,
+              borderRadius: theme.radius.sm,
+              opacity: pressed ? 0.95 : 1,
+            })}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text.secondary }}>
+              {t('dashboard.budgetOverview')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
+              {(() => {
+                const ok = budgetProgress.progress.filter((p) => p.status === 'ok').length;
+                const warning = budgetProgress.progress.filter((p) => p.status === 'warning').length;
+                const exceeded = budgetProgress.progress.filter((p) => p.status === 'exceeded').length;
+                const parts: string[] = [];
+                if (ok) parts.push(`${ok} ${t('budgets.ok')}`);
+                if (warning) parts.push(`${warning} ${t('budgets.warning')}`);
+                if (exceeded) parts.push(`${exceeded} ${t('budgets.exceeded')}`);
+                return (
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }}>
+                    {parts.join(' · ')}
+                  </Text>
+                );
+              })()}
+            </View>
+            <Text style={{ fontSize: 13, color: theme.colors.primary }}>→</Text>
+          </Pressable>
+        ) : null}
+
+        {/* Recent transactions (secondary) */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: SECTION_GAP }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }}>
+            {t('dashboard.recentTransactions')}
+          </Text>
+          <Text
+            onPress={() => router.push('/(tabs)/transactions')}
+            style={{ fontSize: 14, color: theme.colors.primary, fontWeight: '500' }}
+          >
+            {t('dashboard.seeAll')}
+          </Text>
+        </View>
+
+        {recent.transactions.length === 0 ? (
+          <View style={{ marginTop: CARD_GAP }}>
+            <EmptyState
+              title={t('dashboard.noTransactions')}
+              actionLabel={t('dashboard.addFirstTransaction')}
+              onAction={() => router.push('/(modals)/add-transaction')}
+              variant="compact"
+            />
+          </View>
+        ) : (
+          <View style={{ marginTop: CARD_GAP, gap: CARD_GAP }}>
+            {recent.transactions.map((tx) => (
+              <Card key={tx.id} padding="md" elevated>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ flex: 1, minWidth: 0, marginRight: theme.spacing.sm }}>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+                      {(tx.note || (tx.type === 'income' ? t('common.typeIncome') : t('common.typeExpense'))).replace(/^\[recurring:[^]+\]\s*/, '')}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: theme.colors.text.tertiary, marginTop: 2 }}>
+                      {formatDate(tx.transaction_date)}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: tx.type === 'income' ? theme.colors.income : theme.colors.expense,
+                      flexShrink: 0,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {tx.type === 'income' ? '+' : '−'} {formatAmount(Number(tx.amount), currency)}
+                  </Text>
+                </View>
+              </Card>
+            ))}
+          </View>
+        )}
+
+        {/* Goals (secondary) */}
         {goals.length > 0 ? (
           <View style={{ marginTop: SECTION_GAP }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -388,6 +379,7 @@ export default function DashboardScreen() {
           </View>
         ) : null}
 
+        {/* Alerts (secondary) */}
         {alerts.length > 0 ? (
           <View style={{ marginTop: SECTION_GAP, marginBottom: SECTION_GAP }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
