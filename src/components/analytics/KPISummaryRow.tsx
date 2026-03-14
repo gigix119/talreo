@@ -35,8 +35,9 @@ function KPICard({
   return (
     <Pressable
       style={({ pressed }) => ({
-        minWidth: 140,
-        padding: theme.spacing.md,
+        width: 130,
+        minWidth: 130,
+        padding: theme.spacing.sm + 4,
         backgroundColor: theme.colors.surface,
         borderRadius: analyticsRadius.card,
         ...analyticsShadows.card,
@@ -48,7 +49,7 @@ function KPICard({
           <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, fontWeight: '500' }}>
             {label}
           </Text>
-          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.text.primary, marginTop: 4, letterSpacing: -0.3 }}>
+          <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.text.primary, marginTop: 2, letterSpacing: -0.3 }} numberOfLines={1}>
             {valueFormatter(value)}
           </Text>
           {showTrend && (
@@ -100,7 +101,11 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 10, paddingVertical: 4 }}
+        contentContainerStyle={{
+          gap: 8,
+          paddingVertical: 4,
+          paddingRight: 16,
+        }}
       >
         <KPICard
           label={t('analytics.totalIncome')}

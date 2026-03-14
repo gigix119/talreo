@@ -17,7 +17,7 @@ import { useI18n } from '@/i18n';
 import { theme } from '@/constants/theme';
 import { PAGE_PADDING_H } from '@/constants/layout';
 import { analyticsColors, analyticsShadows } from '@/constants/analyticsTheme';
-import { formatAmount } from '@/utils/currency';
+import { formatAmount, formatAmountShort } from '@/utils/currency';
 import { formatMonth } from '@/utils/date';
 import type { MonthlyTrendItem } from '@/types/database';
 
@@ -244,9 +244,9 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
           style={{
             flexDirection: 'row',
             backgroundColor: theme.colors.background,
-            borderRadius: theme.radius.md,
-            padding: 4,
-            marginBottom: theme.spacing.md,
+            borderRadius: theme.radius.sm,
+            padding: 3,
+            marginBottom: theme.spacing.sm,
             alignSelf: 'flex-start',
           }}
         >
@@ -279,7 +279,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
         </View>
 
         {/* Series toggles */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: theme.spacing.md }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: theme.spacing.sm }}>
           {(['income', 'expense', 'balance'] as const).map((s) => (
             <Pressable
               key={s}
@@ -348,9 +348,9 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
             endSpacing={28}
             yAxisColor={theme.colors.border}
             xAxisColor={theme.colors.border}
-            yAxisLabelWidth={58}
+            yAxisLabelWidth={52}
             noOfSections={4}
-            formatYLabel={(v) => formatAmount(Number(v), currency)}
+            formatYLabel={(v) => formatAmountShort(Number(v), currency)}
           />
 
           {/* Crosshair (inspect mode, long-press) */}
@@ -475,7 +475,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
           )}
         </View>
 
-        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: 8 }}>
+        <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginTop: 10, lineHeight: 14 }}>
           {mode === 'inspect'
             ? t('analytics.chartLongPressToInspect')
             : t('analytics.chartTapToCompare')}

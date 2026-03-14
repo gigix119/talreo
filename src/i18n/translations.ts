@@ -22,6 +22,7 @@ export const translations: Record<
     common: Record<string, string>;
     validation: Record<string, string>;
     empty: Record<string, string>;
+    tabs: Record<string, string>;
   }
 > = {
   pl: {
@@ -441,6 +442,14 @@ export const translations: Record<
       notFound: 'Ta strona nie istnieje.',
       goToWelcome: 'Przejdź do strony głównej',
     },
+    tabs: {
+      dashboard: 'Panel',
+      transactions: 'Trans.',
+      budgets: 'Budżety',
+      analytics: 'Analiza',
+      goals: 'Cele',
+      profile: 'Profil',
+    },
   },
   en: {
     auth: {
@@ -841,6 +850,14 @@ export const translations: Record<
       noResults: 'No results for selected filters.',
       notFound: 'This page does not exist.',
       goToWelcome: 'Go to home',
+    },
+    tabs: {
+      dashboard: 'Dashboard',
+      transactions: 'Trans.',
+      budgets: 'Budgets',
+      analytics: 'Analytics',
+      goals: 'Goals',
+      profile: 'Profile',
     },
   },
 };

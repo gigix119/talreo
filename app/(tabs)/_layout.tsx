@@ -44,8 +44,8 @@ export default function TabsLayout() {
       </View>
     );
   }
-  const tabBarHeight = 56;
-  const tabBarPaddingBottom = Math.max(insets.bottom, 8);
+  const tabBarPaddingBottom = Math.max(insets.bottom, 12);
+  const tabBarHeight = 52;
 
   return (
     <LanguageSync>
@@ -58,52 +58,56 @@ export default function TabsLayout() {
           backgroundColor: '#FFFFFF',
           height: tabBarHeight + tabBarPaddingBottom,
           paddingBottom: tabBarPaddingBottom,
-          paddingTop: 10,
+          paddingTop: 8,
           borderTopWidth: 1,
           borderTopColor: '#E5E5EA',
+          minHeight: tabBarHeight + tabBarPaddingBottom,
         },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '500', marginTop: 2 },
+        tabBarItemStyle: { paddingVertical: 4 },
+        tabBarIconStyle: { marginBottom: 0 },
+        tabBarAllowFontScaling: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: t('dashboard.title'),
+          title: t('tabs.dashboard'),
           tabBarIcon: () => <TabIcon name="🏠" />,
         }}
       />
       <Tabs.Screen
         name="transactions"
         options={{
-          title: t('transactions.title'),
+          title: t('tabs.transactions'),
           tabBarIcon: () => <TabIcon name="📋" />,
         }}
       />
       <Tabs.Screen
         name="budgets"
         options={{
-          title: t('budgets.title'),
+          title: t('tabs.budgets'),
           tabBarIcon: () => <TabIcon name="💰" />,
         }}
       />
       <Tabs.Screen
         name="analytics"
         options={{
-          title: t('analytics.title'),
+          title: t('tabs.analytics'),
           tabBarIcon: () => <TabIcon name="📊" />,
         }}
       />
       <Tabs.Screen
         name="goals"
         options={{
-          title: t('goals.title'),
+          title: t('tabs.goals'),
           tabBarIcon: () => <TabIcon name="🎯" />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: t('profile.title'),
+          title: t('tabs.profile'),
           tabBarIcon: () => <TabIcon name="👤" />,
         }}
       />

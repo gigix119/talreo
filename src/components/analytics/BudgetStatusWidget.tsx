@@ -61,7 +61,7 @@ export function BudgetStatusWidget({
 
   return (
     <InteractiveWidget title={t('analytics.budgetStatus')} icon="🎯">
-      <View style={{ gap: 14 }}>
+      <View style={{ gap: 10 }}>
         {data.map((row) => {
           const pctUsed = row.budget > 0 ? Math.min(100, (row.spent / row.budget) * 100) : 0;
           const overBudget = row.budget > 0 && row.spent > row.budget;
@@ -73,32 +73,29 @@ export function BudgetStatusWidget({
               key={row.categoryId ?? row.categoryName}
               style={({ pressed }) => ({
                 backgroundColor: theme.colors.background,
-                borderRadius: analyticsRadius.pill,
-                padding: theme.spacing.md,
+                borderRadius: theme.radius.sm,
+                padding: theme.spacing.sm + 4,
                 opacity: pressed ? 0.95 : 1,
               })}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
                   {row.categoryName}
                 </Text>
-                <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.text.primary }}>
-                    {formatAmount(row.spent, currency)}
-                  </Text>
-                  <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-                    / {row.budget > 0 ? formatAmount(row.budget, currency) : '—'}
-                  </Text>
-                </View>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: theme.colors.text.primary }}>
+                  {formatAmount(row.spent, currency)}
+                  <Text style={{ fontSize: 12, fontWeight: '500', color: theme.colors.text.tertiary }}> / {row.budget > 0 ? formatAmount(row.budget, currency) : '—'}</Text>
+                </Text>
               </View>
               {row.budget > 0 && (
                 <>
                   <View
                     style={{
-                      height: 8,
+                      height: 6,
                       backgroundColor: theme.colors.border,
-                      borderRadius: 4,
+                      borderRadius: 3,
                       overflow: 'hidden',
+                      marginTop: 6,
                     }}
                   >
                     <View
@@ -106,30 +103,17 @@ export function BudgetStatusWidget({
                         width: `${Math.min(100, pctUsed)}%`,
                         height: '100%',
                         backgroundColor: barColor,
-                        borderRadius: 4,
+                        borderRadius: 3,
                       }}
                     />
                   </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, flexWrap: 'wrap', gap: 4 }}>
-                    <View>
-                      <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-                        {row.remaining >= 0
-                          ? `${formatAmount(row.remaining, currency)} ${t('analytics.budgetLeft')}`
-                          : `${formatAmount(Math.abs(row.remaining), currency)} ${t('analytics.budgetOver')}`}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 11,
-                          fontWeight: '600',
-                          color: overBudget ? analyticsColors.expense : barColor,
-                          marginTop: 2,
-                        }}
-                      >
-                        {t(overBudget ? 'analytics.statusOverBudget' : 'analytics.statusOnTrack')}
-                      </Text>
-                    </View>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6, flexWrap: 'wrap', gap: 4 }}>
+                    <Text style={{ fontSize: 11, fontWeight: '600', color: overBudget ? analyticsColors.expense : barColor }}>
+                      {row.remaining >= 0 ? t('analytics.statusOnTrack') : t('analytics.statusOverBudget')}
+                      {row.remaining >= 0 ? ` · ${formatAmount(row.remaining, currency)}` : ''}
+                    </Text>
                     {prediction ? (
-                      <Text style={{ fontSize: 12, fontWeight: '600', color: analyticsColors.warning }}>
+                      <Text style={{ fontSize: 11, fontWeight: '600', color: analyticsColors.warning }} numberOfLines={1}>
                         {prediction}
                       </Text>
                     ) : null}

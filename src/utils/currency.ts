@@ -25,3 +25,12 @@ export function formatAmountSigned(amount: number, currency: Currency = 'PLN', l
   const prefix = amount >= 0 ? '+' : '−';
   return `${prefix} ${formatAmount(amount, currency, locale)}`;
 }
+
+/** Compact format for chart axis (avoids clipped labels on mobile) */
+export function formatAmountShort(amount: number, currency: Currency | string = 'PLN'): string {
+  const symbol = CURRENCY_SYMBOLS[currency as Currency] ?? String(currency);
+  const abs = Math.abs(amount);
+  if (abs >= 1_000_000) return `${(abs / 1_000_000).toFixed(1)}M ${symbol}`;
+  if (abs >= 1_000) return `${(abs / 1_000).toFixed(1)}k ${symbol}`;
+  return new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 }).format(abs) + ' ' + symbol;
+}

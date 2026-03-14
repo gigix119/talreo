@@ -81,19 +81,23 @@ function GoalCard({
     <Card key={g.id} padding="md" elevated>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
-            {g.name}
-          </Text>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.secondary, marginTop: 4 }}>
-            {formatAmount(g.current_amount, currency)} / {formatAmount(g.target_amount, currency)}
-            <Text style={{ fontSize: 13, color: theme.colors.text.tertiary }}> · {g.progressPercent.toFixed(0)}%</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.text.primary }} numberOfLines={1}>
+              {g.name}
+            </Text>
+            {g.status !== 'active' ? <StatusBadge status={g.status} /> : null}
+          </View>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: theme.colors.text.primary, marginTop: 4 }}>
+            {formatAmount(g.current_amount, currency)}
+            <Text style={{ fontSize: 13, fontWeight: '500', color: theme.colors.text.tertiary }}> / {formatAmount(g.target_amount, currency)}</Text>
+            <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}> ({g.progressPercent.toFixed(0)}%)</Text>
           </Text>
           <View
             style={{
-              height: 6,
+              height: 4,
               backgroundColor: theme.colors.border,
-              borderRadius: 3,
-              marginTop: 8,
+              borderRadius: 2,
+              marginTop: 6,
               overflow: 'hidden',
             }}
           >
@@ -102,27 +106,26 @@ function GoalCard({
                 width: `${Math.min(g.progressPercent, 100)}%`,
                 height: '100%',
                 backgroundColor: progressColor,
-                borderRadius: 3,
+                borderRadius: 2,
               }}
             />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: theme.spacing.sm, flexWrap: 'wrap' }}>
-            <Button variant="primary" onPress={onAddFunds} style={{ paddingHorizontal: 14, paddingVertical: 6 }}>
+            <Button variant="primary" onPress={onAddFunds} style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
               {t('goals.addFunds')}
             </Button>
-            <Button variant="ghost" onPress={onWithdraw} style={{ paddingHorizontal: 10 }}>
-              {t('goals.withdraw')}
-            </Button>
-            {g.status !== 'active' ? <StatusBadge status={g.status} /> : null}
+            <Pressable onPress={onWithdraw} style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.text.secondary }}>{t('goals.withdraw')}</Text>
+            </Pressable>
             {g.target_date ? (
-              <Text style={{ fontSize: 12, color: theme.colors.text.tertiary }}>
-                {t('goals.targetDate')}: {formatDate(g.target_date)}
+              <Text style={{ fontSize: 11, color: theme.colors.text.tertiary, marginLeft: theme.spacing.xs }}>
+                {formatDate(g.target_date)}
               </Text>
             ) : null}
           </View>
         </View>
         <Pressable onPress={showOverflowMenu} hitSlop={12} style={{ padding: 8, marginLeft: 4 }}>
-          <Text style={{ fontSize: 18, color: theme.colors.text.tertiary, fontWeight: '600' }}>⋯</Text>
+          <Text style={{ fontSize: 16, color: theme.colors.text.tertiary, fontWeight: '600' }}>⋯</Text>
         </Pressable>
       </View>
     </Card>
