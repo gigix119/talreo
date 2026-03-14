@@ -153,7 +153,7 @@ export default function AddBudgetScreen() {
               label="Kwota (limit)"
               value={amount}
               onChangeText={setAmount}
-              placeholder={`0.00 ${currency}`}
+              placeholder={t('goals.placeholderAmount')}
               keyboardType="decimal-pad"
             />
 

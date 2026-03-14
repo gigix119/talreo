@@ -23,6 +23,7 @@ function KPICard({
   trendPercent,
   sparklineData,
   color,
+  isExpense = false,
 }: {
   label: string;
   value: number;
@@ -30,6 +31,8 @@ function KPICard({
   trendPercent: number | null;
   sparklineData: number[];
   color: string;
+  isExpense?: boolean;
+  trendVsLast: string;
 }) {
   const showTrend = trendPercent !== null && !Number.isNaN(trendPercent);
   return (
@@ -58,12 +61,12 @@ function KPICard({
                 style={{
                   fontSize: 12,
                   fontWeight: '600',
-                  color: label.includes('Expense') ? (trendPercent >= 0 ? analyticsColors.expense : analyticsColors.success) : (trendPercent >= 0 ? analyticsColors.success : analyticsColors.expense),
+                  color: isExpense ? (trendPercent >= 0 ? analyticsColors.expense : analyticsColors.success) : (trendPercent >= 0 ? analyticsColors.success : analyticsColors.expense),
                 }}
               >
                 {trendPercent >= 0 ? '+' : ''}{trendPercent.toFixed(1)}%
               </Text>
-              <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>vs last</Text>
+              <Text style={{ fontSize: 11, color: theme.colors.text.tertiary }}>{trendVsLast}</Text>
             </View>
           )}
         </View>
@@ -114,6 +117,8 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
           trendPercent={incomeTrend}
           sparklineData={trend.map((x) => x.income)}
           color={analyticsColors.income}
+          isExpense={false}
+          trendVsLast={t('analytics.trendVsLast')}
         />
         <KPICard
           label={t('analytics.totalExpenses')}
@@ -122,6 +127,8 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
           trendPercent={expenseTrend}
           sparklineData={trend.map((x) => x.expense)}
           color={analyticsColors.expense}
+          isExpense={true}
+          trendVsLast={t('analytics.trendVsLast')}
         />
         <KPICard
           label={t('analytics.balance')}
@@ -130,6 +137,8 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
           trendPercent={balanceTrend}
           sparklineData={trend.map((x) => x.balance)}
           color={analyticsColors.balance}
+          isExpense={false}
+          trendVsLast={t('analytics.trendVsLast')}
         />
         <KPICard
           label={t('analytics.savingsRate')}
@@ -138,6 +147,7 @@ export function KPISummaryRow({ trend, currency }: KPISummaryRowProps) {
           trendPercent={null}
           sparklineData={[]}
           color={analyticsColors.analytics}
+          trendVsLast={t('analytics.trendVsLast')}
         />
       </ScrollView>
     </View>

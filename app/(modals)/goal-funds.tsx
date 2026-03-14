@@ -74,7 +74,7 @@ export default function GoalFundsScreen() {
             label={t('goals.amount')}
             value={amount}
             onChangeText={setAmount}
-            placeholder={`0.00 ${currency}`}
+            placeholder={t('goals.placeholderAmount')}
             keyboardType="decimal-pad"
           />
           {error ? (

@@ -81,7 +81,7 @@ export default function ForgotPasswordScreen() {
             label={t('auth.email')}
             value={email}
             onChangeText={setEmail}
-            placeholder="you@example.com"
+            placeholder={t('auth.emailPlaceholder')}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}

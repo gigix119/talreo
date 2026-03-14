@@ -66,7 +66,7 @@ export default function SignUpScreen() {
             label={t('auth.email')}
             value={email}
             onChangeText={setEmail}
-            placeholder="you@example.com"
+            placeholder={t('auth.emailPlaceholder')}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -75,7 +75,7 @@ export default function SignUpScreen() {
             label={t('auth.password')}
             value={password}
             onChangeText={setPassword}
-            placeholder="At least 6 characters"
+            placeholder={t('auth.passwordMinPlaceholder')}
             secureTextEntry
             error={error || undefined}
           />
@@ -83,7 +83,7 @@ export default function SignUpScreen() {
             label={t('auth.fullName')}
             value={fullName}
             onChangeText={setFullName}
-            placeholder="Jane Doe"
+            placeholder={t('auth.fullNamePlaceholder')}
             autoCapitalize="words"
           />
         </AuthScreen>

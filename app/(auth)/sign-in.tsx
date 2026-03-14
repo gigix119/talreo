@@ -57,7 +57,7 @@ export default function SignInScreen() {
             label={t('auth.email')}
             value={email}
             onChangeText={setEmail}
-            placeholder="you@example.com"
+            placeholder={t('auth.emailPlaceholder')}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -66,7 +66,7 @@ export default function SignInScreen() {
             label={t('auth.password')}
             value={password}
             onChangeText={setPassword}
-            placeholder="••••••••"
+            placeholder={t('auth.passwordPlaceholder')}
             secureTextEntry
             error={error || undefined}
           />

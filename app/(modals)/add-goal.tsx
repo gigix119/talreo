@@ -108,27 +108,27 @@ export default function AddGoalScreen() {
               label={t('goals.name')}
               value={name}
               onChangeText={setName}
-              placeholder="e.g. Vacation"
+              placeholder={t('goals.placeholderGoalName')}
             />
             <Input
               label={t('goals.targetAmount')}
               value={targetAmount}
               onChangeText={setTargetAmount}
-              placeholder={`0.00 ${currency}`}
+              placeholder={t('goals.placeholderAmount')}
               keyboardType="decimal-pad"
             />
             <Input
               label={t('goals.currentAmount')}
               value={currentAmount}
               onChangeText={setCurrentAmount}
-              placeholder={`0.00 ${currency}`}
+              placeholder={t('goals.placeholderAmount')}
               keyboardType="decimal-pad"
             />
             <Input
               label={`${t('goals.targetDate')} (${t('goals.optional')})`}
               value={targetDate}
               onChangeText={setTargetDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('goals.placeholderDate')}
             />
             {error ? (
               <Text style={{ fontSize: 12, color: theme.colors.error, marginTop: theme.spacing.sm }}>{error}</Text>

@@ -129,7 +129,7 @@ export const analyticsService = {
       const percentUsed = budgetAmount > 0 ? (actual / budgetAmount) * 100 : 0;
       items.push({
         category_id: b.category_id,
-        category_name: catMap.get(b.category_id) ?? 'Unknown',
+        category_name: catMap.get(b.category_id) ?? 'Nieznana',
         budgetAmount,
         actualAmount: actual,
         variance,

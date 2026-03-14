@@ -204,7 +204,7 @@ export default function AddRecurringScreen() {
               label="Note (optional)"
               value={note}
               onChangeText={setNote}
-              placeholder="e.g. Netflix, Rent"
+              placeholder={t('recurring.placeholderNote')}
             />
 
             <View style={{ marginTop: theme.spacing.md }}>
@@ -229,14 +229,14 @@ export default function AddRecurringScreen() {
               label="Start date"
               value={startDate}
               onChangeText={setStartDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('recurring.placeholderDate')}
             />
 
             <Input
               label="End date (optional)"
               value={endDate}
               onChangeText={setEndDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('recurring.placeholderDate')}
             />
 
             {isEdit ? (

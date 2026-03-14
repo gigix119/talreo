@@ -186,13 +186,13 @@ export default function EditTransactionScreen() {
               </View>
             ) : null}
 
-            <Input label="Date" value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
+            <Input label={t('transactions.labelDate')} value={date} onChangeText={setDate} placeholder={t('goals.placeholderDate')} />
 
             <Input
-              label="Note (optional)"
+              label={t('transactions.labelNote')}
               value={note}
               onChangeText={handleNoteChange}
-              placeholder="e.g. Groceries"
+              placeholder={t('transactions.quickAddPlaceholder')}
             />
 
             {error ? (
