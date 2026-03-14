@@ -348,7 +348,7 @@ export const FinancialTrendChart = memo(function FinancialTrendChart({
             endSpacing={28}
             yAxisColor={theme.colors.border}
             xAxisColor={theme.colors.border}
-            yAxisLabelWidth={52}
+            yAxisLabelWidth={60}
             noOfSections={4}
             formatYLabel={(v) => formatAmountShort(Number(v), currency)}
           />

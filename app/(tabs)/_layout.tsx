@@ -72,42 +72,42 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.dashboard'),
+          title: t('dashboard.title'),
           tabBarIcon: () => <TabIcon name="🏠" />,
         }}
       />
       <Tabs.Screen
         name="transactions"
         options={{
-          title: t('tabs.transactions'),
+          title: t('transactions.title'),
           tabBarIcon: () => <TabIcon name="📋" />,
         }}
       />
       <Tabs.Screen
         name="budgets"
         options={{
-          title: t('tabs.budgets'),
+          title: t('budgets.title'),
           tabBarIcon: () => <TabIcon name="💰" />,
         }}
       />
       <Tabs.Screen
         name="analytics"
         options={{
-          title: t('tabs.analytics'),
+          title: t('analytics.title'),
           tabBarIcon: () => <TabIcon name="📊" />,
         }}
       />
       <Tabs.Screen
         name="goals"
         options={{
-          title: t('tabs.goals'),
+          title: t('goals.title'),
           tabBarIcon: () => <TabIcon name="🎯" />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: t('tabs.profile'),
+          title: t('profile.title'),
           tabBarIcon: () => <TabIcon name="👤" />,
         }}
       />

@@ -21,7 +21,7 @@ import {
 } from '@/components/transactions';
 import { Toast } from '@/components/ui/Toast';
 import { theme } from '@/constants/theme';
-import { FAB_BOTTOM_OFFSET, BOTTOM_CONTENT_PADDING } from '@/constants/layout';
+import { BOTTOM_CONTENT_PADDING } from '@/constants/layout';
 import { useMultiSelectManager } from '@/hooks/useMultiSelectManager';
 import type { Transaction } from '@/types/database';
 
@@ -222,7 +222,7 @@ export default function TransactionsScreen() {
         onPress={() => router.push('/(modals)/add-transaction')}
         style={({ pressed }) => ({
           position: 'absolute',
-          bottom: FAB_BOTTOM_OFFSET,
+          bottom: Math.max(insets.bottom, 12) + 64,
           right: theme.spacing.lg,
           width: 56,
           height: 56,

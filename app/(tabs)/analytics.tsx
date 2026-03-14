@@ -154,6 +154,7 @@ export default function AnalyticsScreen() {
           backgroundColor: theme.colors.background,
         }}
         showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
       >
         <AnalyticsHeader
           month={month}
